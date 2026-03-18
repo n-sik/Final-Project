@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.flowenect.hr.board.mapper.BoardCmntMapper">
+
+	<insert id="insertComment">
+		<selectKey keyProperty="cmntNo" resultType="int" order="BEFORE">
+        	SELECT SEQ_BOARD_CMNT_NO.NEXTVAL FROM DUAL
+    	</selectKey>
+	
+        INSERT INTO BOARD_CMNT (
+            CMNT_NO,
+            POST_NO,
+            PARENT_CMNT_NO,
+            COMMENT_LVL, 
+            COMMENT_CN,
+            WRITER_EMP_NO,
+            DEL_YN,
+            REG_DTM
+        ) VALUES (
+            #{cmntNo},
+            #{postNo},
+            #{parentCmntNo},
+            #{commentLvl}, 
+            #{commentCn},
+            #{writerEmpNo},
+            'N',
+            SYSDATE
+        )
+    </insert>
+
+    <select id="selectCommentList" resultType="BoardCmntDTO">
+        SELECT
+        	CMNT_NO,
+            POST_NO,
+            PARENT_CMNT_NO,
+            COMMENT_LVL, 
+            COMMENT_CN,
+            WRITER_EMP_NO,
+            DEL_YN,
+            REG_DTM
+        FROM BOARD_CMNT
+        WHERE POST_NO = #{postNo}
+        ORDER BY NVL(PARENT_CMNT_NO, CMNT_NO), REG_DTM
+    </select>
+
+	<update id="updateComment">
+        UPDATE BOARD_CMNT
+        SET COMMENT_CN = #{commentCn}
+        WHERE CMNT_NO = #{cmntNo}
+          AND DEL_YN = 'N' 
+    </update>
+
+    <update id="deleteComment">
+        UPDATE BOARD_CMNT
+        SET DEL_YN = 'Y'
+        WHERE CMNT_NO = #{cmntNo}
+    </update>
+
+</mapper>

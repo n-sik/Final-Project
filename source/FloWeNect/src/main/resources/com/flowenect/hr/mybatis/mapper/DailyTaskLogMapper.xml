@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.flowenect.hr.dailytasklog.mapper.DailyTaskLogMapper">
+	
+	
+	 <!-- ══════════════════════════════════════
+         담당업무 목록 SELECT (사이드 목록용)
+         ASSIGN_TASK + EMP JOIN
+    ══════════════════════════════════════ -->
+    <select id="selectTaskList" parameterType="string"
+            resultType="DailyTaskLogDTO">
+        SELECT
+            T.TASK_NO,
+            T.EMP_NO,
+            T.DEPT_CD,
+            T.TASK_TITLE,
+            T.TASK_CN, 
+            T.TASK_STAT_CD,
+            T.PROGRESS_RATE        AS TASK_PROGRESS_RATE,
+            TO_CHAR(T.TASK_START_DTM, 'YYYY.MM.DD')
+            || ' ~ '
+            || TO_CHAR(T.TASK_END_DTM, 'YYYY.MM.DD') AS TASK_PERIOD,
+            E.EMP_NM
+        FROM ASSIGN_TASK T
+        JOIN EMP E ON T.EMP_NO = E.EMP_NO
+        WHERE T.EMP_NO = #{empNo}
+          AND T.DEL_YN = 'N'
+        ORDER BY T.REG_DTM DESC
+    </select>
+
+    <!-- ══════════════════════════════════════
+         이전 일지 목록 (업무번호 + 기간 필터)
+    ══════════════════════════════════════ -->
+    <select id="selectLogList" parameterType="DailyTaskLogDTO"
+            resultType="DailyTaskLogDTO">
+        SELECT
+            L.TASK_LOG_NO,
+            L.TASK_NO,
+            L.EMP_NO,
+            L.LOG_DIV_CD,
+            L.LOG_TITLE,
+            L.LOG_CN,
+            L.WORK_DTM,
+            L.REG_DTM,
+            L.MOD_DTM,
+            E.EMP_NM,
+            T.TASK_TITLE
+        FROM DAILY_TASK_LOG L
+        JOIN EMP          E ON L.EMP_NO  = E.EMP_NO
+        JOIN ASSIGN_TASK  T ON L.TASK_NO = T.TASK_NO
+        WHERE L.TASK_NO  = #{taskNo}
+          AND L.EMP_NO   = #{empNo}
+          AND L.DEL_YN   = 'N'
+        <if test="dateFrom != null and dateFrom != ''">
+            AND TRUNC(L.WORK_DTM) &gt;= TO_DATE(#{dateFrom}, 'YYYY-MM-DD')
+        </if>
+        <if test="dateTo != null and dateTo != ''">
+            AND TRUNC(L.WORK_DTM) &lt;= TO_DATE(#{dateTo}, 'YYYY-MM-DD')
+        </if>
+        ORDER BY L.WORK_DTM DESC
+    </select>
+
+    <!-- ══════════════════════════════════════
+         일지 단건 조회
+    ══════════════════════════════════════ -->
+    <select id="selectLogByNo" parameterType="int"
+            resultType="DailyTaskLogDTO">
+        SELECT
+            L.TASK_LOG_NO,
+            L.TASK_NO,
+            L.EMP_NO,
+            L.LOG_DIV_CD,
+            L.LOG_TITLE,
+            L.LOG_CN,
+            L.WORK_DTM,
+            L.REG_DTM,
+            L.MOD_DTM,
+            E.EMP_NM,
+            T.TASK_TITLE
+        FROM DAILY_TASK_LOG L
+        JOIN EMP          E ON L.EMP_NO  = E.EMP_NO
+        JOIN ASSIGN_TASK  T ON L.TASK_NO = T.TASK_NO
+        WHERE L.TASK_LOG_NO = #{taskLogNo}
+          AND L.DEL_YN = 'N'
+    </select>
+
+    <!-- ══════════════════════════════════════
+         오늘 일지 존재 여부 (중복 제출 방지)
+    ══════════════════════════════════════ -->
+    <select id="selectTodayLogCount" parameterType="DailyTaskLogDTO"
+            resultType="int">
+        SELECT COUNT(*)
+        FROM DAILY_TASK_LOG
+        WHERE TASK_NO       = #{taskNo}
+          AND EMP_NO        = #{empNo}
+          AND DEL_YN        = 'N'
+          AND TRUNC(WORK_DTM) = TRUNC(SYSDATE)
+    </select>
+
+    <!-- ══════════════════════════════════════
+         일지 등록
+    ══════════════════════════════════════ -->
+    <insert id="insertLog" parameterType="DailyTaskLogDTO">
+        INSERT INTO DAILY_TASK_LOG (
+            TASK_LOG_NO,
+            TASK_NO,
+            EMP_NO,
+            LOG_DIV_CD,
+            LOG_TITLE,
+            LOG_CN,
+            WORK_DTM,
+            REG_DTM,
+            DEL_YN
+        ) VALUES (
+            (SELECT NVL(MAX(TASK_LOG_NO), 0) + 1 FROM DAILY_TASK_LOG),
+            #{taskNo},
+            #{empNo},
+            #{logDivCd},
+            #{logTitle},
+            #{logCn},
+            SYSDATE,
+            SYSDATE,
+            'N'
+        )
+    </insert>
+
+    <!-- ══════════════════════════════════════
+         일지 수정
+    ══════════════════════════════════════ -->
+    <update id="updateLog" parameterType="DailyTaskLogDTO">
+        UPDATE DAILY_TASK_LOG
+        SET
+            LOG_TITLE = #{logTitle},
+            LOG_CN    = #{logCn},
+            MOD_DTM   = SYSDATE
+        WHERE TASK_LOG_NO = #{taskLogNo}
+          AND EMP_NO      = #{empNo}
+          AND DEL_YN      = 'N'
+    </update>
+
+    <!-- ══════════════════════════════════════
+         일지 삭제 (소프트)
+    ══════════════════════════════════════ -->
+    <update id="deleteLog" parameterType="DailyTaskLogDTO">
+        UPDATE DAILY_TASK_LOG
+        SET
+            DEL_YN  = 'Y',
+            DEL_DTM = SYSDATE
+        WHERE TASK_LOG_NO = #{taskLogNo}
+          AND EMP_NO      = #{empNo}
+    </update>
+
+    <!-- ══════════════════════════════════════
+         담당업무 진행률 + 상태 업데이트
+         (일지 제출 시 ASSIGN_TASK 동시 업데이트)
+    ══════════════════════════════════════ -->
+    <update id="updateTaskProgress" parameterType="DailyTaskLogDTO">
+        UPDATE ASSIGN_TASK
+        SET
+            PROGRESS_RATE = #{progressRate},
+            TASK_STAT_CD  = #{taskStatCd},
+            MOD_DTM       = SYSDATE
+        WHERE TASK_NO = #{taskNo}
+          AND DEL_YN  = 'N'
+    </update>
+	
+</mapper>

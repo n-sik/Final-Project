@@ -1,0 +1,135 @@
+/* font-thin	100
+font-extralight	200
+font-light	300
+font-normal	400
+font-medium	500
+font-semibold	600
+font-bold	700
+font-extrabold	800
+font-black	900 */
+
+@font-face {
+    font-family: 'SCDream';
+    src: url("/fonts/S-Core_Dream/SCDream1.otf") format("opentype");
+    font-weight: 100;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'SCDream';
+    src: url("/fonts/S-Core_Dream/SCDream2.otf") format("opentype");
+    font-weight: 200;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'SCDream';
+    src: url("/fonts/S-Core_Dream/SCDream3.otf") format("opentype");
+    font-weight: 300;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'SCDream';
+    src: url("/fonts/S-Core_Dream/SCDream4.otf") format("opentype");
+    font-weight: 400;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'SCDream';
+    src: url("/fonts/S-Core_Dream/SCDream5.otf") format("opentype");
+    font-weight: 500;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'SCDream';
+    src: url("/fonts/S-Core_Dream/SCDream6.otf") format("opentype");
+    font-weight: 600;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'SCDream';
+    src: url("/fonts/S-Core_Dream/SCDream7.otf") format("opentype");
+    font-weight: 700;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'SCDream';
+    src: url("/fonts/S-Core_Dream/SCDream8.otf") format("opentype");
+    font-weight: 800;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'SCDream';
+    src: url("/fonts/S-Core_Dream/SCDream9.otf") format("opentype");
+    font-weight: 900;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Paperozi';
+    src: url("/fonts/Paperlogy/Paperlogy-1Thin.ttf") format("truetype");
+    font-weight: 100;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Paperozi';
+    src: url("/fonts/Paperlogy/Paperlogy-2ExtraLight.ttf") format("truetype");
+    font-weight: 200;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Paperozi';
+    src: url("/fonts/Paperlogy/Paperlogy-3Light.ttf") format("truetype");
+    font-weight: 300;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Paperozi';
+    src: url("/fonts/Paperlogy/Paperlogy-4Regular.ttf") format("truetype");
+    font-weight: 400;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Paperozi';
+    src: url("/fonts/Paperlogy/Paperlogy-5Medium.ttf") format("truetype");
+    font-weight: 500;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Paperozi';
+    src: url("/fonts/Paperlogy/Paperlogy-6SemiBold.ttf") format("truetype");
+    font-weight: 600;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Paperozi';
+    src: url("/fonts/Paperlogy/Paperlogy-7Bold.ttf") format("truetype");
+    font-weight: 700;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Paperozi';
+    src: url("/fonts/Paperlogy/Paperlogy-8ExtraBold.ttf") format("truetype");
+    font-weight: 800;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Paperozi';
+    src: url("/fonts/Paperlogy/Paperlogy-9Black.ttf") format("truetype");
+    font-weight: 900;
+    font-display: swap;
+}

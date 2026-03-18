@@ -1,0 +1,204 @@
+.service {
+  background: var(--bg-secondary);
+}
+
+.service-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 40px;
+  margin-top: 80px;
+}
+
+.service-card {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 24px;
+  padding: 50px 40px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.service-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: conic-gradient(from 0deg,
+      transparent,
+      rgba(0, 240, 255, 0.1),
+      transparent);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  animation: rotate 6s linear infinite;
+}
+
+.service-card:hover::before {
+  opacity: 1;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.service-card:hover {
+  border-color: var(--accent-primary);
+  transform: translateY(-10px);
+  box-shadow: 0 25px 70px rgba(0, 240, 255, 0.25);
+}
+
+.service-icon {
+  font-size: 80px;
+  margin-bottom: 30px;
+  transition: transform 0.4s ease;
+  position: relative;
+  z-index: 1;
+}
+
+.service-card:hover .service-icon {
+  transform: scale(1.15) rotate(5deg);
+}
+
+.service-name {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 15px;
+  position: relative;
+  z-index: 1;
+}
+
+.service-description {
+  font-size: 16px;
+  color: var(--text-secondary);
+  margin-bottom: 35px;
+  line-height: 1.6;
+  position: relative;
+  z-index: 1;
+}
+
+.service-features {
+  flex: 1;
+  margin-bottom: 30px;
+  position: relative;
+  z-index: 1;
+}
+
+.service-features h4 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--accent-primary);
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.service-features ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.service-features li {
+  font-size: 15px;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 15px;
+  background: rgba(0, 240, 255, 0.05);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.service-features li:hover {
+  background: rgba(0, 240, 255, 0.1);
+  transform: translateX(5px);
+}
+
+.feature-dot {
+  color: var(--accent-primary);
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.service-detail-btn {
+  padding: 16px 30px;
+  background: transparent;
+  border: 2px solid var(--accent-primary);
+  border-radius: 50px;
+  color: var(--accent-primary);
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.service-detail-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: var(--accent-gradient);
+  transition: left 0.3s ease;
+  z-index: -1;
+}
+
+.service-detail-btn span {
+  transition: transform 0.3s ease;
+  font-size: 18px;
+}
+
+.service-detail-btn:hover::before {
+  left: 0;
+}
+
+.service-detail-btn:hover {
+  color: #000;
+  border-color: transparent;
+}
+
+.service-detail-btn:hover span {
+  transform: translateX(5px);
+}
+
+/* 반응형 */
+@media (max-width: 1024px) {
+  .service-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .service-card {
+    padding: 40px 30px;
+  }
+
+  .service-icon {
+    font-size: 60px;
+  }
+
+  .service-name {
+    font-size: 26px;
+  }
+}

@@ -1,0 +1,527 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.flowenect.hr.eval.mapper.EvalMapper">
+
+	<resultMap id="QualEvalResultMap" type="QualEvalMasterDTO">
+		<id property="evalCd" column="EVAL_CD" />
+		<result property="deptCd" column="DEPT_CD" />
+		<result property="evalItemNm" column="EVAL_ITEM_NM" />
+		<result property="useYn" column="USE_YN" />
+		<collection property="rubrics" ofType="QualEvalRubricDTO">
+			<id property="rubricSeq" column="RUBRIC_SEQ" />
+			<result property="evalScore" column="EVAL_SCORE" />
+			<result property="scoreDesc" column="SCORE_DESC" />
+		</collection>
+	</resultMap>
+
+	<resultMap id="WorkResultMap" type="map">
+		<id property="projectNo" column="project_no" />
+		<result property="projectNm" column="project_nm" />
+		<result property="empNm" column="emp_nm" />
+		<result property="posNm" column="pos_nm" />
+		<result property="startDtm" column="start_dtm" />
+		<result property="endDtm" column="end_dtm" />
+		<result property="deptCd" column="dept_cd" />
+	</resultMap>
+
+	<!-- EMP -->
+	<select id="selectEvalTargetList" resultType="QualTargetDTO">
+		SELECT e.emp_no /*
+		com.flowenect.hr.eval.mapper.EvalMapper.selectEvalTargetList */
+		, e.emp_nm
+		, e.dept_cd
+		, d.dept_nm , p.pos_nm
+		, CASE WHEN r.target_emp_no IS NOT NULL THEN '완료'
+			ELSE '대기' END AS evalStatCd
+			FROM EMP E
+			LEFT JOIN position_mst P ON e.pos_cd = p.pos_cd
+			LEFT JOIN dept D ON e.dept_cd = d.dept_cd LEFT JOIN (
+			SELECT DISTINCT target_emp_no
+			FROM qual_eval_result
+			WHERE eval_year = TO_CHAR(SYSDATE, 'YYYY')
+			AND eval_quarter =
+			CASE WHEN TO_NUMBER(TO_CHAR(SYSDATE, 'MM'))
+			BETWEEN 1 AND 6 THEN '1' ELSE '2' END
+			) r ON e.emp_no = r.target_emp_no
+			WHERE TRIM(e.dept_cd) = #{deptCd}
+			AND e.emp_stat_cd = 'WORK'
+			ORDER BY e.pos_cd ASC, e.emp_nm ASC
+	</select>
+
+	<select id="selectQuantEvalTargetList" resultType="QualTargetDTO">
+	    SELECT /* com.flowenect.hr.eval.mapper.EvalMapper.selectQuantEvalTargetList */
+	          e.emp_no
+	        , e.emp_nm
+	        , e.dept_cd
+	        , d.dept_nm 
+	        , p.pos_nm
+	        , CASE WHEN r.emp_no IS NOT NULL THEN '완료'
+	               ELSE '대기' END AS evalStatCd
+	    FROM EMP E
+	    LEFT JOIN position_mst P ON e.pos_cd = p.pos_cd
+	    LEFT JOIN dept D ON e.dept_cd = d.dept_cd 
+	    LEFT JOIN (
+	        SELECT DISTINCT emp_no
+	        FROM QUANT_EVAL_RESULT
+	        WHERE eval_year = TO_CHAR(SYSDATE, 'YYYY')
+	          AND eval_half = CASE 
+	                            WHEN TO_NUMBER(TO_CHAR(SYSDATE, 'MM')) BETWEEN 1 AND 6 THEN 'H1' 
+	                            ELSE 'H2'
+	                            END
+	    ) r ON e.emp_no = r.emp_no
+	    WHERE TRIM(e.dept_cd) = #{deptCd}
+	      AND e.emp_stat_cd = 'WORK'
+	    ORDER BY e.pos_cd ASC, e.emp_nm ASC
+	</select>
+
+	<!-- qualEval -->
+	<select id="selectEmpDetailByNo" resultType="QualTargetDTO">
+		SELECT /* com.flowenect.hr.eval.mapper.EvalMapper.selectEmpDetailByNo */
+		e.EMP_NO
+		, e.EMP_NM
+		, d.DEPT_NM
+		, p.POS_NM
+		FROM EMP E
+		LEFT JOIN position_mst P ON e.POS_CD = p.POS_CD
+		LEFT JOIN dept D ON e.DEPT_CD = d.DEPT_CD
+		WHERE e.EMP_NO = #{targetEmpNo}
+		AND e.EMP_STAT_CD = 'WORK'
+	</select>
+
+	<select id="checkExistEval" parameterType="QualEvalResultDTO"
+		resultType="int">
+		SELECT COUNT(*) /* com.flowenect.hr.eval.mapper.EvalMapper.checkExistEval */
+		FROM
+		qual_eval_result
+		WHERE
+		eval_year = #{evalYear}
+		AND eval_quarter = #{evalQuarter}
+		AND evaluator_id = #{evaluatorId}
+		AND target_emp_no = #{targetEmpNo}
+	</select>
+
+	<select id="selectCountQualEval" resultType="int">
+		SELECT COUNT(*) /*
+		com.flowenect.hr.eval.mapper.EvalMapper.selectCountQualEval */
+		FROM
+		qual_eval_master
+		WHERE
+		DEPT_CD = #{deptCd} AND USE_YN = 'Y'
+	</select>
+
+	<select id="selectListQualEval" resultMap="QualEvalResultMap">
+		SELECT /* com.flowenect.hr.eval.mapper.EvalMapper.selectListQualEval */
+		M.EVAL_CD
+		, m.dept_cd
+		, m.eval_item_nm
+		, m.use_yn
+		, r.rubric_seq
+		, r.eval_score
+		, r.score_desc
+		FROM (
+		SELECT
+		EVAL_CD
+		, DEPT_CD
+		, EVAL_ITEM_NM
+		, USE_YN
+		FROM
+		qual_eval_master
+		WHERE
+		dept_cd = #{deptCd} AND use_yn = 'Y'
+		ORDER BY
+		eval_cd ASC
+		OFFSET #{paging.offset} ROWS FETCH NEXT #{paging.recordSize} ROWS ONLY
+		) M
+		INNER JOIN qual_eval_rubric R
+		ON m.eval_cd = r.eval_cd
+		ORDER BY m.eval_cd ASC, r.eval_score DESC
+	</select>
+
+	<insert id="insertQualEvalResults"
+		parameterType="QualEvalResultDTO">
+		INSERT INTO qual_eval_result ( /*
+		com.flowenect.hr.eval.mapper.EvalMapper.insertQualEvalResults */
+		result_no
+		, target_emp_no
+		, eval_cd
+		, eval_score
+		, eval_year
+		, eval_quarter
+		, evaluator_id
+		, eval_comment
+		, eval_dtm
+		)
+		SELECT SEQ_QUAL_EVAL_RESULT_NO.NEXTVAL,
+		A.* FROM (
+		<foreach collection="resultList" item="item"
+			separator="UNION ALL">
+			SELECT
+			#{targetEmpNo}
+			, #{item.evalCd}
+			, #{item.evalScore}
+			, TO_CHAR(SYSDATE, 'YYYY')
+			, CASE
+			WHEN TO_NUMBER(TO_CHAR(SYSDATE, 'MM')) BETWEEN 1 AND 6 THEN '1'
+			ELSE '2'
+			END
+			, #{evaluatorId}
+			, #{item.evalComment}
+			, SYSDATE FROM DUAL
+		</foreach>
+		) A
+	</insert>
+
+	<!-- workInquiry -->
+	<select id="selectProjectListByEmp" resultType="ProjectDTO">
+	    SELECT DISTINCT 
+	          p.project_no, 
+	          p.project_nm, 
+	          p.project_desc,
+	          p.project_stat_cd, p.start_dtm, p.end_dtm
+	    FROM project p
+	    INNER JOIN kpi k ON p.project_no = k.proj_no
+	    INNER JOIN assign_task t ON k.kpi_no = t.kpi_no
+	    WHERE p.use_yn = 'Y'
+	      AND t.del_yn = 'N'
+	      AND t.emp_no = #{empNo}
+	    ORDER BY p.start_dtm DESC
+	</select>
+
+	<select id="selectKpiListByProj" resultType="KpiDTO">
+	    SELECT DISTINCT /* com.flowenect.hr.eval.mapper.EvalMapper.selectKpiListByProj */
+	          k.kpi_no
+	        , k.kpi_parent_no
+	        , k.proj_no
+	        , k.kpi_nm
+	        , k.start_dtm
+	        , k.end_dtm
+	        , k.use_yn
+	        , k.progress_rate
+	        , k.kpi_cn
+	        , k.kpi_type_cd
+	    FROM KPI k
+	    INNER JOIN ASSIGN_TASK t ON k.kpi_no = t.kpi_no
+	    WHERE k.proj_no = #{projNo} 
+	      AND k.use_yn = 'Y'
+	      AND t.del_yn = 'N'
+	      AND t.emp_no = #{empNo}
+	    ORDER BY k.kpi_no ASC
+	</select>
+
+	<select id="selectTaskListByKpi" resultType="AssignTaskDTO">
+		SELECT /* com.flowenect.hr.eval.mapper.EvalMapper.selectTaskListByKpi */
+	          TASK_NO
+	        , EMP_NO
+	        , KPI_NO
+	        , DEPT_CD
+	        , TASK_TITLE
+	        , TASK_CN
+	        , TASK_STAT_CD
+	        , REG_DTM
+	        , MOD_DTM
+	        , DEL_YN
+	        , DEL_DTM
+	        , PROGRESS_RATE
+	        , TASK_START_DTM
+	        , TASK_END_DTM
+	    FROM ASSIGN_TASK
+	    WHERE KPI_NO = #{kpiNo}
+	      AND EMP_NO = #{empNo}  AND DEL_YN = 'N'
+	    ORDER BY TASK_NO DESC
+	</select>
+	
+	<select id="selectAllKpiListByProj" resultType="KpiDTO">
+	    SELECT 
+	          kpi_no, kpi_nm, progress_rate, proj_no
+	    FROM KPI
+	    WHERE proj_no = #{projNo} 
+	      AND use_yn = 'Y'
+	    ORDER BY kpi_no ASC
+	</select>
+
+	<select id="selectDailyTaskLogListByTask"
+		resultType="DailyTaskLogDTO">
+		SELECT /*
+		com.flowenect.hr.eval.mapper.EvalMapper.selectDailyTaskLogListByTask
+		*/
+		task_log_no
+		, task_no
+		, emp_no
+		, log_div_cd
+		, log_title
+		, log_cn
+		, work_dtm
+		, reg_dtm
+		, mod_dtm
+		, del_yn
+		, del_dtm
+		FROM daily_task_log
+		WHERE task_no = #{taskNo}
+		ORDER BY reg_dtm DESC
+	</select>
+
+	<select id="selectPersonalTaskList" resultType="AssignTaskDTO">
+		SELECT /* com.flowenect.hr.eval.mapper.EvalMapper.selectPersonalTaskList */
+		task_no
+		, emp_no
+		, kpi_no
+		, dept_cd
+		, task_title
+		, task_cn
+		, task_stat_cd
+		, reg_dtm
+		, mod_dtm
+		, del_yn
+		, del_dtm
+		, progress_rate
+		, task_start_dtm
+		, task_end_dtm
+		FROM assign_task
+		WHERE EMP_NO = #{empNo}
+		AND KPI_NO IS NULL
+		AND DEL_YN = 'N'
+		ORDER BY task_no DESC
+	</select>
+
+	<select id="selectSearchWorkList" resultType="map">
+    <choose>
+        <when test="searchType == 'PROJECT'">
+            SELECT DISTINCT
+                  p.project_no
+                , p.project_nm
+                , p.project_desc
+                , p.project_stat_cd
+                , p.start_dtm
+                , p.end_dtm
+                , e.emp_nm
+            FROM project p
+            INNER JOIN kpi k ON p.project_no = k.proj_no
+            INNER JOIN assign_task t ON k.kpi_no = t.kpi_no
+            INNER JOIN emp e ON t.emp_no = e.emp_no
+            WHERE e.dept_cd = #{deptCd}
+              AND e.emp_no = #{empNo}
+            
+            <choose>
+                <when test="startDate != null and startDate != '' and endDate != null and endDate != ''">
+                    AND p.start_dtm &lt;= TO_DATE(#{endDate}, 'YYYY-MM-DD')
+                    AND p.end_dtm &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+                </when>
+                <when test="startDate != null and startDate != ''">
+                    AND TO_DATE(#{startDate}, 'YYYY-MM-DD') BETWEEN TRUNC(p.start_dtm) AND TRUNC(p.end_dtm)
+                </when>
+                <when test="endDate != null and endDate != ''">
+                    AND p.start_dtm &lt;= TO_DATE(#{endDate}, 'YYYY-MM-DD')
+                </when>
+            </choose>
+            
+            <if test="projectNo != null and projectNo != ''">
+                AND p.project_no = #{projectNo}
+            </if>
+            <if test="searchKeyword != null and searchKeyword != ''">
+                AND p.project_nm LIKE '%' || #{searchKeyword} || '%'
+            </if>
+        </when>
+
+        <otherwise>
+            SELECT 
+                  t.task_no AS project_no
+                , t.task_title AS project_nm
+                , t.task_cn AS project_desc
+                , t.task_stat_cd AS project_stat_cd
+                , t.task_start_dtm AS start_dtm
+                , t.task_end_dtm AS end_dtm
+                , e.emp_nm
+            FROM assign_task t
+            INNER JOIN emp e ON t.emp_no = e.emp_no
+            WHERE e.emp_no = #{empNo}
+              AND t.kpi_no IS NULL
+            
+            <choose>
+                <when test="startDate != null and startDate != '' and endDate != null and endDate != ''">
+                    AND t.task_start_dtm &lt;= TO_DATE(#{endDate}, 'YYYY-MM-DD')
+                    AND t.task_end_dtm &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+                </when>
+                <when test="startDate != null and startDate != ''">
+                    AND TO_DATE(#{startDate}, 'YYYY-MM-DD') BETWEEN TRUNC(t.task_start_dtm) AND TRUNC(t.task_end_dtm)
+                </when>
+            </choose>
+
+            <if test="searchKeyword != null and searchKeyword != ''">
+                AND t.task_title LIKE '%' || #{searchKeyword} || '%'
+            </if>
+        </otherwise>
+    </choose>
+</select>
+
+	<insert id="insertQuantEvalResult" parameterType="QuantEvalResultDTO">
+		INSERT INTO QUANT_EVAL_RESULT ( /* com.flowenect.hr.eval.mapper.EvalMapper.insertQuantEvalResult */
+		eval_res_no
+			, emp_no
+			, eval_year
+			, eval_half
+			, score_align
+			, score_speed
+			, score_faith
+			, score_reach
+			, score_diff
+			, ai_summary
+			, reg_emp_no
+			, reg_dtm
+		) VALUES (
+		SEQ_QUANT_EVAL.NEXTVAL 
+		    , #{empNo}
+			, #{evalYear}
+			, #{evalHalf}
+			, #{scoreAlign}
+			, #{scoreSpeed}
+			, #{scoreFaith}
+			, #{scoreReach}
+			, #{scoreDiff}
+			, #{aiSummary}
+			, #{regEmpNo}
+			, SYSDATE
+		)
+	</insert>
+	
+	<!-- 수정필요 -->
+	<select id="selectEmpPerformanceFact" resultType="map">
+	    SELECT /* com.flowenect.hr.eval.mapper.EvalMapper.selectEmpPerformanceFact */
+	          T.EMP_NO                                    
+	        , COUNT(T.TASK_NO)                        
+	        , AVG(NVL(T.PROGRESS_RATE, 0))               
+	        , AVG(NVL(K.PROGRESS_RATE, 0))                
+	    FROM ASSIGN_TASK T
+	    LEFT OUTER JOIN KPI K ON T.KPI_NO = K.KPI_NO
+	    WHERE T.EMP_NO = #{empNo}
+	    GROUP BY T.EMP_NO
+	</select>
+	
+	<select id="selectLogsForVectorSync" resultType="map">
+	    SELECT /* com.flowenect.hr.eval.mapper.EvalMapper.selectLogsForVectorSync */
+	          T.TASK_NO                                  
+	        , T.EMP_NO                                   
+	        , NVL(P.PROJECT_NM, '일반과업') AS PROJECT_NM                              
+	        , NVL(K.KPI_NM, '개인직무과업') AS KPI_NM                                  
+	        , NVL(K.PROGRESS_RATE, 0) AS KPI_PROGRESS                   
+	        , T.TASK_TITLE                                
+	        , NVL(T.PROGRESS_RATE, 0) AS TASK_PROGRESS                
+	        , NVL(L.LOG_CN, '기록없음') AS LOG_CONTENT                     
+	        , TO_CHAR(NVL(L.REG_DTM, T.REG_DTM), 'YYYY-MM-DD') AS REG_DATE
+	    FROM ASSIGN_TASK T
+	    LEFT OUTER JOIN KPI K         ON T.KPI_NO = K.KPI_NO
+	    LEFT OUTER JOIN PROJECT P     ON K.PROJ_NO = P.PROJECT_NO
+	    LEFT OUTER JOIN DAILY_TASK_LOG L ON T.TASK_NO = L.TASK_NO AND L.DEL_YN = 'N'
+	    WHERE T.EMP_NO = #{empNo}
+	    ORDER BY T.REG_DTM DESC
+	</select>
+	
+    <select id="selectPersonalLogsForVector" resultType="map">
+        SELECT  /* com.flowenect.hr.eval.mapper.EvalMapper.selectPersonalLogsForVector */
+              T.TASK_NO                                   AS "taskNo"
+            , '개인업무'                                    AS "projectNm"
+            , '[개인업무] ' ||
+              '▶ 업무: ' || T.TASK_TITLE || ' (진행: ' || NVL(T.PROGRESS_RATE, 0) || '%) | ' ||
+              '▶ 일지: ' || NVL(L.LOG_CN, '상세 기록 없음')    AS "vectorContent"
+            , TO_CHAR(NVL(L.REG_DTM, T.REG_DTM), 'YYYY-MM-DD HH24:MI:SS') AS "regDtm"
+        FROM ASSIGN_TASK T
+        LEFT OUTER JOIN DAILY_TASK_LOG L ON T.TASK_NO = L.TASK_NO AND L.DEL_YN = 'N'
+        WHERE T.EMP_NO = #{empNo}
+          AND (T.KPI_NO IS NULL OR T.KPI_NO = 0)
+        ORDER BY T.TASK_NO ASC
+    </select>
+    
+    <select id="selectLatestQuantEvalResult" parameterType="string" resultType="QuantEvalResultDTO">
+    SELECT 
+          EVAL_RES_NO    AS evalResNo
+        , EMP_NO         AS empNo
+        , EVAL_YEAR      AS evalYear
+        , EVAL_HALF      AS evalHalf
+        , SCORE_ALIGN    AS scoreAlign
+        , SCORE_SPEED    AS scoreSpeed
+        , SCORE_FAITH    AS scoreFaith
+        , SCORE_REACH    AS scoreReach
+        , SCORE_DIFF     AS scoreDiff
+        , AI_SUMMARY     AS aiSummary
+        , REG_EMP_NO     AS regEmpNo
+        , REG_COMENT     AS regComent
+        , TO_CHAR(REG_DTM, 'YYYY-MM-DD HH24:MI:SS') AS regDtm
+    FROM QUANT_EVAL_RESULT
+    WHERE EMP_NO = #{empNo}
+      AND EVAL_YEAR = '2026'  /* 필요시 파라미터화 */
+      AND EVAL_HALF = 'H1'    /* 필요시 파라미터화 */
+    ORDER BY REG_DTM DESC
+    FETCH FIRST 1 ROWS ONLY   /* 가장 최근 데이터 1건만 */
+</select>
+
+	<update id="updateLeaderComment" parameterType="QuantEvalResultDTO">
+	    UPDATE QUANT_EVAL_RESULT
+	       SET REG_COMENT = #{regComent},
+	           REG_EMP_NO = #{regEmpNo},  
+	           REG_DTM    = SYSDATE
+	     WHERE EMP_NO    = #{empNo}
+	       AND EVAL_YEAR = #{evalYear}
+	       AND EVAL_HALF = #{evalHalf}
+	</update>
+	
+	<insert id="insertDeptAiReport" parameterType="map">
+        INSERT INTO DEPT_AI_REPORT (
+            DEPT_CD, 
+            AI_INSIGHT, 
+            PERFORMANCE_GRADE,
+            ANALYSIS_DATE
+        ) VALUES (
+            #{deptCd}, 
+            #{aiInsight, jdbcType=CLOB}, 
+            #{performanceGrade},
+            SYSDATE
+        )
+    </insert>
+
+    <select id="selectLatestDeptAiReport" parameterType="string" resultType="map">
+	    SELECT * FROM (
+	        SELECT 
+	            DEPT_CD as "deptCd",
+	            AI_INSIGHT as "aiInsight",
+	            PERFORMANCE_GRADE as "performanceGrade",
+	            TO_CHAR(ANALYSIS_DATE, 'YYYY-MM-DD HH24:MI:SS') as "analysisDate"
+	        FROM DEPT_AI_REPORT 
+	        WHERE DEPT_CD = #{deptCd}
+	        ORDER BY ANALYSIS_DATE DESC
+	    ) WHERE ROWNUM = 1
+	</select>
+    
+    <insert id="insertPeerAiReport" parameterType="map">
+	    INSERT INTO PEER_AI_REPORT (
+	        REPORT_ID, TARGET_EMP_NO, MODEL_CD, ANALYSIS_TEXT, SIMILARITY, CONSENSUS, REG_DTM
+	    ) VALUES (
+	        SEQ_PEER_AI_REPORT_ID.NEXTVAL, #{targetEmpNo}, #{modelCd}, #{analysisText}, #{similarity}, #{consensus}, SYSDATE
+	    )
+	</insert>
+
+	<select id="selectLatestPeerAiReport" parameterType="string" resultType="map">
+	    SELECT 
+	        REPORT_ID AS "reportId",
+	        TARGET_EMP_NO AS "targetEmpNo",
+	        MODEL_CD AS "modelCd",
+	        DBMS_LOB.SUBSTR(ANALYSIS_TEXT, 4000, 1) AS "analysisText",
+	        SIMILARITY AS "similarity",
+	        CONSENSUS AS "consensus",
+	        TO_CHAR(REG_DTM, 'YYYY-MM-DD HH24:MI:SS') AS "regDtm"
+	    FROM PEER_AI_REPORT 
+	    WHERE TARGET_EMP_NO = #{empNo} 
+	    ORDER BY REG_DTM DESC
+	    FETCH FIRST 1 ROWS ONLY
+	</select>
+	
+	<select id="selectQualEvalDetails" parameterType="string" resultType="map">
+	   	SELECT 
+	        RESULT_NO,
+	        EVAL_SCORE,
+	        EVAL_COMMENT,
+	        EVAL_QUARTER,
+	        TO_CHAR(EVAL_DTM, 'YYYY-MM-DD HH24:MI:SS') as EVAL_DTM
+	    FROM QUAL_EVAL_RESULT
+	    WHERE TARGET_EMP_NO = #{empNo}
+	    ORDER BY EVAL_CD ASC
+</select>
+</mapper>

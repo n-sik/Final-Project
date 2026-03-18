@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.flowenect.hr.schedule.mapper.ScheduleAllMapper">
+
+    <select id="selectAllSchedules" resultType="com.flowenect.hr.dto.schedule.ScheduleAllDTO">
+        SELECT
+            S.SCHD_NO, S.EMP_NO, E.EMP_NM, S.REF_POST_NO,
+            S.SCHD_DIV_CD, S.SCHD_TITLE, S.SCHD_CN,
+            S.SCHD_ST_DTM, S.SCHD_ED_DTM, S.ALL_DAY_YN,
+            S.DEL_YN, S.REG_DTM, S.COLOR, S.SCHD_PRIO
+        FROM SCHEDULE S
+        LEFT JOIN EMP E ON S.EMP_NO = E.EMP_NO
+        WHERE S.DEL_YN = 'N'
+
+        UNION ALL
+
+        SELECT
+            AL.APRV_NO          AS SCHD_NO,
+            A.EMP_NO            AS EMP_NO,
+            A.DOC_WRTR_EMP_NM   AS EMP_NM,
+            NULL                AS REF_POST_NO,
+            'VACATION'          AS SCHD_DIV_CD,
+            AL.LEAVE_TYPE_CD    AS SCHD_TITLE,
+            AL.REASON           AS SCHD_CN,
+            AL.START_DTM        AS SCHD_ST_DTM,
+            AL.END_DTM          AS SCHD_ED_DTM,
+            'Y'                 AS ALL_DAY_YN,
+            'N'                 AS DEL_YN,
+            NULL                AS REG_DTM,
+            '#dd6b20'           AS COLOR,
+            2                   AS SCHD_PRIO
+        FROM APRV_LEAVE AL
+        JOIN APRV_DOC A ON AL.APRV_NO = A.APRV_NO
+        WHERE A.STAT_CD IN ('APPROVED', 'COMPLETED')
+
+        ORDER BY SCHD_ST_DTM
+    </select>
+
+</mapper>

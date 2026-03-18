@@ -1,0 +1,572 @@
+@import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700&display=swap');
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  width: 100%;
+  height: 100%;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   루트  — imRoot 와 동일
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.resignRoot {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #f4f6f9;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  color: #1e2532;
+  overflow: hidden;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   헤더  — imHeader 와 동일
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.resignPageHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 18px;          /* imHeader 와 동일 */
+  border-radius: 14px;
+  background: #fff;
+  border-bottom: 1px solid #e8eaf0;
+  flex-shrink: 0;
+}
+
+.resignPageTitle {
+  font-size: 18px;             /* imHeaderTitle */
+  font-weight: 900;
+  color: #1f2a44;
+}
+
+.resignPageSub {
+  font-size: 13px;             /* imHeaderSub */
+  color: #8892a4;
+  margin-top: 2px;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   본문 레이아웃  — imBody 와 동일
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.resignBody {
+  display: grid;
+  grid-template-columns: 1fr 400px;  /* imBody 와 동일 */
+  gap: 12px;
+  padding: 12px 0px 0px 0px;
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   왼쪽 패널
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.resignLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   카드 공통  — imCard / imCardHeader / imCardTitle 와 동일
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.resignCard {
+  background: #fff;
+  border-radius: 12px;         /* imCard */
+  border: 1px solid #e8eaf0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.resignCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;          /* imCardHeader */
+  border-bottom: 1px solid #f0f2f6;
+}
+
+.resignCardTitle {
+  font-size: 15px;             /* imCardTitle */
+  font-weight: 700;
+  color: #1e2532;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   필터 바  — imTableHeader 패딩 기준
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.resignFilterBar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;          /* imTableHeader 와 동일 */
+  border-bottom: 1px solid #f0f2f6;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.filterGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #8892a4;
+}
+
+.filterDivider {
+  width: 1px;
+  height: 20px;
+  background: #e8eaf0;
+}
+
+/* 날짜 input  — imInput 와 동일 */
+.dateInput {
+  height: 38px;                /* imInput */
+  padding: 0 12px;
+  border: 1px solid #dde1ea;
+  border-radius: 7px;
+  font-size: 13px;
+  color: #1e2532;
+  background: #fff;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  font-family: inherit;
+}
+
+.dateInput:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+}
+
+/* 검색 input  — imInput 와 동일 */
+.searchInputWrapper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 38px;                /* imInput */
+  padding: 0 12px;
+  border: 1px solid #dde1ea;
+  border-radius: 7px;
+  background: #fff;
+  color: #b0b8c8;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.searchInputWrapper:focus-within {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+  color: #3b82f6;
+}
+
+.searchInputWrapper input {
+  border: none;
+  outline: none;
+  font-size: 13px;
+  color: #1e2532;
+  background: transparent;
+  width: 160px;
+  font-family: inherit;
+}
+
+.searchInputWrapper input::placeholder {
+  color: #b0b8c8;
+}
+
+/* 액션 버튼 그룹 */
+.filterActions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* 선택 뱃지  — imSelectedBadge 와 동일 */
+.selectedBadge {
+  font-size: 13px;
+  color: #3b82f6;
+  font-weight: 600;
+  padding: 4px 10px;
+  background: #eff6ff;
+  border-radius: 20px;
+}
+
+/* 승인 버튼  — imConfirmBtn 와 동일 */
+.btnApprove {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 18px;           /* imConfirmBtn */
+  background: #4f46e5;
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btnApprove:hover { background: #059669; }
+
+/* 반려 버튼 */
+.btnReject {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 18px;
+  background: #ef4444;
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btnReject:hover { background: #dc2626; }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   테이블 래퍼  — imTableWrap 와 동일
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.resignTableWrap {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: auto;
+  min-height: 0;
+}
+
+.resignTableWrap::-webkit-scrollbar { width: 6px; height: 6px; }
+.resignTableWrap::-webkit-scrollbar-thumb { background: #dde1ea; border-radius: 3px; }
+.resignTableWrap::-webkit-scrollbar-track { background: #f7f8fb; }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   테이블  — imTable 와 동일
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.resignTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;             /* imTable */
+  table-layout: fixed;
+}
+
+.resignTable thead th {
+  position: sticky;
+  top: 0;
+  background: #f7f8fb;         /* imTable thead th */
+  padding: 11px 12px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: #8892a4;
+  border-bottom: 1px solid #e8eaf0;
+  white-space: nowrap;
+  z-index: 2;
+}
+
+.resignTable tbody td {
+  padding: 11px 12px;          /* imTable tbody td */
+  text-align: center;
+  border-bottom: 1px solid #f0f2f6;
+  color: #3d4a5c;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.resignTable tbody tr:last-child td { border-bottom: none; }
+.resignTable tbody tr:hover td { background: #f9fbff; }
+
+.resignTable input[type='checkbox'] {
+  width: 15px;
+  height: 15px;
+  accent-color: #3b82f6;
+  cursor: pointer;
+}
+
+.resignTable input[type='checkbox']:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* 컬럼 너비 */
+.resignTable th:nth-child(1) { width: 44px; }
+.resignTable th:nth-child(2) { width: 10%; }
+.resignTable th:nth-child(3) { width: 10%; }
+.resignTable th:nth-child(4) { width: 9%; }
+.resignTable th:nth-child(5) { width: 15%; }
+.resignTable th:nth-child(6) { width: 8%; }
+.resignTable th:nth-child(7) { width: 11%; }
+.resignTable th:nth-child(8) { width: auto; }
+.resignTable th:nth-child(9) { width: 9%; }
+
+.selectedRow td { background: #f0f7ff !important; }
+.processedRow td { background: #fcfcfc; color: #aab0bc; }
+
+.dateHighlight { color: #ef4444; font-weight: 600; }
+
+.emptyRow {
+  text-align: center !important;
+  padding: 48px 0 !important;  /* imEmpty */
+  color: #b0b8c8;
+  font-size: 14px;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   상태 뱃지  — imBadge / imBadgeDot 와 동일 방식
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.statusTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.statusDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.statusWaiting  { background: #fff8e6; color: #b07d00; }
+.statusApproved { background: #e6f9ee; color: #1a7a3f; }
+.statusRejected { background: #fde8ea; color: #a01c2a; }
+.statusDone     { background: #ede9fe; color: rgb(99, 102, 241);}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   페이지네이션  — pagination 과 동일
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 0;
+  flex-shrink: 0;
+  border-top: 1px solid #f0f2f6;
+}
+
+.pageBtn {
+  min-width: 34px;
+  height: 34px;
+  padding: 0 10px;
+  border: 1px solid #dde1ea;
+  background: #fff;
+  color: #5a6478;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: inherit;
+}
+
+.pageBtn:hover:not(:disabled) {
+  border-color: #3b82f6;
+  color: #3b82f6;
+}
+
+.pageBtn.active {
+  background: #3b82f6;
+  border-color: #3b82f6;
+  color: #fff;
+  font-weight: 600;
+}
+
+.pageBtn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   오른쪽 패널  — imRight 와 동일
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.resignRight {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;                   /* imRight */
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   통계 카드  — imCard + imStatsGrid 와 동일
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.resignStatsCard {
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #e8eaf0;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.resignStatsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 16px 20px;          /* imStatsGrid */
+}
+
+.statItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 14px;          /* imStatItem */
+  border-radius: 8px;
+}
+
+.statNum {
+  font-size: 22px;             /* imStatNum */
+  font-weight: 700;
+  line-height: 1;
+}
+
+.statLabel {
+  font-size: 11px;             /* imStatLabel */
+  color: #8892a4;
+  font-weight: 500;
+}
+
+.statItem.blue  { background: #eff6ff; }
+.statItem.blue .statNum  { color: #3b82f6; }
+.statItem.amber { background: #fffbeb; }
+.statItem.amber .statNum { color: #f59e0b; }
+.statItem.green { background: #ecfdf5; }
+.statItem.green .statNum { color: #10b981; }
+.statItem.red   { background: #fef2f2; }
+.statItem.red .statNum   { color: #ef4444; }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   상세 정보 카드  — imDetailCard + imPanelBody 와 동일
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.resignDetailCard {
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #e8eaf0;
+  overflow: hidden;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.resignDetailBody {
+  padding: 20px;               /* imPanelBody */
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+}
+
+.resignDetailBody::-webkit-scrollbar { width: 6px; }
+.resignDetailBody::-webkit-scrollbar-thumb { background: #dde1ea; border-radius: 3px; }
+.resignDetailBody::-webkit-scrollbar-track { background: transparent; }
+
+/* 상세 필드  — imFieldRow / imFieldGroup / imFieldLabel / imFieldValue 와 동일 */
+.detailRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;                   /* imFieldRow */
+}
+
+.detailGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;                    /* imFieldGroup */
+}
+
+.detailLabel {
+  font-size: 11px;             /* imFieldLabel */
+  font-weight: 600;
+  color: #8892a4;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+
+.detailValue {
+  font-size: 14px;             /* imFieldValue */
+  font-weight: 600;
+  color: #1e2532;
+  padding: 9px 12px;
+  background: #f7f8fb;
+  border-radius: 7px;
+  border: 1px solid #e8eaf0;
+  min-height: 38px;
+}
+
+.detailValueRed  { color: #ef4444; }
+
+.detailValueReason {
+  height: auto;
+  min-height: 60px;
+  line-height: 1.6;
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.emptyDetail {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #b0b8c8;
+  font-size: 13px;
+  line-height: 1.8;
+  padding: 20px;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   반응형
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+@media (max-width: 1100px) {
+  .resignBody {
+    grid-template-columns: 1fr;
+    overflow-y: auto;
+  }
+  .resignRight { overflow: visible; }
+}
+
+@media (max-width: 680px) {
+  .resignBody { padding: 16px 0; }
+}
+
+/* 완료 버튼 */
+.btnDone {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 18px;
+  background: #6366f1;
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-family: inherit;
+}
+.btnDone:hover { background: #4f46e5; }
+
+/* 상세 패널 하단 액션 버튼 그룹 */
+.detailActions {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+}

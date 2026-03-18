@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.flowenect.hr.data.mapper.DeptKpiEvalMapper">
+	<select id="selectDeptList" resultType="DeptDTO">
+		SELECT
+			dept_cd
+			, dept_nm
+			, up_dept_cd
+		FROM DEPT
+		WHERE del_yn = 'N' AND dept_cd != 'CEO'
+	</select>
+	
+	<resultMap id="ProjectKpiResultMap" type="com.flowenect.hr.dto.data.ResponseDeptKpiEvalDTO">
+	    <id property="projectNo" column="PROJECT_NO" />
+	    <result property="regEmpNo" column="REG_EMP_NO" />
+	    <result property="deptCd" column="DEPT_CD" />
+	    <result property="projectNm" column="PROJECT_NM" />
+	    <result property="projectDesc" column="PROJECT_DESC" />
+	    <result property="projectStatCd" column="PROJECT_STAT_CD" />
+	    <result property="startDtm" column="START_DTM" />
+	    <result property="endDtm" column="END_DTM" />
+	    <result property="useYn" column="USE_YN" />
+	    <result property="mainImgPath" column="MAIN_IMG_PATH" />
+
+	    <collection property="kpi" ofType="com.flowenect.hr.dto.kpi.KpiDTO">
+	        <id property="kpiNo" column="KPI_NO" />
+	        <result property="kpiParentNo" column="KPI_PARENT_NO" />
+	        <result property="projNo" column="PROJ_NO" />
+	        <result property="regEmpNo" column="REG_EMP_NO" />
+	        <result property="kpiNm" column="KPI_NM" />
+	        <result property="kpiCn" column="KPI_CN" />
+	        <result property="kpiTypeCd" column="KPI_TYPE_CD" />
+	        <result property="progressRate" column="PROGRESS_RATE" />
+	        <result property="startDtm" column="START_DTM" />
+	        <result property="endDtm" column="END_DTM" />
+	        <result property="useYn" column="USE_YN" />
+	        <result property="regDtm" column="REG_DTM" />
+	        <result property="modDtm" column="MOD_DTM" />
+	    </collection>
+	</resultMap>
+	
+	<select id="selectDeptProjectKpiList" resultMap="ProjectKpiResultMap">
+	    SELECT 
+	        p.PROJECT_NO
+	        , p.PROJECT_NM
+	        , p.PROJECT_DESC
+	        , p.DEPT_CD
+	        , p.PROJECT_STAT_CD
+	        , p.START_DTM
+	        , p.END_DTM
+	        , p.USE_YN
+	        , p.REG_EMP_NO
+	        , p.MAIN_IMG_PATH
+	        , k.KPI_NO
+	        , k.KPI_NM
+	        , k.KPI_CN
+	        , k.KPI_PARENT_NO
+	        , k.PROJ_NO
+	        , k.KPI_TYPE_CD
+	        , k.PROGRESS_RATE
+	        , k.START_DTM
+	        , k.END_DTM
+	        , k.REG_DTM
+	        , k.MOD_DTM
+	    FROM PROJECT p
+	    LEFT OUTER JOIN KPI k ON p.PROJECT_NO = k.PROJ_NO
+	    WHERE p.DEPT_CD = #{deptCd}
+	    ORDER BY p.PROJECT_NO DESC, k.KPI_NO ASC
+	</select>
+	
+</mapper>

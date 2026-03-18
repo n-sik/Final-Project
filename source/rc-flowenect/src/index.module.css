@@ -1,0 +1,31 @@
+@import "tailwindcss";
+/* 1. 가장 먼저 선언 */
+@import "./fonts.module.css";
+/* 2. 그 다음 커스텀 폰트 */
+
+@theme {
+  /* Tailwind v4의 유틸리티 클래스(font-scdream 등)를 생성합니다. */
+  --font-scdream: "SCDream", sans-serif;
+  --font-paperozi: "Paperozi", sans-serif;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+
+  /* 테마에서 정의한 변수를 body 전체에 적용 */
+  font-family: var(--font-scdream);
+  font-weight: 400;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  width: 100%;
+  height: 100vh;
+}
+
+* {
+  box-sizing: border-box;
+}

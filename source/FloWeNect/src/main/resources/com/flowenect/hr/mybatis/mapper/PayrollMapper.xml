@@ -1,0 +1,880 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.flowenect.hr.payroll.mapper.PayrollMapper">
+
+  <!-- =========================
+       1) 급여관리: 사원목록(기준금액/이력 존재여부)
+       - baseAmt: 오늘 기준 유효한 기준급(최신 1건)
+       - baseAmtExists: 기준급 존재 여부(0/1)
+       - hasHistory: 이력 존재 여부(2건 이상이면 1)
+       ========================= -->
+  <select id="selectEmployeePayrollRows" resultType="com.flowenect.hr.dto.payroll.EmployeePayrollRowDTO">
+    SELECT
+      E.EMP_NO  AS empNo,
+      E.EMP_NM  AS empNm,
+      D.DEPT_NM AS deptNm,
+      P.POS_NM  AS posNm,
+
+      NVL(EP_CUR.BASE_AMT, GB_CUR.STD_AMT) AS baseAmt,
+      CASE WHEN EP_CUR.EMP_NO IS NULL THEN 0 ELSE 1 END AS baseAmtExists,
+      CASE
+        WHEN (SELECT COUNT(1) FROM EMP_PAY_INFO H WHERE H.EMP_NO = E.EMP_NO) > 1 THEN 1
+        ELSE 0
+      END AS hasHistory,
+      TRIM(EP_CUR.BANK_NAME) AS bankName,
+      TRIM(EP_CUR.ACCNT_NO) AS accntNo,
+      CASE
+        WHEN NULLIF(TRIM(EP_CUR.BANK_NAME), '') IS NULL
+         AND NULLIF(TRIM(EP_CUR.ACCNT_NO), '') IS NULL THEN 1
+        ELSE 0
+      END AS unregistered
+
+    FROM EMP E
+    LEFT JOIN DEPT D ON D.DEPT_CD = E.DEPT_CD
+    LEFT JOIN POSITION_MST P ON P.POS_CD = E.POS_CD
+
+    LEFT JOIN (
+      SELECT emp_no, base_amt, bank_name, accnt_no
+      FROM (
+        SELECT
+          emp_no,
+          base_amt,
+          bank_name,
+          accnt_no,
+          start_dtm,
+          end_dtm,
+          pay_seq,
+          ROW_NUMBER() OVER (
+            PARTITION BY emp_no
+            ORDER BY start_dtm DESC NULLS LAST, pay_seq DESC
+          ) rn
+        FROM EMP_PAY_INFO
+        WHERE TRUNC(SYSDATE) BETWEEN TRUNC(NVL(start_dtm, DATE '1900-01-01'))
+                                AND TRUNC(NVL(end_dtm,   DATE '9999-12-31'))
+      )
+      WHERE rn = 1
+    ) EP_CUR ON EP_CUR.EMP_NO = E.EMP_NO
+
+    LEFT JOIN (
+      SELECT pos_cd, std_amt
+      FROM (
+        SELECT
+          pos_cd,
+          std_amt,
+          start_dt,
+          end_dtm,
+          base_amt_no,
+          ROW_NUMBER() OVER (
+            PARTITION BY pos_cd
+            ORDER BY start_dt DESC NULLS LAST, base_amt_no DESC
+          ) rn
+        FROM GRADE_BASE_AMT
+        WHERE TRUNC(SYSDATE) BETWEEN TRUNC(NVL(start_dt, DATE '1900-01-01'))
+                                AND TRUNC(NVL(end_dtm, DATE '9999-12-31'))
+      )
+      WHERE rn = 1
+    ) GB_CUR ON GB_CUR.POS_CD = E.POS_CD
+
+    ORDER BY
+      CASE
+        WHEN NULLIF(TRIM(EP_CUR.BANK_NAME), '') IS NULL
+         AND NULLIF(TRIM(EP_CUR.ACCNT_NO), '') IS NULL THEN 0
+        ELSE 1
+      END,
+      E.EMP_NM
+  </select>
+
+  <!-- =========================
+       명세서 생성 대상(필수정보 등록한 사원만)
+       - 기준: 급여월 말일(baseDate)에 유효한 EMP_PAY_INFO(END_DTM=9999-12-31) 존재
+       ========================= -->
+  <select id="selectEmployeesForPayrollGeneration" parameterType="java.util.Date"
+          resultType="com.flowenect.hr.dto.payroll.EmployeePayrollRowDTO">
+    SELECT
+      E.EMP_NO  AS empNo,
+      E.EMP_NM  AS empNm,
+      D.DEPT_NM AS deptNm,
+      P.POS_NM  AS posNm,
+      EP_CUR.BASE_AMT AS baseAmt,
+      1 AS baseAmtExists,
+      CASE
+        WHEN (SELECT COUNT(1) FROM EMP_PAY_INFO H WHERE H.EMP_NO = E.EMP_NO) > 1 THEN 1
+        ELSE 0
+      END AS hasHistory
+    FROM EMP E
+    LEFT JOIN DEPT D ON D.DEPT_CD = E.DEPT_CD
+    LEFT JOIN POSITION_MST P ON P.POS_CD = E.POS_CD
+    INNER JOIN (
+      SELECT emp_no, base_amt
+      FROM (
+        SELECT
+          emp_no,
+          base_amt,
+          start_dtm,
+          end_dtm,
+          pay_seq,
+          ROW_NUMBER() OVER (
+            PARTITION BY emp_no
+            ORDER BY start_dtm DESC NULLS LAST, pay_seq DESC
+          ) rn
+        FROM EMP_PAY_INFO
+        WHERE TRUNC(#{baseDate}) BETWEEN TRUNC(NVL(start_dtm, DATE '1900-01-01'))
+                                   AND TRUNC(NVL(end_dtm,   DATE '9999-12-31'))
+          AND TRUNC(NVL(end_dtm, DATE '9999-12-31')) = DATE '9999-12-31'
+      )
+      WHERE rn = 1
+    ) EP_CUR ON EP_CUR.EMP_NO = E.EMP_NO
+    ORDER BY E.EMP_NM
+  </select>
+
+
+  <select id="selectPositions" resultType="com.flowenect.hr.dto.payroll.PositionDTO">
+    SELECT POS_CD AS posCd, POS_NM AS posNm
+    FROM POSITION_MST
+    WHERE USE_YN = 'Y'
+    ORDER BY POS_NM
+  </select>
+
+  <select id="selectEmpInfo" resultType="com.flowenect.hr.dto.payroll.EmployeeInfoDTO">
+    SELECT
+      E.EMP_NO  AS empNo,
+      E.EMP_NM  AS empNm,
+      D.DEPT_NM AS deptNm,
+      P.POS_CD  AS posCd,
+      P.POS_NM  AS posNm,
+      E.EMP_EMAIL   AS email
+    FROM EMP E
+    LEFT JOIN DEPT D ON D.DEPT_CD = E.DEPT_CD
+    LEFT JOIN POSITION_MST P ON P.POS_CD = E.POS_CD
+    WHERE E.EMP_NO = #{empNo}
+  </select>
+
+  <!-- =========================
+       2) 개인 기준금액(EMP_PAY_INFO)
+       - 날짜는 화면에서 "적용일(YYYY-MM-DD)"만 사용하므로 TO_CHAR로 내려줌
+       ========================= -->
+  <select id="selectCurrentEmpBase" resultType="com.flowenect.hr.dto.payroll.EmpPayInfoDTO">
+    SELECT *
+FROM (
+SELECT
+      PAY_SEQ         AS paySeq,
+      EMP_NO          AS empNo,
+      BASE_AMT        AS baseAmt,
+      BANK_NAME       AS bankName,
+      ACCNT_NO        AS accntNo,
+      DEDUCT_FAM_CNT  AS deductFamCnt,
+      SALARY_GRADE    AS salaryGrade,
+      ADJUST_RSN      AS adjustRsn,
+      TO_CHAR(START_DTM, 'YYYY-MM-DD') AS startDtm,
+      TO_CHAR(END_DTM,   'YYYY-MM-DD') AS endDtm
+    FROM EMP_PAY_INFO
+    WHERE EMP_NO = #{empNo}
+      AND TRUNC(SYSDATE) BETWEEN TRUNC(NVL(START_DTM, DATE '1900-01-01'))
+                           AND TRUNC(NVL(END_DTM,   DATE '9999-12-31'))
+    ORDER BY START_DTM DESC, PAY_SEQ DESC
+)
+WHERE ROWNUM = 1
+  </select>
+
+  <!-- END_DTM=9999-12-31인 "열려있는" row(1건) -->
+  <select id="selectOpenEmpBase" resultType="com.flowenect.hr.dto.payroll.EmpPayInfoDTO">
+    SELECT *
+FROM (
+SELECT
+      PAY_SEQ         AS paySeq,
+      EMP_NO          AS empNo,
+      BASE_AMT        AS baseAmt,
+      BANK_NAME       AS bankName,
+      ACCNT_NO        AS accntNo,
+      DEDUCT_FAM_CNT  AS deductFamCnt,
+      SALARY_GRADE    AS salaryGrade,
+      ADJUST_RSN      AS adjustRsn,
+      TO_CHAR(START_DTM, 'YYYY-MM-DD') AS startDtm,
+      TO_CHAR(END_DTM,   'YYYY-MM-DD') AS endDtm
+    FROM EMP_PAY_INFO
+    WHERE EMP_NO = #{empNo}
+      AND TRUNC(NVL(END_DTM, DATE '9999-12-31')) = DATE '9999-12-31'
+    ORDER BY START_DTM DESC, PAY_SEQ DESC
+)
+WHERE ROWNUM = 1
+  </select>
+
+  <select id="selectEmpBaseHistory" resultType="com.flowenect.hr.dto.payroll.EmpPayInfoDTO">
+    SELECT
+      PAY_SEQ         AS paySeq,
+      EMP_NO          AS empNo,
+      BASE_AMT        AS baseAmt,
+      BANK_NAME       AS bankName,
+      ACCNT_NO        AS accntNo,
+      DEDUCT_FAM_CNT  AS deductFamCnt,
+      SALARY_GRADE    AS salaryGrade,
+      ADJUST_RSN      AS adjustRsn,
+      TO_CHAR(START_DTM, 'YYYY-MM-DD') AS startDtm,
+      TO_CHAR(END_DTM,   'YYYY-MM-DD') AS endDtm
+    FROM EMP_PAY_INFO
+    WHERE EMP_NO = #{empNo}
+    ORDER BY START_DTM DESC, PAY_SEQ DESC
+  </select>
+
+  <!-- paySeq 있으면 UPDATE, 없으면 INSERT
+       - 적용일은 날짜(YYYY-MM-DD)만 받도록 고정: TO_DATE로 명시 변환
+       - null/빈문자는 NULL로 저장
+  -->
+  <update id="mergeEmpBase">
+    <choose>
+      <when test="paySeq != null">
+        UPDATE EMP_PAY_INFO
+        SET
+          BASE_AMT       = #{baseAmt},
+          BANK_NAME      = #{bankName},
+          ACCNT_NO       = #{accntNo},
+          DEDUCT_FAM_CNT = #{deductFamCnt},
+          SALARY_GRADE   = #{salaryGrade},
+          ADJUST_RSN     = #{adjustRsn},
+          START_DTM      =
+            <choose>
+              <when test="startDtm != null and startDtm != ''">
+                TO_DATE(#{startDtm}, 'YYYY-MM-DD')
+              </when>
+              <otherwise>NULL</otherwise>
+            </choose>,
+          END_DTM        =
+            <choose>
+              <when test="endDtm != null and endDtm != ''">
+                TO_DATE(#{endDtm}, 'YYYY-MM-DD')
+              </when>
+              <otherwise>NULL</otherwise>
+            </choose>
+        WHERE PAY_SEQ = #{paySeq}
+      </when>
+
+      <otherwise>
+        INSERT INTO EMP_PAY_INFO
+          (PAY_SEQ, EMP_NO, BASE_AMT, BANK_NAME, ACCNT_NO, DEDUCT_FAM_CNT, SALARY_GRADE, ADJUST_RSN, START_DTM, END_DTM)
+        VALUES
+          (
+            SEQ_PAY_SEQ.NEXTVAL,
+            #{empNo},
+            #{baseAmt},
+            #{bankName},
+            #{accntNo},
+            #{deductFamCnt},
+            #{salaryGrade},
+            #{adjustRsn},
+            <choose>
+              <when test="startDtm != null and startDtm != ''">
+                TO_DATE(#{startDtm}, 'YYYY-MM-DD')
+              </when>
+              <otherwise>NULL</otherwise>
+            </choose>,
+            <choose>
+              <when test="endDtm != null and endDtm != ''">
+                TO_DATE(#{endDtm}, 'YYYY-MM-DD')
+              </when>
+              <otherwise>NULL</otherwise>
+            </choose>
+          )
+      </otherwise>
+    </choose>
+  </update>
+
+  <!-- 기존 현재행 종료 처리(END_DTM 갱신) -->
+  <update id="updateEmpBaseEndDtm">
+    UPDATE EMP_PAY_INFO
+    SET END_DTM = TO_DATE(#{endDtm}, 'YYYY-MM-DD')
+    WHERE PAY_SEQ = #{paySeq}
+  </update>
+
+  <!-- =========================
+       3) 사원별 수당(EMP_SALARY_ITEM)
+       - 날짜는 적용일(YYYY-MM-DD)만 사용하므로 TO_CHAR로 내려주고, 저장은 TO_DATE로
+       ========================= -->
+  <select id="selectCurrentEmpAllowances" resultType="com.flowenect.hr.dto.payroll.EmpSalaryItemDTO">
+    SELECT
+      E.EMP_NO           AS empNo,
+      E.SALARY_ITEM_CODE AS salaryItemCode,
+      S.SALARY_ITEM_NAME AS salaryItemName,
+      E.ITEM_AMOUNT      AS itemAmount,
+      TO_CHAR(E.START_DTM, 'YYYY-MM-DD') AS startDtm,
+      TO_CHAR(E.END_DTM,   'YYYY-MM-DD') AS endDtm
+    FROM EMP_SALARY_ITEM E
+    LEFT JOIN SALARY_ITEM S
+      ON S.SALARY_ITEM_CODE = E.SALARY_ITEM_CODE
+    WHERE E.EMP_NO = #{empNo}
+      AND TRUNC(SYSDATE) BETWEEN TRUNC(NVL(E.START_DTM, DATE '1900-01-01'))
+                           AND TRUNC(NVL(E.END_DTM,   DATE '9999-12-31'))
+    ORDER BY E.SALARY_ITEM_CODE
+  </select>
+
+  <delete id="deleteEmpAllowances">
+    DELETE FROM EMP_SALARY_ITEM
+    WHERE EMP_NO = #{empNo}
+  </delete>
+
+  <insert id="insertEmpAllowance">
+    INSERT INTO EMP_SALARY_ITEM
+      (EMP_NO, SALARY_ITEM_CODE, ITEM_AMOUNT, START_DTM, END_DTM)
+    VALUES
+      (
+        #{empNo},
+        #{salaryItemCode},
+        #{itemAmount},
+        <choose>
+          <when test="startDtm != null and startDtm != ''">
+            TO_DATE(#{startDtm}, 'YYYY-MM-DD')
+          </when>
+          <otherwise>NULL</otherwise>
+        </choose>,
+        <choose>
+          <when test="endDtm != null and endDtm != ''">
+            TO_DATE(#{endDtm}, 'YYYY-MM-DD')
+          </when>
+          <otherwise>NULL</otherwise>
+        </choose>
+      )
+  </insert>
+
+  <!-- =========================
+       4) 직위별 기준금액(GRADE_BASE_AMT)
+       - 테이블 컬럼명: START_DT (주의)
+       - 날짜는 화면에서 날짜만 사용: TO_CHAR 내려줌 / 저장은 TO_DATE
+       ========================= -->
+  <select id="selectPosBaseAmt" resultType="com.flowenect.hr.dto.payroll.GradeBaseAmtDTO">
+    SELECT *
+FROM (
+SELECT
+      BASE_AMT_NO AS baseAmtNo,
+      POS_CD      AS posCd,
+      STD_AMT     AS stdAmt,
+      TO_CHAR(START_DT, 'YYYY-MM-DD') AS startDtm,
+      TO_CHAR(END_DTM,  'YYYY-MM-DD') AS endDtm
+    FROM GRADE_BASE_AMT
+    WHERE POS_CD = #{posCd}
+      AND TRUNC(SYSDATE) BETWEEN TRUNC(NVL(START_DT, DATE '1900-01-01'))
+                           AND TRUNC(NVL(END_DTM,  DATE '9999-12-31'))
+    ORDER BY START_DT DESC, BASE_AMT_NO DESC
+)
+WHERE ROWNUM = 1
+  
+</select>
+  <!-- END_DTM=9999-12-31인 "열려있는" row(1건) -->
+  <select id="selectOpenPosBaseAmt" resultType="com.flowenect.hr.dto.payroll.GradeBaseAmtDTO">
+    SELECT *
+FROM (
+SELECT
+      BASE_AMT_NO AS baseAmtNo,
+      POS_CD      AS posCd,
+      STD_AMT     AS stdAmt,
+      TO_CHAR(START_DT, 'YYYY-MM-DD') AS startDtm,
+      TO_CHAR(END_DTM,  'YYYY-MM-DD') AS endDtm
+    FROM GRADE_BASE_AMT
+    WHERE POS_CD = #{posCd}
+      AND TRUNC(NVL(END_DTM, DATE '9999-12-31')) = DATE '9999-12-31'
+    ORDER BY START_DT DESC, BASE_AMT_NO DESC
+)
+WHERE ROWNUM = 1
+  </select>
+
+  <!-- 직위별 기준금액 이력 전체 -->
+  <select id="selectPosBaseAmtHistory" resultType="com.flowenect.hr.dto.payroll.GradeBaseAmtDTO">
+    SELECT
+      BASE_AMT_NO AS baseAmtNo,
+      POS_CD      AS posCd,
+      STD_AMT     AS stdAmt,
+      TO_CHAR(START_DT, 'YYYY-MM-DD') AS startDtm,
+      TO_CHAR(END_DTM,  'YYYY-MM-DD') AS endDtm
+    FROM GRADE_BASE_AMT
+    WHERE POS_CD = #{posCd}
+    ORDER BY START_DT DESC, BASE_AMT_NO DESC
+  </select>
+
+  <!-- 기존 현재행 종료 처리(END_DTM 갱신) -->
+  <update id="updatePosBaseAmtEndDtm">
+    UPDATE GRADE_BASE_AMT
+    SET END_DTM = TO_DATE(#{endDtm}, 'YYYY-MM-DD')
+    WHERE BASE_AMT_NO = #{baseAmtNo}
+  </update>
+
+
+  <select id="selectPosBaseAmtLatestList" resultType="com.flowenect.hr.dto.payroll.GradeBaseAmtDTO">
+    SELECT baseAmtNo, posCd, stdAmt, startDtm, endDtm
+    FROM (
+      SELECT
+        BASE_AMT_NO AS baseAmtNo,
+        POS_CD      AS posCd,
+        STD_AMT     AS stdAmt,
+        TO_CHAR(START_DT, 'YYYY-MM-DD') AS startDtm,
+        TO_CHAR(END_DTM,  'YYYY-MM-DD') AS endDtm,
+        ROW_NUMBER() OVER (
+          PARTITION BY POS_CD
+          ORDER BY START_DT DESC NULLS LAST, BASE_AMT_NO DESC
+        ) rn
+      FROM GRADE_BASE_AMT
+    )
+    WHERE rn = 1
+    ORDER BY posCd
+  </select>
+
+  <!-- (호환) 기존 호출명: selectPosBaseAmtList -->
+  <select id="selectPosBaseAmtList" resultType="com.flowenect.hr.dto.payroll.GradeBaseAmtDTO">
+      SELECT baseAmtNo, posCd, stdAmt, startDtm, endDtm
+      FROM (
+        SELECT
+          BASE_AMT_NO AS baseAmtNo,
+          POS_CD      AS posCd,
+          STD_AMT     AS stdAmt,
+          TO_CHAR(START_DT, 'YYYY-MM-DD') AS startDtm,
+          TO_CHAR(END_DTM,  'YYYY-MM-DD') AS endDtm,
+          ROW_NUMBER() OVER (
+            PARTITION BY POS_CD
+            ORDER BY START_DT DESC NULLS LAST, BASE_AMT_NO DESC
+          ) rn
+        FROM GRADE_BASE_AMT
+      )
+      WHERE rn = 1
+      ORDER BY posCd
+    </select>
+
+  <update id="mergePosBaseAmt">
+    <choose>
+      <when test="baseAmtNo != null">
+        UPDATE GRADE_BASE_AMT
+        SET
+          POS_CD   = #{posCd},
+          STD_AMT  = #{stdAmt},
+          START_DT =
+            <choose>
+              <when test="startDtm != null and startDtm != ''">
+                TO_DATE(#{startDtm}, 'YYYY-MM-DD')
+              </when>
+              <otherwise>NULL</otherwise>
+            </choose>,
+          END_DTM  =
+            <choose>
+              <when test="endDtm != null and endDtm != ''">
+                TO_DATE(#{endDtm}, 'YYYY-MM-DD')
+              </when>
+              <otherwise>NULL</otherwise>
+            </choose>
+        WHERE BASE_AMT_NO = #{baseAmtNo}
+      </when>
+
+      <otherwise>
+        INSERT INTO GRADE_BASE_AMT
+          (BASE_AMT_NO, POS_CD, STD_AMT, START_DT, END_DTM)
+        VALUES
+          (
+            SEQ_BASE_AMT_NO.NEXTVAL,
+            #{posCd},
+            #{stdAmt},
+            <choose>
+              <when test="startDtm != null and startDtm != ''">
+                TO_DATE(#{startDtm}, 'YYYY-MM-DD')
+              </when>
+              <otherwise>NULL</otherwise>
+            </choose>,
+            <choose>
+              <when test="endDtm != null and endDtm != ''">
+                TO_DATE(#{endDtm}, 'YYYY-MM-DD')
+              </when>
+              <otherwise>NULL</otherwise>
+            </choose>
+          )
+      </otherwise>
+    </choose>
+  </update>
+
+  <!-- =========================
+       5) 호봉 가산율(STEP_RATE)
+       - 날짜는 화면에서 날짜만 사용: TO_CHAR 내려줌 / 저장은 TO_DATE
+       ========================= -->
+  <select id="selectStepRates" resultType="com.flowenect.hr.dto.payroll.StepRateDTO">
+    SELECT
+      STEP_RATE_NO   AS stepRateNo,
+      SALARY_STEP    AS salaryStep,
+      INCREASE_RATE  AS increaseRate,
+      TO_CHAR(CREATED_DTM, 'YYYY-MM-DD') AS createdDtm,
+      TO_CHAR(START_DTM,   'YYYY-MM-DD') AS startDtm,
+      TO_CHAR(END_DTM,     'YYYY-MM-DD') AS endDtm,
+      USE_YN         AS useYn
+    FROM STEP_RATE
+    WHERE TRUNC(SYSDATE) BETWEEN TRUNC(NVL(START_DTM, DATE '1900-01-01'))
+                           AND TRUNC(NVL(END_DTM,   DATE '9999-12-31'))
+    ORDER BY SALARY_STEP
+  </select>
+
+  <!-- 현재 적용중인 호봉 가산율(호환) -->
+  <select id="selectCurrentStepRates" resultType="com.flowenect.hr.dto.payroll.StepRateDTO">
+    SELECT
+      STEP_RATE_NO   AS stepRateNo,
+      SALARY_STEP    AS salaryStep,
+      INCREASE_RATE  AS increaseRate,
+      TO_CHAR(CREATED_DTM, 'YYYY-MM-DD') AS createdDtm,
+      TO_CHAR(START_DTM,   'YYYY-MM-DD') AS startDtm,
+      TO_CHAR(END_DTM,     'YYYY-MM-DD') AS endDtm,
+      USE_YN         AS useYn
+    FROM STEP_RATE
+    WHERE TRUNC(SYSDATE) BETWEEN TRUNC(NVL(START_DTM, DATE '1900-01-01'))
+                           AND TRUNC(NVL(END_DTM,   DATE '9999-12-31'))
+    ORDER BY SALARY_STEP
+  </select>
+
+  <!-- 열린 호봉 가산율 세트의 시작일(END=9999-12-31) -->
+  <select id="selectOpenStepSetStartDtm" resultType="string">
+    SELECT TO_CHAR(MAX(START_DTM), 'YYYY-MM-DD')
+    FROM STEP_RATE
+    WHERE TRUNC(NVL(END_DTM, DATE '9999-12-31')) = DATE '9999-12-31'
+  </select>
+
+  <!-- 열린 호봉 가산율 세트 종료 처리 -->
+  <update id="updateOpenStepSetEndDtm">
+    UPDATE STEP_RATE
+    SET END_DTM = TO_DATE(#{endDtm}, 'YYYY-MM-DD'),
+        USE_YN = 'N'
+    WHERE TRUNC(NVL(END_DTM, DATE '9999-12-31')) = DATE '9999-12-31'
+  </update>
+
+  
+<!-- (호환) 기존 방식: 전체 삭제 후 재등록 -->
+<delete id="deleteStepRates">
+  DELETE FROM STEP_RATE
+</delete>
+
+<!-- 특정 시작일(세트) 삭제 -->
+  <delete id="deleteStepRatesByStartDtm">
+    DELETE FROM STEP_RATE
+    WHERE TRUNC(START_DTM) = TRUNC(TO_DATE(#{startDtm}, 'YYYY-MM-DD'))
+      AND TRUNC(NVL(END_DTM, DATE '9999-12-31')) = DATE '9999-12-31'
+  </delete>
+
+  <insert id="insertStepRate">
+    INSERT INTO STEP_RATE
+      (STEP_RATE_NO, SALARY_STEP, INCREASE_RATE, CREATED_DTM, START_DTM, END_DTM, USE_YN)
+    VALUES
+      (
+        SEQ_STEP_RATE_NO.NEXTVAL,
+        #{salaryStep},
+        #{increaseRate},
+        SYSDATE,
+        <choose>
+          <when test="startDtm != null and startDtm != ''">
+            TO_DATE(#{startDtm}, 'YYYY-MM-DD')
+          </when>
+          <otherwise>NULL</otherwise>
+        </choose>,
+        <choose>
+          <when test="endDtm != null and endDtm != ''">
+            TO_DATE(#{endDtm}, 'YYYY-MM-DD')
+          </when>
+          <otherwise>NULL</otherwise>
+        </choose>,
+        #{useYn}
+      )
+  </insert>
+
+  <!-- =========================
+       6) 수당 정의(SALARY_ITEM)
+       ========================= -->
+  <select id="selectAllowanceDefs" resultType="com.flowenect.hr.dto.payroll.SalaryItemDTO">
+    SELECT
+      SALARY_ITEM_CODE AS salaryItemCode,
+      SALARY_ITEM_NAME AS salaryItemName,
+      ITEM_TYPE        AS itemType,
+      TAX_TYPE         AS taxType
+    FROM SALARY_ITEM
+    ORDER BY SALARY_ITEM_CODE
+  </select>
+
+  <!-- 신규 수당코드 채번(SEQ_ITEM_NO 기반) -->
+  <select id="nextSalaryItemCode" resultType="string">
+    SELECT LPAD(TO_CHAR(SEQ_ITEM_NO.NEXTVAL), 10, '0') FROM DUAL
+  </select>
+
+  <!-- 신규 등록: SALARY_ITEM_CODE는 시퀀스로 자동 생성 -->
+  <insert id="insertAllowanceDef" parameterType="com.flowenect.hr.dto.payroll.SalaryItemDTO">
+    <selectKey keyProperty="salaryItemCode" resultType="string" order="BEFORE">
+      SELECT LPAD(TO_CHAR(SEQ_ITEM_NO.NEXTVAL), 10, '0') FROM DUAL
+    </selectKey>
+    INSERT INTO SALARY_ITEM (
+      SALARY_ITEM_CODE,
+      SALARY_ITEM_NAME,
+      ITEM_TYPE,
+      TAX_TYPE
+    ) VALUES (
+      #{salaryItemCode},
+      #{salaryItemName},
+      #{itemType},
+      #{taxType}
+    )
+  </insert>
+
+  <!-- 수정 -->
+  <update id="updateAllowanceDef" parameterType="com.flowenect.hr.dto.payroll.SalaryItemDTO">
+    UPDATE SALARY_ITEM
+       SET SALARY_ITEM_NAME = #{salaryItemName},
+           ITEM_TYPE        = #{itemType},
+           TAX_TYPE         = #{taxType}
+     WHERE SALARY_ITEM_CODE = #{salaryItemCode}
+  </update>
+
+  <update id="mergeAllowanceDef" parameterType="com.flowenect.hr.dto.payroll.SalaryItemDTO">
+    MERGE INTO SALARY_ITEM T
+    USING (
+      SELECT
+        #{salaryItemCode} AS SALARY_ITEM_CODE,
+        #{salaryItemName} AS SALARY_ITEM_NAME,
+        #{itemType}       AS ITEM_TYPE,
+        #{taxType}        AS TAX_TYPE
+      FROM DUAL
+    ) S
+    ON (T.SALARY_ITEM_CODE = S.SALARY_ITEM_CODE)
+    WHEN MATCHED THEN
+      UPDATE SET
+        T.SALARY_ITEM_NAME = S.SALARY_ITEM_NAME,
+        T.ITEM_TYPE        = S.ITEM_TYPE,
+        T.TAX_TYPE         = S.TAX_TYPE
+    WHEN NOT MATCHED THEN
+      INSERT (SALARY_ITEM_CODE, SALARY_ITEM_NAME, ITEM_TYPE, TAX_TYPE)
+      VALUES (S.SALARY_ITEM_CODE, S.SALARY_ITEM_NAME, S.ITEM_TYPE, S.TAX_TYPE)
+  </update>
+
+  <!-- =========================
+       7) 공제율(INSURANCE_RATE)
+       - 날짜는 화면에서 날짜만 사용: TO_CHAR 내려줌 / 저장은 TO_DATE
+       ========================= -->
+  <select id="selectDeductionRates" resultType="com.flowenect.hr.dto.payroll.InsuranceRateDTO">
+    SELECT *
+FROM (
+SELECT
+      RATE_NO          AS rateNo,
+      PENSION_RATE     AS pensionRate,
+      HEALTH_RATE      AS healthRate,
+      EMPLOY_RATE      AS employRate,
+      CARE_RATE        AS careRate,
+      INCOME_TAX_RATE  AS incomeTaxRate,
+      LOCAL_TAX_RATE   AS localTaxRate,
+      TO_CHAR(START_DTM, 'YYYY-MM-DD') AS startDtm,
+      TO_CHAR(END_DTM,   'YYYY-MM-DD') AS endDtm
+    FROM INSURANCE_RATE
+    WHERE TRUNC(SYSDATE) BETWEEN TRUNC(NVL(START_DTM, DATE '1900-01-01'))
+                           AND TRUNC(NVL(END_DTM,   DATE '9999-12-31'))
+    ORDER BY START_DTM DESC, RATE_NO DESC
+)
+WHERE ROWNUM = 1
+  </select>
+
+  <!-- END_DTM=9999-12-31인 "열려있는" row(1건) -->
+  <select id="selectOpenDeductionRate" resultType="com.flowenect.hr.dto.payroll.InsuranceRateDTO">
+    SELECT *
+FROM (
+SELECT
+      RATE_NO          AS rateNo,
+      PENSION_RATE     AS pensionRate,
+      HEALTH_RATE      AS healthRate,
+      EMPLOY_RATE      AS employRate,
+      CARE_RATE        AS careRate,
+      INCOME_TAX_RATE  AS incomeTaxRate,
+      LOCAL_TAX_RATE   AS localTaxRate,
+      TO_CHAR(START_DTM, 'YYYY-MM-DD') AS startDtm,
+      TO_CHAR(END_DTM,   'YYYY-MM-DD') AS endDtm
+    FROM INSURANCE_RATE
+    WHERE TRUNC(NVL(END_DTM, DATE '9999-12-31')) = DATE '9999-12-31'
+    ORDER BY START_DTM DESC, RATE_NO DESC
+)
+WHERE ROWNUM = 1
+  </select>
+
+  <!-- 기존 현재행 종료 처리(END_DTM 갱신) -->
+  <update id="updateDeductionRateEndDtm">
+    UPDATE INSURANCE_RATE
+    SET END_DTM = TO_DATE(#{endDtm}, 'YYYY-MM-DD')
+    WHERE RATE_NO = #{rateNo}
+  </update>
+
+
+  <select id="selectDeductionRatesList" resultType="com.flowenect.hr.dto.payroll.InsuranceRateDTO">
+    SELECT *
+FROM (
+SELECT
+      RATE_NO          AS rateNo,
+      PENSION_RATE     AS pensionRate,
+      HEALTH_RATE      AS healthRate,
+      EMPLOY_RATE      AS employRate,
+      CARE_RATE        AS careRate,
+      INCOME_TAX_RATE  AS incomeTaxRate,
+      LOCAL_TAX_RATE   AS localTaxRate,
+      TO_CHAR(START_DTM, 'YYYY-MM-DD') AS startDtm,
+      TO_CHAR(END_DTM,   'YYYY-MM-DD') AS endDtm
+    FROM INSURANCE_RATE
+    ORDER BY NVL(START_DTM, DATE '1900-01-01') DESC, RATE_NO DESC
+)
+WHERE ROWNUM = 1
+  </select>
+
+  <update id="mergeDeductionRate">
+    <choose>
+      <when test="rateNo != null">
+        UPDATE INSURANCE_RATE
+        SET
+          PENSION_RATE    = #{pensionRate},
+          HEALTH_RATE     = #{healthRate},
+          EMPLOY_RATE     = #{employRate},
+          CARE_RATE       = #{careRate},
+          INCOME_TAX_RATE = #{incomeTaxRate},
+          LOCAL_TAX_RATE  = #{localTaxRate},
+          START_DTM       =
+            <choose>
+              <when test="startDtm != null and startDtm != ''">
+                TO_DATE(#{startDtm}, 'YYYY-MM-DD')
+              </when>
+              <otherwise>NULL</otherwise>
+            </choose>,
+          END_DTM         =
+            <choose>
+              <when test="endDtm != null and endDtm != ''">
+                TO_DATE(#{endDtm}, 'YYYY-MM-DD')
+              </when>
+              <otherwise>NULL</otherwise>
+            </choose>
+        WHERE RATE_NO = #{rateNo}
+      </when>
+
+      <otherwise>
+        INSERT INTO INSURANCE_RATE
+          (RATE_NO, PENSION_RATE, HEALTH_RATE, EMPLOY_RATE, CARE_RATE, INCOME_TAX_RATE, LOCAL_TAX_RATE, START_DTM, END_DTM)
+        VALUES
+          (
+            SEQ_RATE_NO.NEXTVAL,
+            #{pensionRate},
+            #{healthRate},
+            #{employRate},
+            #{careRate},
+            #{incomeTaxRate},
+            #{localTaxRate},
+            <choose>
+              <when test="startDtm != null and startDtm != ''">
+                TO_DATE(#{startDtm}, 'YYYY-MM-DD')
+              </when>
+              <otherwise>NULL</otherwise>
+            </choose>,
+            <choose>
+              <when test="endDtm != null and endDtm != ''">
+                TO_DATE(#{endDtm}, 'YYYY-MM-DD')
+              </when>
+              <otherwise>NULL</otherwise>
+            </choose>
+          )
+      </otherwise>
+    </choose>
+  </update>
+
+  <!-- =========================
+       8) 명세서 목록/생성/상세(PAYROLL, PAYROLL_ITEM)
+       ========================= -->
+    <select id="selectPayrollList" resultType="com.flowenect.hr.dto.payroll.PayrollListRowDTO">
+    SELECT
+      PR.PAYROLL_NO AS payrollNo,
+      TO_CHAR(PR.CREATED_DTM, 'YYYY-MM-DD HH24:MI:SS') AS createdDtm,
+      PR.EMP_NO     AS empNo,
+      E.EMP_NM      AS empNm,
+      D.DEPT_NM     AS deptNm,
+      P.POS_NM      AS posNm,
+      PR.CONFIRM_YN AS confirmYn
+    FROM PAYROLL PR
+    JOIN EMP E ON E.EMP_NO = PR.EMP_NO
+    LEFT JOIN DEPT D ON D.DEPT_CD = E.DEPT_CD
+    LEFT JOIN POSITION_MST P ON P.POS_CD = E.POS_CD
+    WHERE PR.PAY_YYYYMM BETWEEN #{fromYm} AND #{toYm}
+    ORDER BY PR.CREATED_DTM DESC
+  </select>
+
+  <select id="selectPayrollExists" resultType="int">
+    SELECT COUNT(1)
+    FROM PAYROLL
+    WHERE EMP_NO = #{empNo}
+      AND PAY_YYYYMM = #{payYyyymm}
+  </select>
+
+  <insert id="insertPayroll" parameterType="com.flowenect.hr.dto.payroll.PayrollHeaderDTO" useGeneratedKeys="false">
+    <selectKey keyProperty="payrollNo" resultType="long" order="BEFORE">
+      SELECT SEQ_PAYROLL_NO.NEXTVAL FROM DUAL
+    </selectKey>
+    INSERT INTO PAYROLL
+      (PAYROLL_NO, EMP_NO, PAY_YYYYMM, TOTAL_PAY_AMT, TOTAL_DEDUCT_AMT, NET_PAY_AMT, CONFIRM_YN, CREATED_DTM)
+    VALUES
+      (#{payrollNo}, #{empNo}, #{payYyyymm}, #{totalPayAmt}, #{totalDeductAmt}, #{netPayAmt}, 'N', SYSDATE)
+  </insert>
+
+  <delete id="deletePayrollItems">
+    DELETE FROM PAYROLL_ITEM
+    WHERE PAYROLL_NO = #{payrollNo}
+  </delete>
+
+  <insert id="insertPayrollItem">
+    INSERT INTO PAYROLL_ITEM
+      (ITEM_DETAIL_NO, PAYROLL_NO, ITEM_CODE, ITEM_NAME, ITEM_TYPE_CD, AMOUNT, TAXABLE_YN)
+    VALUES
+      (SEQ_ITEM_DETAIL_NO.NEXTVAL, #{payrollNo}, #{itemCode}, #{itemName}, #{itemTypeCd}, #{amount}, #{taxableYn})
+  </insert>
+
+  <select id="selectPayrollHeader" resultType="com.flowenect.hr.dto.payroll.PayrollHeaderDTO">
+    SELECT
+      PR.PAYROLL_NO AS payrollNo,
+      PR.EMP_NO     AS empNo,
+      PR.PAY_YYYYMM AS payYyyymm,
+      PR.TOTAL_PAY_AMT     AS totalPayAmt,
+      PR.TOTAL_DEDUCT_AMT  AS totalDeductAmt,
+      PR.NET_PAY_AMT       AS netPayAmt,
+      PR.CONFIRM_YN        AS confirmYn,
+      TO_CHAR(PR.CREATED_DTM, 'YYYY-MM-DD HH24:MI:SS') AS createdDtm
+    FROM PAYROLL PR
+    WHERE PR.PAYROLL_NO = #{payrollNo}
+  </select>
+
+  <select id="selectPayrollItems" resultType="com.flowenect.hr.dto.payroll.PayrollItemDTO">
+    SELECT
+      ITEM_DETAIL_NO AS itemDetailNo,
+      PAYROLL_NO     AS payrollNo,
+      ITEM_CODE      AS itemCode,
+      ITEM_NAME      AS itemName,
+      ITEM_TYPE_CD   AS itemTypeCd,
+      AMOUNT         AS amount,
+      TAXABLE_YN     AS taxableYn
+    FROM PAYROLL_ITEM
+    WHERE PAYROLL_NO = #{payrollNo}
+    ORDER BY ITEM_TYPE_CD, ITEM_CODE
+  </select>
+
+  <update id="updatePayrollItemAmount">
+    UPDATE PAYROLL_ITEM
+    SET AMOUNT = #{amount}
+    WHERE ITEM_DETAIL_NO = #{itemDetailNo}
+  </update>
+
+  <update id="updatePayrollConfirmYn">
+    UPDATE PAYROLL
+    SET CONFIRM_YN = #{confirmYn}
+    WHERE PAYROLL_NO = #{payrollNo}
+  </update>
+
+  <update id="updatePayrollTotals">
+    UPDATE PAYROLL
+    SET
+      TOTAL_PAY_AMT = #{totalPayAmt},
+      TOTAL_DEDUCT_AMT = #{totalDeductAmt},
+      NET_PAY_AMT = #{netPayAmt}
+    WHERE PAYROLL_NO = #{payrollNo}
+  </update>
+
+  <delete id="deletePayrolls">
+    DELETE FROM PAYROLL
+    WHERE PAYROLL_NO IN
+    <foreach collection="payrollIds" item="id" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+  </delete>
+
+</mapper>

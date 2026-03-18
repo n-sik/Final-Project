@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.flowenect.hr.mainboard.mapper.MainBoardMapper">
+
+	<!-- 오늘 근태 -->
+	<select id="selectTodayAttendance" resultType="AttendanceDTO">
+		SELECT
+		ATTD_NO, EMP_NO, WORK_DT,
+		IN_DTM, OUT_DTM,
+		LATE_YN, OUT_AUTO_YN,
+		ATTD_STAT_CD, REMARK,
+		CRT_DTM, MOD_DTM
+		FROM ATTENDANCE
+		WHERE EMP_NO = #{empNo}
+		AND WORK_DT = TRUNC(SYSDATE)
+	</select>
+
+	<!-- 전날 일일업무 1건 -->
+	<select id="selectYesterdayDailyTaskLog"
+		resultType="DailyTaskLogDTO">
+		SELECT *
+		FROM (
+		SELECT
+		TASK_LOG_NO, TASK_NO, EMP_NO,
+		LOG_DIV_CD, LOG_TITLE, LOG_CN,
+		WORK_DTM, REG_DTM, MOD_DTM,
+		DEL_YN, DEL_DTM
+		FROM DAILY_TASK_LOG
+		WHERE EMP_NO = #{empNo}
+		AND NVL(DEL_YN, 'N') = 'N'
+		AND WORK_DTM IS NOT NULL
+		AND TRUNC(WORK_DTM) = TRUNC(SYSDATE) - 1
+		ORDER BY REG_DTM ASC, TASK_LOG_NO ASC
+		)
+		WHERE ROWNUM = 1
+	</select>
+
+	<!-- 신규업무: 최근 7일 이내 등록된 담당업무 -->
+	<select id="selectRecentAssignTaskList"
+		resultType="AssignTaskDTO">
+		SELECT
+		T.TASK_NO, T.EMP_NO, T.TASK_TITLE,
+		T.REG_DTM, T.DEL_YN
+		FROM ASSIGN_TASK T
+		WHERE T.EMP_NO = #{empNo}
+		AND NVL(T.DEL_YN, 'N') = 'N'
+		AND T.REG_DTM >= TRUNC(SYSDATE) - 6
+		AND T.REG_DTM &lt; TRUNC(SYSDATE) + 1
+		ORDER BY T.REG_DTM DESC, T.TASK_NO DESC
+	</select>
+
+	<!-- 이번 주(월~일) 본인 일정 -->
+	<select id="selectWeekSchedules" parameterType="string"
+		resultType="com.flowenect.hr.dto.mainboard.MainBoardScheduleDTO">
+		SELECT *
+		FROM (
+		SELECT
+		SCHD_NO, S.EMP_NO,
+		E.EMP_NM, -- ✅ 추가
+		SCHD_DIV_CD, SCHD_TITLE,
+		SCHD_ST_DTM, SCHD_ED_DTM,
+		ALL_DAY_YN, COLOR
+		FROM SCHEDULE S
+		LEFT JOIN EMP E ON S.EMP_NO = E.EMP_NO -- ✅ JOIN 추가
+		WHERE S.EMP_NO = #{empNo}
+		AND NVL(S.DEL_YN, 'N') = 'N'
+		AND S.SCHD_ST_DTM >= TRUNC(SYSDATE, 'IW')
+		AND S.SCHD_ST_DTM &lt; TRUNC(SYSDATE, 'IW') + 7
+
+		UNION ALL
+
+		SELECT
+		AL.APRV_NO AS SCHD_NO,
+		A.EMP_NO AS EMP_NO,
+		A.DOC_WRTR_EMP_NM      AS EMP_NM,
+		'VACATION' AS SCHD_DIV_CD,
+		CASE AL.LEAVE_TYPE_CD
+		WHEN 'ANNUAL' THEN '연차'
+		WHEN 'HALF_AM' THEN '오전 반차'
+		WHEN 'HALF_PM' THEN '오후 반차'
+		WHEN 'SICK' THEN '병가'
+		ELSE AL.LEAVE_TYPE_CD
+		END AS SCHD_TITLE,
+		AL.START_DTM AS SCHD_ST_DTM,
+		AL.END_DTM AS SCHD_ED_DTM,
+		'Y' AS ALL_DAY_YN,
+		'#dd6b20' AS COLOR
+		FROM APRV_LEAVE AL
+		JOIN APRV_DOC A ON AL.APRV_NO = A.APRV_NO
+		WHERE A.EMP_NO = #{empNo}
+		AND A.STAT_CD IN ('APPROVED', 'COMPLETED')
+		AND AL.START_DTM >= TRUNC(SYSDATE, 'IW')
+		AND AL.START_DTM &lt; TRUNC(SYSDATE, 'IW') + 7
+
+		ORDER BY SCHD_ST_DTM ASC
+		)
+		FETCH FIRST 5 ROWS ONLY
+	</select>
+
+	<!-- 공지사항 최근 5건 (BOARD 테이블, BOARD_TYPE_NO 1·3 = 공지·인사이동) -->
+	<select id="selectRecentNotices" resultType="NoticeDTO">
+		SELECT
+		B.POST_NO AS NOTICE_NO,
+		B.TITLE AS NOTICE_TITLE,
+		CASE B.BOARD_TYPE_NO
+		WHEN 3 THEN '인사'
+		ELSE '공지'
+		END AS NOTICE_TYPE,
+		TO_CHAR(B.REG_DTM, 'YYYY-MM-DD') AS REG_DTM
+		FROM BOARD B
+		WHERE NVL(B.DEL_YN, 'N') = 'N'
+		AND B.BOARD_TYPE_NO IN (1, 3)
+		ORDER BY B.REG_DTM DESC
+		FETCH FIRST 5 ROWS ONLY
+	</select>
+
+	<!-- 이번 달 출퇴근 기록 전체 (최신순) -->
+	<select id="selectMonthAttendance" parameterType="string"
+		resultType="AttendanceDTO">
+		SELECT
+		ATTD_NO, EMP_NO, WORK_DT,
+		IN_DTM, OUT_DTM,
+		LATE_YN, OUT_AUTO_YN,
+		ATTD_STAT_CD, REMARK,
+		CRT_DTM, MOD_DTM
+		FROM ATTENDANCE
+		WHERE EMP_NO = #{empNo}
+		AND WORK_DT >= TRUNC(SYSDATE, 'MM')
+		AND WORK_DT &lt;= TRUNC(SYSDATE)
+		ORDER BY WORK_DT DESC
+	</select>
+
+	<!-- 이번 달 근태 통계 -->
+	<select id="selectMonthAttdStats" parameterType="string"
+		resultType="map">
+		SELECT
+		COUNT(CASE WHEN ATTD_STAT_CD IN ('PRESENT','OFF','LATE') THEN 1 END) AS
+		WORK_DAYS,
+		COUNT(CASE WHEN LATE_YN = 'Y' THEN 1 END) AS LATE_DAYS,
+		COUNT(CASE WHEN ATTD_STAT_CD = 'ABSENT' THEN 1 END) AS ABSENT_DAYS,
+		COUNT(CASE WHEN OUT_AUTO_YN = 'Y' THEN 1 END) AS AUTO_OUT_DAYS
+		FROM ATTENDANCE
+		WHERE EMP_NO = #{empNo}
+		AND WORK_DT >= TRUNC(SYSDATE, 'MM')
+		AND WORK_DT &lt;= TRUNC(SYSDATE)
+	</select>
+</mapper>

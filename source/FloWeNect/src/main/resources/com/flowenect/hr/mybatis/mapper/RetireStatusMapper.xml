@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.flowenect.hr.data.mapper.RetireStatusMapper">
+
+    <select id="selectRetireDeptSummary" resultType="ResponseRetireDeptSummaryDTO">
+        SELECT DISTINCT
+            D.DEPT_CD as docWrtrDeptCd,
+            D.DEPT_NM as deptNm
+        FROM APRV_DOC A
+        INNER JOIN DEPT D ON A.DOC_WRTR_DEPT_CD = D.DEPT_CD
+        WHERE A.FORM_CD = 'RETIRE'
+        ORDER BY D.DEPT_NM ASC
+    </select>
+
+    <select id="selectRetireStatusCount" parameterType="SearchRequest" resultType="int">
+        SELECT COUNT(*)
+        FROM APRV_DOC A
+        INNER JOIN APRV_RETIRE R ON A.APRV_NO = R.APRV_NO
+        <where>
+            AND A.FORM_CD = 'RETIRE'
+            <if test="params.dept != null and params.dept != 'ALL' and params.dept != ''">
+                AND A.DOC_WRTR_DEPT_CD = #{params.dept}
+            </if>
+            <if test="params.keyword != null and params.keyword != ''">
+                AND (A.DOC_WRTR_EMP_NM LIKE '%' || #{params.keyword} || '%' OR R.EMP_NO LIKE '%' || #{params.keyword} || '%')
+            </if>
+            <if test="params.startDate != null and params.startDate != ''">
+                AND A.SUBMIT_DTM &gt;= TO_DATE(#{params.startDate}, 'YYYY-MM-DD')
+            </if>
+            <if test="params.endDate != null and params.endDate != ''">
+                AND A.SUBMIT_DTM &lt;= TO_DATE(#{params.endDate} || ' 23:59:59', 'YYYY-MM-DD HH24:MI:SS')
+            </if>
+        </where>
+    </select>
+
+    <select id="selectAprvRetireList" parameterType="SearchRequest" resultType="ResponseRetireStatusDTO">
+        SELECT * FROM (
+            SELECT a_inner.*, ROWNUM rnum FROM (
+                SELECT
+                    A.APRV_NO           AS aprvNo,
+                    A.DOC_WRTR_EMP_NM   AS docWrtrEmpNm,
+                    A.DOC_WRTR_DEPT_CD  AS docWrtrDeptCd,
+                    D.DEPT_NM           AS deptNm,
+                    A.STAT_CD           AS statCd,
+                    A.SUBMIT_DTM        AS submitDtm,
+                    R.EMP_NO            AS empNo,         
+                    R.EXP_RETR_DT       AS expRetrDt,     
+                    R.RETR_RSN          AS retrRsn,       
+                    R.PROC_STAT_CD      AS procStatCd,
+                    A.DOC_WRTR_EMP_NM   AS empNm
+                FROM APRV_DOC A
+                INNER JOIN APRV_RETIRE R ON A.APRV_NO = R.APRV_NO
+                LEFT JOIN DEPT D ON A.DOC_WRTR_DEPT_CD = D.DEPT_CD
+                <where>
+                    AND A.FORM_CD = 'RETIRE'
+                    <if test="params.dept != null and params.dept != 'ALL' and params.dept != ''">
+                        AND A.DOC_WRTR_DEPT_CD = #{params.dept}
+                    </if>
+                    <if test="params.keyword != null and params.keyword != ''">
+                        AND (A.DOC_WRTR_EMP_NM LIKE '%' || #{params.keyword} || '%' OR R.EMP_NO LIKE '%' || #{params.keyword} || '%')
+                    </if>
+                    <if test="params.startDate != null and params.startDate != ''">
+                        AND A.SUBMIT_DTM &gt;= TO_DATE(#{params.startDate}, 'YYYY-MM-DD')
+                    </if>
+                    <if test="params.endDate != null and params.endDate != ''">
+                        AND A.SUBMIT_DTM &lt;= TO_DATE(#{params.endDate} || ' 23:59:59', 'YYYY-MM-DD HH24:MI:SS')
+                    </if>
+                </where>
+                ORDER BY A.SUBMIT_DTM DESC
+            ) a_inner
+            WHERE ROWNUM &lt;= #{paging.page} * #{paging.recordSize}
+        )
+        WHERE rnum &gt; (#{paging.page} - 1) * #{paging.recordSize}
+    </select>
+</mapper>

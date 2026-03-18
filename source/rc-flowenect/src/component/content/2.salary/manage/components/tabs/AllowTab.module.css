@@ -1,0 +1,103 @@
+.innerSplit {
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    gap: 12px;
+
+    flex: 1;
+    min-height: 0;
+}
+
+.innerLeft,
+.innerRight {
+    border: 1px solid #eef2f7;
+    border-radius: 14px;
+    padding: 12px;
+
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.grid {
+    width: 100%;
+    flex: 1;
+    min-height: 0;
+
+    /* ✅ + 버튼을 그리드 테두리(ag-theme) 안에 띄우기 위해 */
+    position: relative;
+}
+
+.gridPlusBtn {
+    width: 44px;
+    height: 44px;
+    border-radius: 999px;
+    border: 1px solid #dbe7ff;
+    background: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+
+    /* ✅ 그리드 내부 하단 중앙 */
+    position: absolute;
+    left: 50%;
+    bottom: 14px;
+    transform: translateX(-50%);
+    z-index: 5;
+}
+
+.gridPlusBtn:hover {
+    background: #f3f7ff;
+}
+
+.formBox {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    /* 입력 항목이 3개(코드는 자동생성 안내)라서
+       불필요하게 넓어 보이지 않도록 폼 폭을 살짝 제한 */
+    max-width: 520px;
+}
+
+.formRow {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    align-items: center;
+    gap: 10px;
+}
+
+.formRow label {
+    font-size: 12px;
+    font-weight: 800;
+    color: #475569;
+}
+
+.formRow input,
+.formRow select {
+    height: 36px;
+    border: 1px solid #e8eef7;
+    border-radius: 10px;
+    padding: 0 10px;
+    background: #fff;
+}
+
+.codeBox {
+    height: 36px;
+    border: 1px dashed #dbe7ff;
+    border-radius: 10px;
+    padding: 0 10px;
+    display: flex;
+    align-items: center;
+    background: #f8fafc;
+    color: #334155;
+    font-weight: 700;
+    font-size: 13px;
+}
+
+.hint {
+    margin-top: 10px;
+    font-size: 12px;
+    color: #64748b;
+    line-height: 1.4;
+}

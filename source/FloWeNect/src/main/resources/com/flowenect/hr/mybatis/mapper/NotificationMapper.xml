@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.flowenect.hr.notification.mapper.NotificationMapper">
+
+    <resultMap id="NotificationResultMap" type="com.flowenect.hr.dto.notification.NotificationDTO">
+        <id property="notiNo" column="NOTI_NO"/>
+        <result property="recvEmpNo" column="RECV_EMP_NO"/>
+        <result property="notiTypeCd" column="NOTI_TYPE_CD"/>
+        <result property="notiCn" column="NOTI_CN"/>
+        <result property="srcTypeCd" column="SRC_TYPE_CD"/>
+        <result property="srcNo" column="SRC_NO"/>
+        <result property="moveUrl" column="MOVE_URL"/>
+        <result property="readYn" column="READ_YN"/>
+        <result property="regDtm" column="REG_DTM"/>
+    </resultMap>
+
+    <!-- 알림 생성 -->
+    <insert id="insertNotification" parameterType="com.flowenect.hr.dto.notification.NotificationDTO">
+        <selectKey keyProperty="notiNo" resultType="long" order="BEFORE">
+            SELECT SEQ_NOTI_NO.NEXTVAL FROM DUAL
+        </selectKey>
+        INSERT INTO NOTIFICATION (
+            NOTI_NO,
+            RECV_EMP_NO,
+            NOTI_TYPE_CD,
+            NOTI_CN,
+            SRC_TYPE_CD,
+            SRC_NO,
+            MOVE_URL,
+            READ_YN,
+            REG_DTM
+        ) VALUES (
+            #{notiNo},
+            #{recvEmpNo},
+            #{notiTypeCd},
+            #{notiCn},
+            #{srcTypeCd},
+            #{srcNo},
+            #{moveUrl},
+            NVL(#{readYn}, 'N'),
+            SYSDATE
+        )
+    </insert>
+
+    <!-- 우상단 요약: 최근 N일 + 최신순 + limit -->
+    <select id="selectRecentSummary" resultMap="NotificationResultMap">
+        SELECT *
+        FROM (
+            SELECT
+                NOTI_NO, RECV_EMP_NO, NOTI_TYPE_CD, NOTI_CN,
+                SRC_TYPE_CD, SRC_NO, MOVE_URL, READ_YN, REG_DTM
+            FROM NOTIFICATION
+            WHERE RECV_EMP_NO = #{recvEmpNo}
+              AND REG_DTM &gt;= TRUNC(SYSDATE) - (#{days} - 1)
+            ORDER BY REG_DTM DESC, NOTI_NO DESC
+        )
+        WHERE ROWNUM &lt;= #{limit}
+    </select>
+
+    <!-- 상세 모달: 최근 N개월, 페이징(OFFSET/LIMIT) -->
+    <select id="selectNotificationPage" resultMap="NotificationResultMap">
+        SELECT *
+        FROM (
+            SELECT
+                t.*,
+                ROW_NUMBER() OVER (ORDER BY t.REG_DTM DESC, t.NOTI_NO DESC) AS rn
+            FROM NOTIFICATION t
+            WHERE t.RECV_EMP_NO = #{recvEmpNo}
+              AND t.REG_DTM &gt;= ADD_MONTHS(TRUNC(SYSDATE), -#{months})
+        )
+        WHERE rn &gt; #{offset}
+          AND rn &lt;= (#{offset} + #{limit})
+    </select>
+
+    <select id="selectNotificationCount" resultType="int">
+        SELECT COUNT(*)
+        FROM NOTIFICATION
+        WHERE RECV_EMP_NO = #{recvEmpNo}
+          AND REG_DTM &gt;= ADD_MONTHS(TRUNC(SYSDATE), -#{months})
+    </select>
+
+    <select id="selectUnreadCount" resultType="int">
+        SELECT COUNT(*)
+        FROM NOTIFICATION
+        WHERE RECV_EMP_NO = #{recvEmpNo}
+          AND READ_YN = 'N'
+          AND REG_DTM &gt;= ADD_MONTHS(TRUNC(SYSDATE), -#{months})
+    </select>
+
+    <update id="markAsRead">
+        UPDATE NOTIFICATION
+        SET READ_YN = 'Y'
+        WHERE NOTI_NO = #{notiNo}
+          AND RECV_EMP_NO = #{recvEmpNo}
+    </update>
+
+    <update id="markAllAsRead">
+        UPDATE NOTIFICATION
+        SET READ_YN = 'Y'
+        WHERE RECV_EMP_NO = #{recvEmpNo}
+          AND READ_YN = 'N'
+    </update>
+
+    <!-- 보관기간 정책: N개월 초과 삭제 -->
+    <delete id="deleteOlderThanMonths">
+        DELETE FROM NOTIFICATION
+        WHERE REG_DTM &lt; ADD_MONTHS(TRUNC(SYSDATE), -#{months})
+    </delete>
+
+    <!-- 전사 알림 대상자: 활성 계정만 (퇴사자는 로그인 불가 정책이므로 기본 제외 권장) -->
+    <select id="selectAllActiveEmpNos" resultType="string">
+        SELECT EMP_NO
+        FROM EMP
+        WHERE NVL(ACNT_ACT_YN, 'Y') = 'Y'
+          AND NVL(EMP_STAT_CD, '재직') != '퇴사'
+        ORDER BY EMP_NO
+    </select>
+
+    <select id="selectConnectionHealthSample" resultType="map">
+        SELECT COUNT(*) AS CNT
+        FROM NOTIFICATION
+    </select>
+
+</mapper>

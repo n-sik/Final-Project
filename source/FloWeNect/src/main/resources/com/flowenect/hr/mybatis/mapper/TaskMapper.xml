@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.flowenect.hr.department.kpi.mapper.TaskMapper">
+
+    <!-- resultMap 정의 -->
+    <resultMap id="TaskResultMap" type="TaskDTO">
+        <id property="taskNo" column="TASK_NO"/>
+        <result property="empNo" column="EMP_NO"/>
+        <result property="empNm" column="EMP_NM"/>
+        <result property="kpiNo" column="KPI_NO"/>
+        <result property="deptCd" column="DEPT_CD"/>
+        <result property="taskTitle" column="TASK_TITLE"/>
+        <result property="taskCn" column="TASK_CN"/>
+        <result property="taskStatCd" column="TASK_STAT_CD"/>
+        <result property="progressRate" column="PROGRESS_RATE"/>
+        <result property="taskStartDtm" column="TASK_START_DTM"/>
+        <result property="taskEndDtm" column="TASK_END_DTM"/>
+        <result property="regDtm" column="REG_DTM"/>
+        <result property="modDtm" column="MOD_DTM"/>
+        <result property="delYn" column="DEL_YN"/>
+        <result property="delDtm" column="DEL_DTM"/>
+    </resultMap>
+
+    <!-- INSERT -->
+    <insert id="insertTask" parameterType="TaskDTO">
+        <selectKey keyProperty="taskNo" resultType="long" order="BEFORE">
+            SELECT SEQ_TASK_NO.NEXTVAL FROM DUAL
+        </selectKey>
+        INSERT INTO ASSIGN_TASK (
+            TASK_NO, EMP_NO,  KPI_NO, DEPT_CD,
+            TASK_TITLE, TASK_CN, TASK_STAT_CD, PROGRESS_RATE,
+            REG_DTM, MOD_DTM, DEL_YN, TASK_START_DTM, TASK_END_DTM
+        ) VALUES (
+            #{taskNo},
+            #{empNo},  #{kpiNo, jdbcType=NUMERIC}, #{deptCd},
+            #{taskTitle}, #{taskCn}, #{taskStatCd}, #{progressRate},
+            SYSDATE, SYSDATE, 'N', #{taskStartDtm}, #{taskEndDtm}
+        )
+    </insert>
+
+    <!-- KPI 기준 Task 리스트 -->
+    <select id="selectTaskListByKpi" parameterType="long" resultMap="TaskResultMap">
+        SELECT 
+            T.TASK_NO, T.EMP_NO, E.EMP_NM, T.KPI_NO, 
+            T.DEPT_CD, T.TASK_TITLE, T.TASK_CN, T.TASK_STAT_CD, 
+            T.PROGRESS_RATE, T.TASK_START_DTM, T.TASK_END_DTM, 
+            T.REG_DTM, T.MOD_DTM, T.DEL_YN, T.DEL_DTM
+        FROM ASSIGN_TASK T
+        LEFT JOIN EMP E ON T.EMP_NO = E.EMP_NO
+        WHERE T.KPI_NO = #{kpiNo} AND T.DEL_YN = 'N'
+        ORDER BY T.TASK_NO DESC
+    </select>
+
+    <!-- 부서원 조회 -->
+    <select id="selectDeptMembers" parameterType="string" resultType="TaskDTO">
+        SELECT EMP_NO, EMP_NM
+        FROM EMP
+        WHERE DEPT_CD = #{deptCd}
+        ORDER BY EMP_NM
+    </select>
+
+    <!-- Task 상세 조회 -->
+    <select id="selectTaskDetail" parameterType="long" resultMap="TaskResultMap">
+        SELECT 
+            T.TASK_NO, T.EMP_NO, E.EMP_NM, T.KPI_NO, 
+            T.DEPT_CD, T.TASK_TITLE, T.TASK_CN, T.TASK_STAT_CD, 
+            T.PROGRESS_RATE, T.TASK_START_DTM, T.TASK_END_DTM, 
+            T.REG_DTM, T.MOD_DTM, T.DEL_YN, T.DEL_DTM
+        FROM ASSIGN_TASK T
+        LEFT JOIN EMP E ON T.EMP_NO = E.EMP_NO
+        WHERE T.TASK_NO = #{taskNo}
+    </select>
+
+    <!-- UPDATE -->
+    <update id="updateTask" parameterType="TaskDTO">
+        UPDATE ASSIGN_TASK
+        SET TASK_TITLE = #{taskTitle},
+            TASK_CN = #{taskCn},
+            EMP_NO = #{empNo},
+            TASK_START_DTM = #{taskStartDtm},
+            TASK_END_DTM = #{taskEndDtm},
+            TASK_STAT_CD = #{taskStatCd},
+            PROGRESS_RATE = #{progressRate},
+            MOD_DTM = SYSDATE
+        WHERE TASK_NO = #{taskNo}
+    </update>
+
+    <!-- SOFT DELETE -->
+    <update id="deleteTask" parameterType="long">
+        UPDATE ASSIGN_TASK
+        SET DEL_YN = 'Y', DEL_DTM = SYSDATE
+        WHERE TASK_NO = #{taskNo}
+    </update>
+
+</mapper>

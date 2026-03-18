@@ -1,0 +1,305 @@
+/* Footer.css */
+
+/* 기본 레이아웃 및 컨테이너 */
+.footer {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+  padding: 0;
+  /* min-height: 100vh;  필요 시 주석 해제하여 사용하세요 */
+}
+
+.footer-container {
+  margin-left: 195px;
+  max-width: 1600px;
+  width: 100%;
+  padding: 0 200px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  min-height: 250px;
+  transform: translateY(-20px);
+}
+
+/* 푸터 내부 콘텐츠 구역 */
+.footer-content {
+  width: 100%;
+  padding: 80px 80px 40px;
+}
+
+.footer-top {
+  display: grid;
+  grid-template-columns: 2fr 3fr;
+  gap: 80px;
+  margin-bottom: 60px;
+}
+
+/* 브랜드 및 로고 섹션 */
+.footer-brand {
+  max-width: 400px;
+}
+
+.footer-logo {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.footer-logo-icon {
+  width: 50px;
+  height: 50px;
+  background: var(--accent-gradient);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: 900;
+  color: #000;
+  box-shadow: 0 0 30px rgba(0, 240, 255, 0.3);
+}
+
+.footer-logo h3 {
+  font-size: 32px;
+  font-weight: 800;
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0;
+}
+
+.footer-tagline {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+.footer-description {
+  font-size: 15px;
+  line-height: 1.8;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* 링크 컬럼 섹션 */
+.footer-links {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+}
+
+.footer-column h4 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 20px;
+  position: relative;
+  display: inline-block;
+}
+
+.footer-column h4::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 30px;
+  height: 2px;
+  background: var(--accent-gradient);
+}
+
+.footer-column ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-column li {
+  margin-bottom: 12px;
+}
+
+.footer-column a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  display: inline-block;
+}
+
+.footer-column a:hover {
+  color: var(--accent-primary);
+  transform: translateX(5px);
+}
+
+.footer-column li:not(:has(a)) {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+/* 소셜 및 하단 정보 */
+.footer-social {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin-bottom: 50px;
+}
+
+.social-link {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 50%;
+  color: var(--text-secondary);
+  font-size: 20px;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.social-link:hover {
+  background: var(--accent-gradient);
+  border-color: transparent;
+  color: #000;
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 240, 255, 0.3);
+}
+
+.footer-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border-color) 20%, var(--border-color) 80%, transparent);
+  margin-bottom: 30px;
+}
+
+.footer-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.copyright {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.footer-legal {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.footer-legal a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.3s ease;
+}
+
+.footer-legal a:hover {
+  color: var(--accent-primary);
+}
+
+.footer-legal .divider {
+  color: var(--border-color);
+}
+
+/* CTA (Call to Action) 섹션 */
+.footer-cta {
+  background: var(--bg-secondary);
+  padding: 80px;
+  text-align: center;
+  border-top: 1px solid var(--border-color);
+  position: relative;
+  overflow: hidden;
+}
+
+.footer-cta::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.05), transparent);
+  animation: slide-shine 4s ease-in-out infinite;
+}
+
+@keyframes slide-shine {
+  0% { left: -100%; }
+  50%, 100% { left: 100%; }
+}
+
+.footer-cta h3 {
+  font-size: 42px;
+  font-weight: 900;
+  color: var(--text-primary);
+  margin-bottom: 15px;
+  position: relative;
+  z-index: 1;
+}
+
+.footer-cta p {
+  font-size: 18px;
+  color: var(--text-secondary);
+  margin-bottom: 35px;
+  position: relative;
+  z-index: 1;
+}
+
+.cta-button {
+  padding: 20px 50px;
+  background: var(--accent-gradient);
+  border: none;
+  border-radius: 50px;
+  color: #000;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 10px 30px rgba(0, 240, 255, 0.3);
+  position: relative;
+  z-index: 1;
+}
+
+.cta-button span {
+  transition: transform 0.3s ease;
+  font-size: 22px;
+}
+
+.cta-button:hover {
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 20px 50px rgba(0, 240, 255, 0.5);
+}
+
+.cta-button:hover span {
+  transform: translateX(5px);
+}
+
+/* 반응형 디자인 */
+@media (max-width: 1024px) {
+  .footer-content { padding: 60px 40px 30px; }
+  .footer-top { grid-template-columns: 1fr; gap: 50px; }
+  .footer-links { grid-template-columns: repeat(2, 1fr); }
+  .footer-cta { padding: 60px 40px; }
+}
+
+@media (max-width: 768px) {
+  .footer-content { padding: 50px 20px 20px; }
+  .footer-links { grid-template-columns: 1fr; }
+  .footer-info { flex-direction: column; gap: 15px; text-align: center; }
+  .footer-cta { padding: 50px 20px; }
+  .footer-cta h3 { font-size: 32px; }
+  .footer-cta p { font-size: 16px; }
+}

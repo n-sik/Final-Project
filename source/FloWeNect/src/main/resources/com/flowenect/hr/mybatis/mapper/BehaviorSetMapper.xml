@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.flowenect.hr.behavior.set.mapper.BehaviorSetMapper">
+
+	<!-- useGeneratedKeys = true // DB가 자동 생성한 pk 값을 java 객체에 다시 넣어달라는 요청 keyProperty 
+		= "값" // 그래서 그 값이 무엇인지. -->
+	<insert 
+		id="insertTestMst"
+		parameterType="com.flowenect.hr.dto.behavior.TestMstDTO"
+		useGeneratedKeys="true" keyProperty="testNo"
+	>
+		<selectKey 
+			keyProperty="testNo" 
+			resultType="int"
+			order="BEFORE"
+		>
+			SELECT SEQ_TYPE_NO.NEXTVAL FROM DUAL
+		</selectKey>
+
+		INSERT INTO test_mst (
+			TEST_NO,
+			TEST_NM,
+			TEST_DESC,
+			WRTR_EMP_NO,
+			REG_DTM
+		) VALUES (
+			#{testNo},
+			#{testNm},
+			#{testDesc},
+			#{wrtrEmpNo},
+			SYSDATE
+		)
+
+	</insert>
+
+	<insert 
+		id="insertQuestion"
+		parameterType="com.flowenect.hr.dto.behavior.QuestionDTO"
+		useGeneratedKeys="true" keyProperty="qstNo"
+	>
+		<selectKey 
+			keyProperty="qstNo" 
+			resultType="int"
+			order="BEFORE"
+		>
+			SELECT SEQ_QST_NO.NEXTVAL FROM DUAL
+		</selectKey>
+
+		INSERT INTO question (
+			QST_NO,
+			TEST_NO,
+			QST_NM
+		) VALUES (
+			#{qstNo},
+			#{testNo},
+			#{qstNm}
+		)
+	</insert>
+
+	<!-- <insert -->
+	<!-- id="insertQuestionItems" -->
+	<!-- > -->
+	<!-- INSERT ALL -->
+	<!-- <foreach collection="items" item="it"> -->
+	<!-- INTO question_item (ITEM_NO, QST_NO, ITEM_CN) -->
+	<!-- VALUES (SEQ_ITEM_NO.NEXTVAL, #{it.qstNo}, #{it.itemCn}) -->
+	<!-- </foreach> -->
+	<!-- SELECT 1 FROM DUAL -->
+	<!-- </insert> -->
+
+	<insert 
+		id="insertQuestionItems"
+		parameterType="com.flowenect.hr.dto.behavior.QuestionItemDTO"
+	>
+		<selectKey 
+			keyProperty="itemNo" 
+			resultType="int"
+			order="BEFORE"
+		>
+			SELECT SEQ_ITEM_NO.NEXTVAL FROM DUAL
+		</selectKey>
+
+		INSERT INTO question_item (
+			ITEM_NO,
+			QST_NO,
+			ITEM_CN,
+			ITEM_TYPE
+		) VALUES (
+			#{itemNo},
+			#{qstNo},
+			#{itemCn},
+			#{itemType}
+		)
+	</insert>
+
+	<insert 
+		id="insertBehaviorType"
+		parameterType="com.flowenect.hr.dto.behavior.BehaviorTypeDTO"
+	>
+
+		INSERT INTO behavior_type (
+			TYPE_NO,
+			TYPE_CD,
+			TYPE_NM,
+			TYPE_CN,
+			TEST_NO
+		) VALUES (
+			SEQ_TYPE_NO.NEXTVAL,
+			#{typeCd},
+			#{typeNm},
+			#{typeCn},
+			#{testNo}
+		)
+
+	</insert>
+
+	<select 
+		id="selectListTestMst"
+		resultType="com.flowenect.hr.dto.behavior.TestMstDTO"
+	>
+		SELECT
+			TEST_NO,
+			TEST_NM,
+			TEST_DESC,
+			WRTR_EMP_NO,
+			REG_DTM,
+			MOD_DTM
+		FROM
+			test_mst
+	</select>
+
+	<select 
+		id="selectListQuestions"
+		resultType="com.flowenect.hr.dto.behavior.QuestionDTO"
+	>
+		SELECT
+			QST_NO,
+			TEST_NO,
+			QST_NM
+		FROM
+			question
+	</select>
+
+	<select 
+		id="selectListQuestionItems"
+		resultType="com.flowenect.hr.dto.behavior.QuestionItemDTO"
+	>
+		SELECT
+			ITEM_NO,
+			QST_NO,
+			ITEM_CN,
+			ITEM_TYPE
+		FROM
+			question_item
+	</select>
+
+	<select 
+		id="selectListBehaviorTypes"
+		resultType="com.flowenect.hr.dto.behavior.BehaviorTypeDTO"
+	>
+
+		SELECT
+			TYPE_NO,
+			TYPE_CD,
+			TYPE_NM,
+			TYPE_CN,
+			TEST_NO
+		FROM
+			behavior_type
+
+	</select>
+
+	<update 
+		id="updateTestMst"
+		parameterType="com.flowenect.hr.dto.behavior.TestMstDTO"
+	>
+		UPDATE TEST_MST
+		SET 
+			TEST_NM = #{testNm},
+			TEST_DESC = #{testDesc},
+			MOD_DTM = SYSDATE
+		WHERE TEST_NO = #{testNo}
+	</update>
+
+	<update id="updateQuestion"
+		parameterType="com.flowenect.hr.dto.behavior.QuestionDTO">
+		UPDATE QUESTION
+		SET QST_NM = #{qstNm}
+		WHERE 
+			QST_NO = #{qstNo}
+			AND TEST_NO = #{testNo}
+	</update>
+
+	<update 
+		id="updateQuestionItem"
+		parameterType="com.flowenect.hr.dto.behavior.QuestionItemDTO"
+	>
+		UPDATE QUESTION_ITEM
+		SET 
+			ITEM_CN = #{itemCn},
+			ITEM_TYPE = #{itemType}
+		WHERE 
+			ITEM_NO = #{itemNo}
+			AND QST_NO = #{qstNo}
+	</update>
+
+	<update 
+		id="updateBehaviorType"
+		parameterType="com.flowenect.hr.dto.behavior.BehaviorTypeDTO"
+	>
+		UPDATE BEHAVIOR_TYPE
+		SET 
+			TYPE_CD = #{typeCd},
+			TYPE_NM = #{typeNm},
+			TYPE_CN = #{typeCn}
+		WHERE 
+			TYPE_NO = #{typeNo}
+			AND TEST_NO = #{testNo}
+	</update>
+
+	<select 
+		id="selectQstNoListByTestNo" 
+		parameterType="int"
+		resultType="int"
+	>
+		SELECT QST_NO
+		FROM QUESTION
+		WHERE TEST_NO = #{testNo}
+	</select>
+
+	<select 
+		id="selectItemNoListByTestNo" 
+		parameterType="int"
+		resultType="int"
+	>
+		SELECT qi.ITEM_NO
+		FROM QUESTION_ITEM qi
+		JOIN QUESTION q
+			ON q.QST_NO = qi.QST_NO
+		WHERE q.TEST_NO = #{testNo}
+	</select>
+
+	<select 
+		id="selectTypeNoListByTestNo" 
+		parameterType="int"
+		resultType="int"
+	>
+		SELECT TYPE_NO
+		FROM BEHAVIOR_TYPE
+		WHERE TEST_NO = #{testNo}
+	</select>
+
+
+	<delete id="deleteTestMstByTestNo" parameterType="int">
+	    DELETE FROM TEST_MST
+	    WHERE TEST_NO = #{testNo}
+	</delete>
+
+	<delete 
+		id="deleteQuestionsByIds" 
+		parameterType="java.util.Set"
+	>
+		DELETE FROM QUESTION
+		WHERE QST_NO IN
+			<foreach 
+				collection="collection" 
+				item="id" 
+				open="("
+				separator="," 
+				close=")"
+			>
+				#{id}
+			</foreach>
+	</delete>
+
+	<delete 
+		id="deleteQuestionItemsByIds"
+		parameterType="java.util.Set"
+	>
+		DELETE FROM QUESTION_ITEM
+		WHERE ITEM_NO IN
+			<foreach 
+				collection="collection" 
+				item="id" 
+				open="("
+				separator="," 
+				close=")"
+			>
+				#{id}
+			</foreach>
+	</delete>
+
+	<delete 
+		id="deleteBehaviorTypesByIds"
+		parameterType="java.util.Set"
+	>
+		DELETE FROM BEHAVIOR_TYPE
+		WHERE TYPE_NO IN
+			<foreach 
+				collection="collection" 
+				item="id" 
+				open="("
+				separator="," 
+				close=")"
+			>
+				#{id}
+			</foreach>
+	</delete>
+
+</mapper>

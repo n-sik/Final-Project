@@ -1,0 +1,544 @@
+@charset "UTF-8";
+
+/* =========================================================
+   aprvList 전용 스타일 (단일 CSS)
+   - mainboard.css의 타이포/색/레디우스/섀도우 “수치”에 맞춤
+   - 전역 테마(전역 폰트/전역 배경 강제) 적용하지 않음
+   - 페이지 전체 스크롤 제거 + 섹션 내부만 스크롤
+   ========================================================= */
+
+html, body { height: 100%; }
+body { margin: 0; }
+
+/* 페이지 스코프 */
+.aprv-list-page{
+  height: 100%;
+  overflow: hidden;
+
+  /* mainboard.css :root와 동일 값 */
+  --aprv-line:#e6e8f0;
+  --aprv-line2:#d8ddeb;
+  --aprv-text:#111827;
+  --aprv-muted:#6b7280;
+  --aprv-muted2:#94a3b8;
+
+  --aprv-primary:#3b6cff;
+  --aprv-primary-bg:#eef3ff;
+
+  --aprv-radius-layout:8px;
+  --aprv-radius-control:12px;
+  --aprv-radius-pill:999px;
+
+  --aprv-shadow:0 10px 24px rgba(17,24,39,.06);
+  --aprv-shadow2:0 6px 14px rgba(17,24,39,.05);
+
+  /* Typography (mainboard.css 기준) */
+  --aprv-fs-base:0.85rem;
+  --aprv-fs-title:1.00rem;
+  --aprv-fs-h2:1.00rem;
+  --aprv-fw-base:400;
+  --aprv-fw-strong:600;
+
+  /* Layout rhythm */
+  --aprv-gap:12px;
+}
+
+.aprv-list-page *{ box-sizing: border-box; }
+
+/* 컨테이너: 상단 고정 + 본문(남은 높이) */
+.aprv-container{
+  height: 100%;
+  min-height: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--aprv-gap);
+  padding: 0; /* 바깥 레이아웃의 좌우 패딩/여백을 신뢰 */
+}
+
+/* =========================================================
+   Alert
+   ========================================================= */
+.aprv-alert{
+  background: #fff;
+  border: 1px solid var(--aprv-line);
+  border-radius: var(--aprv-radius-layout);
+  padding: 12px 14px;
+  box-shadow: var(--aprv-shadow2);
+  font-size: var(--aprv-fs-base);
+  color: var(--aprv-text);
+}
+
+/* =========================================================
+   Top header (탭 + 기안작성 버튼)
+   ========================================================= */
+.aprv-top {
+  height: 64px;                        /* ✅ 고정 높이 */
+  padding: 0 16px;                     /* ✅ 상하 패딩 제거 */
+  background: #fff;
+  border-bottom: 1px solid var(--aprv-line);  /* ✅ 하단만 */
+  border-radius: 10px;
+  box-shadow: var(--aprv-shadow2);
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.aprv-top-left{ min-width: 0; }
+
+.aprv-top-title {
+  margin: 0;
+  font-size: 15px;                     /* ✅ 기준 */
+  font-weight: 700;
+  letter-spacing: -0.1px;
+  color: var(--aprv-text);
+}
+
+.aprv-top-sub {
+  margin: 2px 0 0;                     /* ✅ 6px → 2px */
+  font-size: 11px;
+  color: #94a3b8;
+  font-weight: 400;
+}
+
+/* 오른쪽 영역 */
+.aprv-top-right{
+  display: flex;
+  align-items: center;           /* ✅ 내부도 가운데 정렬 */
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+/* 탭 */
+.aprv-top-tabs{
+  display: flex;
+  gap: 8px;
+
+  /* ✅ 하단 밑줄 제거 */
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.aprv-tab{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 34px;
+  padding: 0 12px;
+  border-radius: var(--aprv-radius-pill);
+  border: 1px solid var(--aprv-line);
+  background: #fff;
+  color: var(--aprv-text);
+  text-decoration: none;
+  font-size: var(--aprv-fs-base);
+  font-weight: var(--aprv-fw-strong);
+  white-space: nowrap;
+}
+
+.aprv-tab:hover{
+  border-color: var(--aprv-line2);
+  box-shadow: 0 0 0 3px rgba(59,108,255,.10);
+}
+
+.aprv-tab.is-active{
+  border-color: rgba(59,108,255,.35);
+  background: var(--aprv-primary-bg);
+  color: var(--aprv-primary);
+}
+
+/* 버튼 */
+.aprv-btn{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 34px;
+  padding: 0 12px;
+  border-radius: var(--aprv-radius-control);
+  border: 1px solid var(--aprv-line);
+  background: #fff;
+  color: var(--aprv-text);
+  text-decoration: none;
+  font-size: var(--aprv-fs-base);
+  font-weight: var(--aprv-fw-strong);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.aprv-btn:hover{
+  border-color: var(--aprv-line2);
+  box-shadow: 0 0 0 3px rgba(59,108,255,.10);
+}
+
+.aprv-btn--primary{
+  border-color: rgba(59,108,255,.35);
+  background: var(--aprv-primary);
+  color: #fff;
+}
+
+.aprv-btn--primary:hover{
+  box-shadow: 0 0 0 3px rgba(59,108,255,.18);
+}
+
+/* =========================================================
+   Guide (페이지 안내)
+   ========================================================= */
+/* =========================================================
+   Guide (페이지 안내) — 기준값으로 통일
+   ========================================================= */
+.aprv-guide {
+  background: #fff;
+  border-bottom: 1px solid var(--aprv-line);  /* ✅ 하단만 */
+  border-radius: 10px;
+  box-shadow: var(--aprv-shadow2);
+  height: 56px;                               /* ✅ 고정 높이 */
+  padding: 0 16px;                            /* ✅ 상하 패딩 제거 */
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.aprv-guide-left {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;                                  /* ✅ 제목/설명 가로 배치 */
+}
+
+.aprv-guide-title {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--aprv-text);
+  white-space: nowrap;
+}
+
+.aprv-guide-desc {
+  margin: 0;                                  /* ✅ margin 제거 */
+  font-size: 11px;
+  color: #94a3b8;
+  font-weight: 400;
+  line-height: 1.4;
+
+  /* 긴 텍스트 말줄임 */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.aprv-guide-right {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: nowrap;
+  justify-content: flex-end;
+  flex-shrink: 0;
+}
+
+.aprv-guide-pill {
+  display: inline-flex;
+  align-items: center;
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 999px;
+  border: 1px solid var(--aprv-line);
+  background: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--aprv-text);
+  white-space: nowrap;
+}
+
+.aprv-guide-pill.is-tip {
+  color: #94a3b8;
+}
+/* =========================================================
+   Main layout (좌/우 동일 높이 + 내부만 스크롤)
+   ========================================================= */
+.aprv-list-grid{
+  flex: 1;
+  min-height: 0;
+  display: grid;
+
+  /* ✅ 검색조건(좌측) 섹션 가로폭 확대
+     - 고정 360px → clamp로 유연하게 확장
+     - 화면이 넓을수록 좌측이 더 넓어짐 (입력란 폭 안정) */
+  grid-template-columns: clamp(420px, 38vw, 560px) 1fr;
+
+  gap: var(--aprv-gap);
+  align-items: stretch;
+
+  padding-top: var(--aprv-pt);
+  padding-bottom: 0;
+}
+
+@media (max-width: 980px){
+  .aprv-list-grid{ grid-template-columns: 1fr; }
+}
+
+/* Card */
+.aprv-card{
+  background: #fff;
+  border: 1px solid var(--aprv-line);
+  border-radius: var(--aprv-radius-layout);
+  box-shadow: var(--aprv-shadow2);
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ✅ 우측 문서목록(특히 제목) 여백 줄이기:
+   head / body padding을 살짝 타이트하게 조정 */
+.aprv-card__head{
+  padding: 10px 12px;                 /* 기존 12px 14px */
+  border-bottom: 1px solid var(--aprv-line);
+  display: flex;
+  align-items: center;                 /* baseline → center (상단 여백 체감 감소) */
+  justify-content: space-between;
+  gap: 10px;
+  flex: 0 0 auto;
+}
+
+.aprv-card__head--rail{ align-items: flex-end; }
+
+.aprv-card__title{
+  margin: 0;
+  font-size: var(--aprv-fs-title);
+  font-weight: var(--aprv-fw-strong);
+  color: var(--aprv-text);
+  line-height: 1.15;                   /* ✅ 제목 라인 높이 줄여 “공간 남음” 체감 감소 */
+}
+
+.aprv-card__meta{
+  font-size: var(--aprv-fs-base);
+  color: var(--aprv-muted);
+  font-weight: var(--aprv-fw-base);
+}
+
+.aprv-card__body{
+  padding: 12px;                       /* 기존 14px */
+  min-height: 0;
+}
+
+.aprv-card__body--scroll{
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  padding: 12px;                       /* 기존 14px */
+}
+
+.aprv-card__footer{
+  flex: 0 0 auto;
+  padding: 10px 12px;                  /* 기존 12px 14px */
+  border-top: 1px solid var(--aprv-line);
+  background: #fff;
+}
+
+/* =========================================================
+   Filter / Fields
+   ========================================================= */
+.aprv-filter{ margin: 0; }
+
+/* ✅ 검색조건 입력란들의 가로 넓이 “일정하게”
+   - 6분할 grid는 span 조합에 따라 폭이 제각각으로 보이기 쉬움
+   - 2열(동일폭) 기반으로 통일 → 모든 입력이 같은 폭으로 정렬됨 */
+.aprv-filter__grid{
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr)); /* ✅ 2열 동일폭 */
+  gap: 12px;
+}
+
+.aprv-filter__grid--rail{ grid-template-columns: 1fr; }
+
+.aprv-field{
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+/* wide는 2열 전체를 차지 (제목/키워드 같은 긴 필드용) */
+.aprv-field--wide{ grid-column: 1 / -1; }
+
+.aprv-label{
+  font-size: calc(var(--aprv-fs-base) * 0.92);
+  font-weight: var(--aprv-fw-strong);
+  color: var(--aprv-text);
+  opacity: .9;
+}
+
+.aprv-input,
+.aprv-select{
+  width: 100%;
+  border: 1px solid var(--aprv-line);
+  border-radius: 10px;
+  padding: 10px 10px;
+  font-size: var(--aprv-fs-base);
+  outline: none;
+  background: #fff;
+  color: var(--aprv-text);
+}
+
+.aprv-input:focus,
+.aprv-select:focus{
+  border-color: rgba(59,108,255,.55);
+  box-shadow: 0 0 0 3px rgba(59,108,255,.14);
+}
+
+.aprv-help{
+  margin: 0;
+  font-size: calc(var(--aprv-fs-base) * 0.92);
+  color: var(--aprv-muted);
+  line-height: 1.35;
+}
+
+.aprv-filter__actions{
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
+.aprv-filter__actions--rail .aprv-btn{ flex: 1; }
+
+/* =========================================================
+   Table
+   ========================================================= */
+.aprv-empty-card{
+  border: 1px dashed var(--aprv-line);
+  border-radius: var(--aprv-radius-layout);
+  padding: 22px 14px;
+  color: var(--aprv-muted);
+  text-align: center;
+  background: #fafafa;
+  font-size: var(--aprv-fs-base);
+  font-weight: var(--aprv-fw-strong);
+}
+
+/* 테이블 래퍼(가로 오버플로우 안전) */
+.aprv-table-wrap{ width: 100%; overflow: auto; }
+
+.aprv-table{
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid var(--aprv-line);
+  border-radius: var(--aprv-radius-layout);
+  overflow: hidden;
+}
+
+.aprv-table thead th{
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: #f9fafb;
+  color: var(--aprv-text);
+  opacity: .9;
+  font-size: calc(var(--aprv-fs-base) * 0.92);
+  font-weight: var(--aprv-fw-strong);
+  text-align: center;
+  padding: 10px 10px;
+  border-bottom: 1px solid var(--aprv-line);
+  white-space: nowrap;
+}
+
+.aprv-table tbody td{
+  padding: 10px 10px;
+  border-bottom: 1px solid #f1f3f9;
+  font-size: var(--aprv-fs-base);
+  color: var(--aprv-text);
+  vertical-align: middle;
+  text-align: center;
+}
+
+.aprv-table tbody tr:last-child td{ border-bottom: 0; }
+
+/* JS 유지용 클릭행 클래스 */
+.aprv-item--clickable{ cursor: pointer; }
+.aprv-item--clickable:hover td{ background: #fbfbff; }
+
+/* widths */
+.col-no{ width: 88px; }
+.col-form{ width: 140px; }
+.col-step{ width: 120px; }
+.col-reg{ width: 120px; }
+.col-last{ width: 120px; }
+.col-stat{ width: 110px; }
+
+/* 제목 말줄임 */
+.aprv-ttl{
+  font-weight: var(--aprv-fw-strong);
+  letter-spacing: -0.1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  text-align: center;
+}
+
+/* =========================================================
+   Badge
+   ========================================================= */
+.aprv-badge{
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 9px;
+  border-radius: var(--aprv-radius-pill);
+  font-size: calc(var(--aprv-fs-base) * 0.92);
+  font-weight: var(--aprv-fw-strong);
+  border: 1px solid var(--aprv-line);
+  background: #fff;
+  white-space: nowrap;
+}
+
+.aprv-badge--draft{ color:#374151; background:#f3f4f6; border-color:#e5e7eb; }
+.aprv-badge--submitted{ color:#1d4ed8; background:#eff6ff; border-color:#bfdbfe; }
+.aprv-badge--in_progress{ color:#92400e; background:#fffbeb; border-color:#fde68a; }
+.aprv-badge--approved{ color:#166534; background:#ecfdf5; border-color:#bbf7d0; }
+.aprv-badge--rejected{ color:#991b1b; background:#fef2f2; border-color:#fecaca; }
+.aprv-badge--canceled,
+.aprv-badge--cancelled{ color:#6b7280; background:#f9fafb; border-color:#e5e7eb; }
+
+/* =========================================================
+   Pagination
+   ========================================================= */
+.aprv-pagination{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+}
+
+.aprv-page{
+  min-width: 34px;
+  height: 34px;
+  padding: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--aprv-line);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--aprv-text);
+  font-size: var(--aprv-fs-base);
+  font-weight: var(--aprv-fw-strong);
+  text-decoration: none;
+}
+
+.aprv-page:hover{
+  border-color: var(--aprv-line2);
+  box-shadow: 0 0 0 3px rgba(59,108,255,.10);
+}
+
+.aprv-page.is-active{
+  border-color: rgba(59,108,255,.40);
+  background: var(--aprv-primary-bg);
+  color: var(--aprv-primary);
+}

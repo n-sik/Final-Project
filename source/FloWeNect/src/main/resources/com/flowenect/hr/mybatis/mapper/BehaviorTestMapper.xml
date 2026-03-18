@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.flowenect.hr.behavior.test.mapper.BehaviorTestMapper">
+
+  <select id="selectTestMst"
+          parameterType="string"
+          resultType="com.flowenect.hr.dto.behavior.TestMstDTO">
+      SELECT
+          TEST_NO,
+          TEST_NM,
+          TEST_DESC,
+          WRTR_EMP_NO,
+          REG_DTM,
+          MOD_DTM
+      FROM TEST_MST
+      WHERE TEST_NO = #{testNo}
+      
+  </select>
+
+  <select id="selectQuestions"
+          parameterType="string"
+          resultType="com.flowenect.hr.dto.behavior.QuestionDTO">
+      SELECT
+          QST_NO,
+          TEST_NO,
+          QST_NM
+      FROM QUESTION
+      WHERE TEST_NO = #{testNo}
+      ORDER BY QST_NO
+  </select>
+
+  <select id="selectQuestionItems"
+          parameterType="string"
+          resultType="com.flowenect.hr.dto.behavior.QuestionItemDTO">
+      SELECT
+          qi.ITEM_NO,
+          qi.QST_NO,
+          qi.ITEM_CN,
+          qi.ITEM_TYPE
+      FROM QUESTION_ITEM qi
+      JOIN QUESTION q
+        ON q.QST_NO = qi.QST_NO
+      WHERE q.TEST_NO = #{testNo}
+      ORDER BY qi.QST_NO, qi.ITEM_NO
+  </select>
+
+  <select id="selectListEmp"
+          parameterType="com.flowenect.hr.dto.EmpDTO"
+          resultType="com.flowenect.hr.dto.EmpDTO">
+      SELECT
+          EMP_NO,
+          DEPT_CD,
+          POS_CD,
+          EMP_NM,
+          PWD,
+          HIRE_DT,
+          EMP_EMAIL,
+          HP_NO,
+          RRNO,
+          ZIP_CD,
+          ADDR1,
+          ADDR2,
+          EMP_STAT_CD,
+          ACNT_ACT_YN,
+          REG_DTM,
+          MOD_DTM
+      FROM EMP
+      WHERE DEPT_CD = #{deptCd}
+  </select>
+
+  <!-- =========================
+       대상자 선택 모달 목록(부서명/직위명 + 반기 완료여부)
+       - doneYn: Y(완료) / N(필요)
+       - 반기 범위: startDate <= RSPNS_DTM < endDate
+       ========================= -->
+  <select id="selectEmpPickList"
+          resultType="com.flowenect.hr.dto.behavior.EmpPickDTO">
+    <![CDATA[
+      SELECT
+          e.EMP_NO AS empNo,
+          e.EMP_NM AS empNm,
+          d.DEPT_NM AS deptNm,
+          p.POS_NM  AS posNm,
+          CASE
+            WHEN EXISTS (
+              SELECT 1
+              FROM RSPNS r
+              WHERE r.TEST_NO = #{testNo}
+                AND r.RSPNR_EMP_NO = #{rspnrEmpNo}
+                AND r.TRGT_EMP_NO = e.EMP_NO
+                AND r.RSPNS_DTM >= #{startDate}
+                AND r.RSPNS_DTM <  #{endDate}
+            )
+            THEN 'Y'
+            ELSE 'N'
+          END AS doneYn
+      FROM EMP e
+      LEFT JOIN DEPT d ON d.DEPT_CD = e.DEPT_CD
+      LEFT JOIN POSITION_MST p ON p.POS_CD = e.POS_CD
+      WHERE e.EMP_NO <> #{rspnrEmpNo}
+      AND e.DEPT_CD = #{deptCd}
+      ORDER BY d.DEPT_NM, p.POS_LVL, e.EMP_NM
+    ]]>
+  </select>
+
+  <!-- 반기 기준: 이미 응답했는지 체크 -->
+  <select id="countRspnsInHalf" resultType="int">
+    <![CDATA[
+      SELECT COUNT(1)
+      FROM RSPNS r
+      WHERE r.TEST_NO = #{testNo}
+        AND r.RSPNR_EMP_NO = #{rspnrEmpNo}
+        AND r.TRGT_EMP_NO = #{trgtEmpNo}
+        AND r.RSPNS_DTM >= #{startDate}
+        AND r.RSPNS_DTM <  #{endDate}
+    ]]>
+  </select>
+
+  <insert id="insertRspns"
+          parameterType="com.flowenect.hr.dto.behavior.rspnsDTO"
+          useGeneratedKeys="false">
+
+    <selectKey keyProperty="rspnsNo"
+               resultType="int"
+               order="BEFORE">
+        SELECT SEQ_RSPNS_NO.NEXTVAL FROM DUAL
+    </selectKey>
+
+      INSERT INTO RSPNS (
+          RSPNS_NO,
+          TEST_NO,
+          RSPNR_EMP_NO,
+          TRGT_EMP_NO,
+          RSPNS_DTM,
+          ACTN_TYPE_RSLT
+      ) VALUES (
+          #{rspnsNo},
+          #{testNo},
+          #{rspnrEmpNo},
+          #{trgtEmpNo},
+          SYSDATE,
+          #{actnTypeRslt}
+      )
+  </insert>
+
+  <insert id="insertRspnsRslt"
+          parameterType="com.flowenect.hr.dto.behavior.rspnsRsltDTO">
+
+    <selectKey keyProperty="rspnsRsltNo"
+               resultType="int"
+               order="BEFORE">
+        SELECT SEQ_RSPNS_RSLT_NO.NEXTVAL FROM DUAL
+    </selectKey>
+
+      INSERT INTO RSPNS_RSLT (
+          RSPNS_RSLT_NO,
+          ITEM_NO,
+          RSPNS_NO,
+          RSPNS_VAL
+      ) VALUES (
+          #{rspnsRsltNo},
+          #{itemNo},
+          #{rspnsNo},
+          #{rspnsVal}
+      )
+  </insert>
+
+</mapper>

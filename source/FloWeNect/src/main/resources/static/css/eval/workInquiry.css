@@ -1,0 +1,1200 @@
+/* ========================================================================
+   work-management.css
+   ======================================================================== */
+
+
+/* ========================================================================
+   1. 전체 레이아웃 (Global Layout)
+   ======================================================================== */
+/* ========================================================================
+   workInquiry — c-page-header 내 검색 인풋 스타일
+   (workInquiry.css 최상단에 추가)
+   ======================================================================== */
+
+/* 검색 그룹 (라벨 + 인풋 묶음) */
+.wi-search-group {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.wi-search-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: #94a3b8;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+/* 날짜 범위 그룹 */
+.wi-date-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 32px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 0 10px;
+}
+
+.wi-date-input {
+    border: none;
+    background: transparent;
+    font-size: 12px;
+    font-weight: 600;
+    color: #334155;
+    width: 100px;
+    outline: none;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+/* 브라우저 기본 날짜 아이콘 제거 */
+.wi-date-input::-webkit-calendar-picker-indicator,
+.wi-date-input::-webkit-inner-spin-button,
+.wi-date-input::-webkit-clear-button { display: none !important; }
+
+.wi-date-sep {
+    font-size: 11px;
+    color: #cbd5e1;
+    font-weight: 600;
+}
+
+/* 키워드 인풋 */
+.wi-keyword-input {
+    height: 32px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 0 12px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #334155;
+    width: 180px;
+    outline: none;
+    font-family: inherit;
+    transition: border-color 0.2s;
+}
+
+.wi-keyword-input::placeholder { color: #cbd5e1; }
+.wi-keyword-input:focus { border-color: #4f46e5; }
+.work-management-wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    gap: 12px;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+/* 상단 검색바 고정 영역 */
+.work-search-bar {
+    flex: 0 0 auto;
+    background-color: #ffffff;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+}
+
+/* 하단 컨텐츠 가변 영역 */
+.work-bottom-layout {
+    display: flex;
+    flex: 1;
+    gap: 1rem;
+    width: 100%;
+    min-height: 0;
+    overflow: hidden;
+}
+
+/* 좌측 부서원 패널 */
+.side-nav-panel {
+    flex: 0 0 25%;
+    min-width: 250px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* 우측 업무 메인 패널 */
+.main-work-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+/* 데이터 렌더링 루트 (하얀 박스) */
+.work-content-root {
+    flex: 1;
+    background-color: #ffffff;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+    padding: 1.5rem;
+}
+
+.work-content-root::-webkit-scrollbar { width: 5px; }
+.work-content-root::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+
+
+/* ========================================================================
+   2. 상단 검색바 (Search Bar)
+   ======================================================================== */
+
+.search-row {
+    display: flex;
+    align-items: flex-end;
+    padding: 20px;
+    gap: 1rem;
+    height: 110px;
+    overflow: hidden;
+}
+
+.search-group  { display: flex; flex-direction: column; gap: 0.8rem; }
+.project-group { flex: 0 0 280px; }
+.date-group    { flex: 0 0 280px; }
+
+.search-label {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: #475569;
+    margin-left: 4px;
+}
+
+/* 공통 인풋 박스 */
+.search-control {
+    width: 245px !important;
+    height: 48px !important;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    padding: 0 1rem;
+}
+
+/* 키워드 검색창 */
+.keyword-group .search-control {
+    width: 100%;
+    padding: 8px 12px;
+}
+
+/* 날짜 그룹 */
+.date-input-group {
+    width: 320px !important;
+    height: 48px !important;
+    flex-shrink: 0;
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 10px;
+}
+
+.date-input-group input {
+    border: none;
+    background: transparent;
+    width: 100%;
+    height: 100%;
+    font-weight: inherit;
+    font-size: inherit;
+    outline: none;
+}
+
+.date-input-group .date-input {
+    flex: 1;
+    border: none !important;
+    background: transparent !important;
+    font-size: 0.95rem;
+    font-weight: 700;
+    text-align: center;
+    cursor: pointer;
+    outline: none;
+}
+
+/* 브라우저 기본 날짜 아이콘 제거 */
+.date-input::-webkit-calendar-picker-indicator,
+.date-input::-webkit-inner-spin-button,
+.date-input::-webkit-clear-button { display: none !important; }
+
+/* 검색 버튼 */
+.btn-search {
+    height: 48px;
+    padding: 0 2.5rem;
+    background-color: #4f46e5;
+    color: #ffffff;
+    border: none;
+    border-radius: 12px;
+    font-weight: 800;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.btn-search:hover { background-color: #4338ca; transform: translateY(-1px); }
+
+
+/* ========================================================================
+   3. 업무 현황 메인 (Tabs & Selected Member)
+   ======================================================================== */
+
+.main-work-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+}
+
+.selected-info-area {
+    padding: 0.5rem 0.25rem;
+    margin-bottom: 1.2rem;
+    flex: 0 0 auto;
+}
+
+#selectedMemberInfo {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #1e293b;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+}
+
+#selectedMemberInfo::before {
+    content: "";
+    width: 4px;
+    height: 20px;
+    background-color: #4f46e5;
+    border-radius: 4px;
+}
+
+/* 탭 메뉴 */
+.work-type-tabs {
+    display: flex;
+    gap: 1rem;
+    border-bottom: 2px solid #f1f5f9;
+    margin-bottom: 1.5rem;
+    flex: 0 0 auto;
+}
+
+.work-tab {
+    padding: 0.8rem 1.2rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #94a3b8;
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: 0.2s;
+}
+
+.work-tab.active { color: #4f46e5; }
+.work-tab.active::after {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: #4f46e5;
+    border-radius: 10px 10px 0 0;
+}
+
+/* 탭 컨텐츠 스크롤 컨테이너 */
+#projectAccordionContainer,
+#personalWorkContainer {
+    display: none;
+    flex: 1;
+    overflow-y: auto !important;
+    padding-right: 0.5rem;
+    min-height: 0;
+}
+
+#projectAccordionContainer.active,
+#personalWorkContainer.active { display: block; }
+
+
+/* ========================================================================
+   4. 요약 정보 바 (Summary Info)
+   ======================================================================== */
+
+.summary-info-area {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 1rem;
+    flex: 0 0 auto;
+}
+
+.summary-info-area i {
+    color: #94a3b8;
+    font-size: 0.95rem;
+}
+
+.summary-count-text {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #64748b;
+    letter-spacing: -0.01em;
+}
+
+.summary-count-text b {
+    color: #4f46e5;
+    font-weight: 800;
+    margin: 0 1px;
+}
+
+
+/* ========================================================================
+   5. 프로젝트 카드 & 아코디언 (Project Accordion)
+   ======================================================================== */
+
+.accordion-item.project-item {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    transition: 0.2s;
+}
+
+.accordion-item.project-item:hover {
+    border-color: #4f46e5;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.05);
+}
+
+.project-main-header {
+    padding: 24px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    transition: background-color 0.2s;
+}
+
+.project-main-header:hover { background-color: #f9fafb; }
+
+.title-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.proj-name {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #111827;
+}
+
+.proj-date-range {
+    margin-left: auto;
+    font-size: 13px;
+    color: #9ca3af;
+    font-weight: 500;
+    background: #f1f5f9;
+    padding: 4px 10px;
+    border-radius: 6px;
+}
+
+.proj-description {
+    margin-top: 8px;
+    color: #6b7280;
+    font-size: 14px;
+    line-height: 1.5;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* 아코디언 내용 */
+.accordion-content {
+    display: none;
+    background-color: #ffffff;
+    border-top: 1px solid #f1f5f9;
+    padding: 1.25rem 1.5rem;
+}
+
+.accordion-content.active {
+    display: block;
+    animation: slideDown 0.3s ease-out;
+}
+
+
+/* ========================================================================
+   6. 상태 배지 (Status Badge)
+   ======================================================================== */
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    line-height: 1;
+    font-size: 0.7rem;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 6px;
+    min-width: 45px;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.status-badge.stat-ing {
+    background-color: #4f46e5;
+    color: #ffffff;
+    border-radius: 50px;
+    padding: 4px 14px;
+    font-size: 11px;
+    border: none;
+}
+
+.status-badge.stat-end {
+    background-color: #f3f4f6;
+    color: #6b7280;
+    border-radius: 50px;
+    padding: 4px 14px;
+    font-size: 11px;
+    border: 1px solid #dee2e6;
+}
+
+.stat-진행 { background-color: #eef2ff; color: #4f46e5; border: 1px solid #c7d2fe; }
+.stat-완료 { background-color: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
+.stat-보류 { background-color: #fff7ed; color: #ea580c; border: 1px solid #ffedd5; }
+.stat-지연 { background-color: #fef2f2; color: #dc2626; border: 1px solid #fee2e2; }
+
+
+/* ========================================================================
+   7. KPI 아이템 (KPI Item)
+   ======================================================================== */
+
+.kpi-item {
+    margin: 12px 15px 12px 35px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background-color: #ffffff;
+    overflow: hidden;
+    transition: all 0.2s;
+}
+
+.kpi-item:last-child { margin-bottom: 0; }
+
+/* KPI 헤더 */
+.kpi-header {
+    padding: 15px 20px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fafafa;
+}
+
+.kpi-header-flex {
+    padding: 10px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f8fafc;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.kpi-header-flex:hover { background-color: #f8fafc; }
+
+.kpi-main-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.kpi-title-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+}
+
+/* KPI 뱃지 */
+.kpi-badge {
+    background-color: #4f46e5;
+    color: #ffffff;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+/* KPI 제목/설명 */
+.kpi-name-text { font-size: 1.05rem; color: #1f2937; margin: 0; }
+.kpi-desc-text { font-size: 0.9rem;  color: #6b7280;  margin: 0; }
+
+/* KPI 진행률 바 */
+.kpi-progress-box {
+    width: 130px;
+    margin: 0 15px;
+    flex-shrink: 0;
+}
+
+.kpi-progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    margin-bottom: 4px;
+    color: #4b5563;
+}
+
+.kpi-bar-wrapper {
+    height: 6px;
+    background: #f3f4f6;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.kpi-bar-fill {
+    height: 100%;
+    background-color: #4f46e5;
+    transition: width 0.4s ease-in-out;
+}
+
+.kpi-arrow { color: #9ca3af; transition: transform 0.3s; }
+
+/* KPI 타이틀 태그 (::before 방식) */
+.kpi-title-area {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.kpi-title-area span {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #334155;
+}
+
+.kpi-title-area span::before {
+    content: "KPI";
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: #4f46e5;
+    background-color: #eef2ff;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-right: 8px;
+}
+
+/* KPI 상태 영역 */
+.kpi-status-area {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-width: 140px;
+}
+
+.status-area {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.status-area .progress-track {
+    width: 80px;
+    height: 6px;
+    background: #e2e8f0;
+    border-radius: 10px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.status-area .progress-fill {
+    height: 100%;
+    background-color: #4f46e5;
+    transition: width 0.6s ease;
+}
+
+.progress-percent {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: #4f46e5;
+    width: 40px;
+    text-align: right;
+}
+
+
+/* ========================================================================
+   8. 업무(Task) 아이템 (Task Item)
+   ======================================================================== */
+
+.task-item {
+    margin: 8px 15px 8px 55px;
+    border: 1px solid #f1f5f9;
+    border-radius: 6px;
+    background-color: #fdfdfd;
+    transition: background-color 0.2s;
+}
+
+.task-item:hover { background-color: #f1f5f9; }
+
+.task-header-flex {
+    padding: 10px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    border-radius: 8px;
+}
+
+/* Task 제목 영역 */
+.task-title-area {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.task-main-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.task-name-text {
+    font-size: 0.95rem;
+    color: #334155;
+    margin: 0;
+}
+
+.task-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #334155;
+}
+
+.task-desc-text {
+    font-size: 0.88rem;
+    color: #64748b;
+    margin-top: 4px;
+    padding-left: 2px;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.task-date-top {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #888;
+    background: #f1f5f9;
+    padding: 4px 10px;
+    border-radius: 6px;
+}
+
+/* Task 뱃지 */
+.task-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #eef2ff;
+    color: #4f46e5;
+    border: 1px solid #c7d2fe;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    line-height: 1;
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    vertical-align: middle;
+}
+
+/* Task 진행률 영역 */
+.task-info-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.task-status-area {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 120px;
+}
+
+.task-rate-num {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #4f46e5;
+    min-width: 35px;
+    text-align: right;
+}
+
+.task-arrow { color: #cbd5e1; font-size: 0.75rem; }
+
+.task-status-area .progress-percent {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #64748b;
+    width: 35px;
+    text-align: right;
+}
+
+/* 공통 진행률 바 */
+.progress-track {
+    flex: 1;
+    height: 4px;
+    background-color: #e2e8f0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background-color: #64748b;
+    border-radius: 10px;
+}
+
+
+/* ========================================================================
+   9. 일지 (Log Item)
+   ======================================================================== */
+
+.accordion-content .log-item-container {
+    position: relative;
+    padding-left: 2rem;
+}
+
+.accordion-content .log-item-container:last-child::before {
+    bottom: 0;
+    height: 20px;
+}
+
+.log-item-container {
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    padding: 1.25rem;
+    transition: all 0.2s ease;
+}
+
+.log-item-container:hover {
+    border-color: #cbd5e1;
+    background-color: #f8fafc;
+}
+
+.log-item-container:last-child { border-bottom: none; }
+
+/* 일지 헤더 */
+.log-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.75rem;
+    gap: 1rem;
+}
+
+.log-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.log-title-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* 일지 제목 */
+.log-title-text {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #1f2937;
+    line-height: 1.4;
+    flex: 1;
+}
+
+/* 일지 날짜 */
+.log-work-date {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #94a3b8;
+    white-space: nowrap;
+    background: #f1f5f9;
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+.log-info-right {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.log-date    { font-weight: 500; }
+.log-rate-tag {
+    background-color: #f1f5f9;
+    padding: 1px 5px;
+    border-radius: 3px;
+    color: #4f46e5;
+    font-weight: 600;
+}
+
+/* 일지 본문 */
+.log-item-body {
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: #475569;
+    padding-top: 0.5rem;
+    border-top: 1px solid #f1f5f9;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+.log-content-text {
+    font-size: 0.88rem;
+    color: #475569;
+    line-height: 1.6;
+    margin: 0;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+/* 일지 뱃지 */
+.log-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #eef2ff;
+    color: #4f46e5;
+    border: 1px solid #c7d2fe;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    line-height: 1;
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    vertical-align: middle;
+}
+
+
+/* ========================================================================
+   10. 개인 업무 (Personal Work)
+   ======================================================================== */
+
+#personalWorkContainer {
+    background-color: #fcfdfe;
+    border-radius: 12px;
+}
+
+#personalWorkContainer .task-item {
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    margin-bottom: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+    transition: all 0.2s ease;
+}
+
+#personalWorkContainer .task-item:hover      { border-color: #4f46e5; }
+#personalWorkContainer .task-header-flex     { padding: 1.25rem 1.5rem; }
+#personalWorkContainer .task-name            { font-size: 0.95rem; font-weight: 700; color: #1e293b; }
+#personalWorkContainer .status-badge         { padding: 4px 10px; font-size: 0.75rem; }
+#personalWorkContainer .progress-track       { height: 8px; background-color: #f1f5f9; }
+
+.personal-summary-bar {
+    background: #f8faff;
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    color: #4f46e5;
+    font-size: 0.9rem;
+    border: 1px solid #eef2ff;
+}
+
+.personal-task-card {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    transition: all 0.2s;
+}
+
+.personal-task-card:hover {
+    border-color: #818cf8;
+    box-shadow: 0 2px 8px rgba(79, 70, 229, 0.05);
+}
+
+.personal-card-header {
+    padding: 12px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
+
+.personal-badge {
+    background-color: #4f46e5;
+    color: #fff;
+    font-size: 0.65rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-right: 8px;
+    vertical-align: middle;
+}
+
+.personal-title-text { font-size: 0.95rem; color: #1e293b; vertical-align: middle; }
+.personal-desc-text  { font-size: 0.85rem; color: #64748b; margin: 4px 0 0 0; padding-left: 2px; }
+
+.personal-right-area {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.personal-rate-info {
+    text-align: right;
+    width: 80px;
+}
+
+.rate-num {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #4f46e5;
+    display: block;
+    margin-bottom: 3px;
+}
+
+.mini-progress-bg    { width: 100%; height: 4px; background: #f1f5f9; border-radius: 2px; }
+.mini-progress-fill  { height: 100%; background: #4f46e5; border-radius: 2px; }
+.personal-arrow      { color: #cbd5e1; font-size: 0.8rem; }
+
+#personalWorkContainer .empty-msg {
+    padding: 4rem 0;
+    text-align: center;
+    color: #94a3b8;
+    background: #ffffff;
+    border-radius: 12px;
+}
+
+
+/* ========================================================================
+   11. 빈 화면 / 초기 안내 (Empty & Initial State)
+   ======================================================================== */
+
+/* 초기 안내 화면 */
+.initial-msg-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.initial-msg-card {
+    background: #ffffff;
+    padding: 40px;
+    border-radius: 15px;
+    text-align: center;
+    max-width: 500px;
+}
+
+.msg-icon-container {
+    position: relative;
+    font-size: 50px;
+    color: #4f46e5;
+    margin-bottom: 20px;
+}
+
+.icon-pulse {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+}
+
+.step-guide {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin: 20px 0;
+    font-size: 13px;
+    color: #64748b;
+}
+
+.main-instruction { font-size: 15px; color: #1e293b; margin-bottom: 10px; }
+.sub-instruction  { font-size: 14px; color: #94a3b8; line-height: 1.6; }
+
+/* 빈 프로젝트 */
+.empty-project-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 20px;
+    height: 100%;
+    min-height: 300px;
+    box-sizing: border-box;
+}
+
+.empty-state-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 50px 30px;
+    width: 100%;
+    max-width: 400px;
+    transition: transform 0.3s ease;
+}
+
+.empty-icon-box {
+    width: 70px;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.empty-icon-box i { font-size: 2rem; color: #4f46e5; }
+
+.empty-text-content h4 {
+    color: #1e293b;
+    font-size: 1.15rem;
+    font-weight: 800;
+    margin: 0 0 10px 0;
+    letter-spacing: -0.5px;
+}
+
+.empty-text-content p { color: #64748b; font-size: 0.95rem; line-height: 1.6; margin: 0; }
+
+/* 빈 일지 */
+.empty-log-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 0;
+    background-color: #f8fafc;
+    border-radius: 8px;
+    border: 1px dashed #cbd5e1;
+    color: #94a3b8;
+    margin: 10px 0;
+}
+
+.empty-log-container i  { font-size: 1.4rem; margin-bottom: 8px; opacity: 0.7; }
+.empty-log-container p  { font-size: 0.85rem; font-weight: 500; margin: 0; }
+
+/* 빈 메시지 카드 */
+.empty-msg-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    background: #ffffff;
+    border: 1px dashed #e5e7eb;
+    border-radius: 16px;
+    margin: 10px 0;
+}
+
+.empty-msg-card .icon-box {
+    width: 60px;
+    height: 60px;
+    background-color: #f3f4f6;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+}
+
+.empty-msg-card .icon-box i { font-size: 24px; color: #9ca3af; }
+.empty-msg-card h5          { font-size: 15px; font-weight: 700; color: #374151; margin-bottom: 8px; }
+.empty-msg-card p           { font-size: 14px; color: #6b7280; text-align: center; line-height: 1.5; }
+
+/* 빈 Task 플레이스홀더 */
+.empty-task-placeholder {
+    padding: 2.5rem 1.5rem;
+    background-color: #fcfcfd;
+    border-radius: 12px;
+    border: 1px solid #f1f5f9;
+    margin: 10px;
+    display: flex;
+    justify-content: center;
+}
+
+.placeholder-content {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    max-width: 320px;
+}
+
+.placeholder-icon {
+    width: 50px;
+    height: 50px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    flex-shrink: 0;
+}
+
+.placeholder-icon i      { font-size: 1.25rem; color: #cbd5e1; }
+.placeholder-text h5     { font-size: 0.95rem; font-weight: 800; color: #334155; margin: 0 0 4px 0; }
+.placeholder-text p      { font-size: 0.82rem; color: #64748b; line-height: 1.5; margin: 0; }
+
+.empty-project-msg          { text-align: center; }
+.empty-project-msg h4       { font-weight: 800; color: #475569; margin-bottom: 0.5rem; }
+.empty-project-msg p        { font-size: 0.9rem; color: #94a3b8; margin: 0; }
+
+.search-wrapper {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+
+/* ========================================================================
+   12. 애니메이션 (Animations)
+   ======================================================================== */
+
+@keyframes contentFadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}

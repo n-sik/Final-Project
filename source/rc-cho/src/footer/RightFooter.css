@@ -1,0 +1,130 @@
+/* RightFooter.css */
+
+.RightFooter {
+  flex: 1;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0px 40px 40px 40px;
+  box-sizing: border-box;
+  text-align: center;
+  position: relative;
+}
+
+.cta-badge {
+  display: inline-block;
+  padding: 10px;
+  background: rgba(0, 212, 255, 0.1);
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  border-radius: 20px;
+  color: #00d4ff;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  margin-bottom: -10px;
+}
+
+.cta-content {
+  margin-bottom: 50px;
+}
+
+.cta-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: #fff;
+  margin: 20px;
+}
+
+.cta-desc {
+  font-size: 16px;
+  color: #888;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.cta-icon-button {
+  position: relative;
+  background: transparent;
+  border: none !important;
+  cursor: pointer;
+  transition: transform 0.4s ease;
+}
+
+.run-icon-box {
+  width: 220px;
+  height: 220px;
+
+  background: linear-gradient(135deg, #00d4ff 0%, #0072ff 100%);
+  border-radius: 70px;
+  /* 크기가 커진 만큼 곡률도 함께 조절 */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #000;
+
+  /* 2. 내부 요소 간격 확장 */
+  gap: 20px;
+
+  z-index: 2;
+  position: relative;
+  transition: all 0.6s cubic-bezier(0.2, 1, 0.3, 1);
+
+  /* 3. 커진 덩치에 맞는 깊고 웅장한 그림자 */
+  box-shadow: 0 35px 80px rgba(0, 212, 255, 0.35);
+
+}
+
+/* 4. RUN 텍스트 크기 업스케일링 */
+.run-text {
+  font-size: 32px;
+  /* 22px -> 32px */
+  font-weight: 950;
+  letter-spacing: 6px;
+  /* 자간을 더 넓혀서 시원하게 배치 */
+  margin-top: 5px;
+}
+
+.run-icon-box svg {
+  width: 64px !important;
+  height: 64px !important;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.1));
+}
+
+/* 애니메이션 폭 미세 조정 */
+@keyframes floating-y {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-25px);
+  }
+
+  /* 진폭을 키워 더 역동적으로 */
+}
+
+.right-footer-bottom {
+  position: absolute;
+  bottom: 40px;
+  /* 바닥에서 40px 띄움 */
+  left: 0;
+  right: 0;
+  text-align: center;
+  pointer-events: none;
+  /* 클릭 방해 금지 */
+}
+
+.copyright {
+  font-size: 14px;
+  font-weight: 500;
+  color: #888;
+  /* #333에서 #888로 대폭 밝게 변경 */
+  letter-spacing: 1.2px;
+  opacity: 1;
+  text-transform: uppercase;
+}

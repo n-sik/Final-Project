@@ -1,0 +1,264 @@
+.strengths-main {
+  width: 70%;
+  margin: 0 auto;
+}
+
+.strengths-container {
+  width: 100%;
+  margin: 0 auto;
+  padding: 80px 20px;
+  color: #e4e6eb; 
+  position: relative;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 100px;
+  opacity: 0;
+  transform: translateY(30px);
+  animation: fadeInUp 0.8s ease forwards;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  font-size: 3.5rem;
+  font-weight: 800;
+  margin-bottom: 20px;
+}
+
+.title-icon {
+  width: 48px;
+  height: 48px;
+  color: #fffbdf;
+  flex-shrink: 0;
+
+  /* 핵심: 외부 광채 효과 */
+  filter: drop-shadow(0 0 8px #667eea) 
+          drop-shadow(0 0 15px rgba(118, 75, 162, 0.6));
+  animation: starTwinkle 3s infinite ease-in-out;
+}
+
+.section-description {
+  font-size: 1.2rem;
+  color: #a0aec0;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.features-section {
+  display: grid;
+  /* 1fr 1fr은 동일한 비율로 2개의 열을 만들겠다는 뜻입니다 */
+  grid-template-columns: repeat(2, 1fr);
+  gap: 30px;
+  padding: 0;
+  margin-top: 50px;
+  position: relative;
+  align-items: stretch;
+}
+
+.feature-card {
+  display: flex;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.6s ease-out;
+}
+
+.feature-card.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.feature-icon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  font-size: 1.5rem;
+  color: #667eea;
+  flex-shrink: 0;
+  z-index: 2;
+
+}
+
+.feature-card:hover .feature-icon {
+  transform: scale(1.15);
+}
+
+.card-content {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(102, 126, 234, 0.2);
+  border-radius: 24px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  padding: 40px;
+  backdrop-filter: blur(10px);
+  transition: all 0.4s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.card-content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s ease;
+}
+
+.feature-card:hover .card-content::before {
+  transform: scaleX(1);
+}
+
+.feature-card:hover .card-content {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(102, 126, 234, 0.4);
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(102, 126, 234, 0.15);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.title-group {
+  display: flex;
+  flex-direction: column; 
+  justify-content: center;
+  text-align: left;
+}
+
+.card-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0; 
+  line-height: 1.2;
+}
+
+.card-small-title {
+  font-size:0.85rem;
+  font-weight: 400;
+  margin-top: 2px;
+  color: #a0aec0;
+}
+
+.card-description {
+  flex-grow: 1;
+  color: #cbd5e0;
+  line-height: 1.5; 
+  margin-bottom: 25px;
+}
+
+.card-details {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+  align-self: stretch;
+}
+
+.card-details li {
+  padding-left: 30px;
+  margin-bottom: 15px;
+  color: #a0aec0;
+  line-height: 1.6;
+  position: relative;
+  font-size: 0.95rem;
+}
+
+.card-details li::before {
+  content: '▸';
+  position: absolute;
+  left: 0;
+  color: #667eea;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.card-details li:last-child {
+  margin-bottom: 0;
+}
+
+/* 밤하늘의 별처럼 불규칙하게 반짝이는 애니메이션 */
+@keyframes starTwinkle {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 0.8;
+    filter: drop-shadow(0 0 5px #667eea);
+  }
+  50% {
+    transform: scale(1.2) rotate(15deg);
+    opacity: 1;
+    /* 중간에 빛이 확 퍼지는 효과 */
+    filter: drop-shadow(0 0 15px #667eea) 
+            drop-shadow(0 0 25px rgba(118, 75, 162, 0.9));
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .section-title {
+    font-size: 2.5rem;
+  }
+
+  .section-description {
+    font-size: 1rem;
+  }
+
+  .features-section {
+    padding-left: 40px;
+  }
+
+  .features-section::before {
+    left: 10px;
+  }
+
+  .feature-icon {
+    left: -30px;
+    width: 35px;
+    height: 35px;
+    font-size: 1.1rem;
+  }
+
+  .card-content {
+    padding: 25px;
+  }
+
+  .card-title {
+    font-size: 1.4rem;
+  }
+
+  .card-description {
+    font-size: 1rem;
+  }
+
+  .feature-card {
+    margin-bottom: 60px;
+  }
+}

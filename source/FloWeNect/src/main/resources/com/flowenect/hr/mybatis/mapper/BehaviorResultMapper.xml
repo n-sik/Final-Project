@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.flowenect.hr.behavior.result.mapper.BehaviorResultMapper">
+
+  <!-- 부서 목록(표시용) -->
+  <select id="selectDeptList" resultType="com.flowenect.hr.dto.DeptDTO">
+    SELECT
+      DEPT_CD,
+      UP_DEPT_CD,
+      DEPT_TYPE_CD,
+      DEPT_HEAD_EMP_NO,
+      DEPT_NM,
+      DEPT_LOC,
+      DEPT_TEL,
+      DEL_YN,
+      REG_DTM,
+      MOD_DTM
+    FROM DEPT
+    WHERE DEL_YN = 'N'
+    ORDER BY DEPT_CD
+  </select>
+
+  <!-- 사원 목록(부서명/직위명 포함) - SSR용 -->
+  <select id="selectEmpViewList" resultType="com.flowenect.hr.dto.behavior.res.EmpViewDTO">
+    <![CDATA[
+      SELECT
+          e.EMP_NO  AS empNo,
+          e.EMP_NM  AS empNm,
+          e.DEPT_CD AS deptCd,
+          d.DEPT_NM AS deptNm,
+          p.POS_NM  AS posNm
+      FROM EMP e
+      LEFT JOIN DEPT d ON d.DEPT_CD = e.DEPT_CD
+      LEFT JOIN POSITION_MST p ON p.POS_CD = e.POS_CD
+      ORDER BY d.DEPT_NM, p.POS_LVL, e.EMP_NM
+    ]]>
+  </select>
+
+  <!-- 사원 단건(부서명/직위명 포함) - 셀프테스트 결과 모달용 -->
+  <select id="selectEmpViewByEmpNo" resultType="com.flowenect.hr.dto.behavior.res.EmpViewDTO">
+    <![CDATA[
+      SELECT
+          e.EMP_NO  AS empNo,
+          e.EMP_NM  AS empNm,
+          e.DEPT_CD AS deptCd,
+          d.DEPT_NM AS deptNm,
+          p.POS_NM  AS posNm
+      FROM EMP e
+      LEFT JOIN DEPT d ON d.DEPT_CD = e.DEPT_CD
+      LEFT JOIN POSITION_MST p ON p.POS_CD = e.POS_CD
+      WHERE e.EMP_NO = #{empNo}
+    ]]>
+  </select>
+
+  <!--
+    대상자 기준 응답 목록
+    - 기간: startDate <= RSPNS_DTM < endDate
+    - testNo가 있으면 필터
+  -->
+  <select id="selectRspnsSummaryByTarget" resultType="com.flowenect.hr.dto.behavior.res.BehaviorRspnsSummaryDTO">
+    <![CDATA[
+      SELECT
+          r.RSPNS_NO AS rspnsNo,
+          r.TEST_NO  AS testNo,
+          tm.TEST_NM AS testNm,
+
+          r.RSPNR_EMP_NO AS rspnrEmpNo,
+          er.EMP_NM      AS rspnrEmpNm,
+          dr.DEPT_NM     AS rspnrDeptNm,
+          pr.POS_NM      AS rspnrPosNm,
+
+          r.TRGT_EMP_NO  AS trgtEmpNo,
+          et.EMP_NM      AS trgtEmpNm,
+          dt.DEPT_NM     AS trgtDeptNm,
+          pt.POS_NM      AS trgtPosNm,
+
+          r.RSPNS_DTM    AS rspnsDtm,
+          r.ACTN_TYPE_RSLT AS actnTypeRslt
+      FROM RSPNS r
+      JOIN TEST_MST tm ON tm.TEST_NO = r.TEST_NO
+
+      LEFT JOIN EMP er ON er.EMP_NO = r.RSPNR_EMP_NO
+      LEFT JOIN DEPT dr ON dr.DEPT_CD = er.DEPT_CD
+      LEFT JOIN POSITION_MST pr ON pr.POS_CD = er.POS_CD
+
+      LEFT JOIN EMP et ON et.EMP_NO = r.TRGT_EMP_NO
+      LEFT JOIN DEPT dt ON dt.DEPT_CD = et.DEPT_CD
+      LEFT JOIN POSITION_MST pt ON pt.POS_CD = et.POS_CD
+      WHERE r.TRGT_EMP_NO = #{empNo}
+        AND r.RSPNS_DTM >= #{startDate}
+        AND r.RSPNS_DTM <  #{endDate}
+    ]]>
+      <if test="testNo != null and testNo != ''">
+        AND r.TEST_NO = #{testNo}
+      </if>
+    <![CDATA[
+      ORDER BY r.RSPNS_DTM DESC, r.RSPNS_NO DESC
+    ]]>
+  </select>
+
+  <!-- 응답 마스터 상세 -->
+  <select id="selectRspnsDetailMst" resultType="com.flowenect.hr.dto.behavior.res.BehaviorRspnsDetailMstDTO">
+    <![CDATA[
+      SELECT
+          r.RSPNS_NO AS rspnsNo,
+          r.TEST_NO  AS testNo,
+          tm.TEST_NM AS testNm,
+          tm.TEST_DESC AS testDesc,
+
+          r.RSPNR_EMP_NO AS rspnrEmpNo,
+          er.EMP_NM      AS rspnrEmpNm,
+          dr.DEPT_NM     AS rspnrDeptNm,
+          pr.POS_NM      AS rspnrPosNm,
+
+          r.TRGT_EMP_NO  AS trgtEmpNo,
+          et.EMP_NM      AS trgtEmpNm,
+          dt.DEPT_NM     AS trgtDeptNm,
+          pt.POS_NM      AS trgtPosNm,
+
+          r.RSPNS_DTM    AS rspnsDtm,
+          r.ACTN_TYPE_RSLT AS actnTypeRslt
+      FROM RSPNS r
+      JOIN TEST_MST tm ON tm.TEST_NO = r.TEST_NO
+
+      LEFT JOIN EMP er ON er.EMP_NO = r.RSPNR_EMP_NO
+      LEFT JOIN DEPT dr ON dr.DEPT_CD = er.DEPT_CD
+      LEFT JOIN POSITION_MST pr ON pr.POS_CD = er.POS_CD
+
+      LEFT JOIN EMP et ON et.EMP_NO = r.TRGT_EMP_NO
+      LEFT JOIN DEPT dt ON dt.DEPT_CD = et.DEPT_CD
+      LEFT JOIN POSITION_MST pt ON pt.POS_CD = et.POS_CD
+      WHERE r.RSPNS_NO = #{rspnsNo}
+    ]]>
+  </select>
+
+  <!--
+    행동유형 리포트(BehaviorType) 조회
+    - RSPNS.ACTN_TYPE_RSLT = BEHAVIOR_TYPE.TYPE_CD
+    - RSPNS.TEST_NO = BEHAVIOR_TYPE.TEST_NO
+  -->
+  <select id="selectBehaviorTypeByRspnsNo" resultType="com.flowenect.hr.dto.behavior.BehaviorTypeDTO">
+    <![CDATA[
+      SELECT
+          bt.TYPE_NO AS typeNo,
+          bt.TEST_NO AS testNo,
+          bt.TYPE_CD AS typeCd,
+          bt.TYPE_NM AS typeNm,
+          bt.TYPE_CN AS typeCn
+      FROM RSPNS r
+      JOIN BEHAVIOR_TYPE bt
+        ON bt.TEST_NO = r.TEST_NO
+       AND bt.TYPE_CD = r.ACTN_TYPE_RSLT
+      WHERE r.RSPNS_NO = #{rspnsNo}
+    ]]>
+  </select>
+
+  <!-- TEST_NO + TYPE_CD 기준 행동유형 리포트 조회(셀프테스트용) -->
+  <select id="selectBehaviorTypeByTestAndTypeCd" resultType="com.flowenect.hr.dto.behavior.BehaviorTypeDTO">
+    <![CDATA[
+      SELECT
+          bt.TYPE_NO AS typeNo,
+          bt.TEST_NO AS testNo,
+          bt.TYPE_CD AS typeCd,
+          bt.TYPE_NM AS typeNm,
+          bt.TYPE_CN AS typeCn
+      FROM BEHAVIOR_TYPE bt
+      WHERE bt.TEST_NO = #{testNo}
+        AND bt.TYPE_CD = #{typeCd}
+    ]]>
+  </select>
+
+  <!-- 응답 상세(문항/항목/점수) -->
+  <select id="selectRspnsAnswers" resultType="com.flowenect.hr.dto.behavior.res.BehaviorRspnsAnswerDTO">
+    <![CDATA[
+      SELECT
+          q.QST_NO     AS qstNo,
+          q.QST_NM     AS qstNm,
+          qi.ITEM_NO   AS itemNo,
+          qi.ITEM_CN   AS itemCn,
+          qi.ITEM_TYPE AS itemType,
+          rr.RSPNS_VAL AS rspnsVal
+      FROM RSPNS_RSLT rr
+      JOIN QUESTION_ITEM qi ON qi.ITEM_NO = rr.ITEM_NO
+      JOIN QUESTION q ON q.QST_NO = qi.QST_NO
+      WHERE rr.RSPNS_NO = #{rspnsNo}
+      ORDER BY q.QST_NO, qi.ITEM_NO
+    ]]>
+  </select>
+
+</mapper>

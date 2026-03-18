@@ -1,0 +1,531 @@
+/* 메인 레이아웃 및 배경 */
+.pageWrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.mainContainer {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+    min-height: 0;
+    /* ← 추가 */
+}
+
+/* 사이드바 스타일 */
+.sidebar {
+    display: flex;
+    flex: 0 0 15%;
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem 1rem 0 0;
+    margin: 12px 1rem 0 0;
+}
+
+.logoSection {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 1.5rem 2rem;
+}
+
+.logoText {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1e293b;
+    letter-spacing: -0.5px;
+}
+
+.navSection {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.navLabel {
+    padding: 0 1.5rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #94a3b8;
+    text-transform: uppercase;
+}
+
+.deptButton {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.8rem 1.5rem;
+    border: none;
+    background: transparent;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.deptButton:hover {
+    background-color: #f1f5f9;
+    color: #3b82f6;
+}
+
+.activeButton {
+    background-color: #eff6ff;
+    color: #3b82f6;
+    font-weight: 600;
+    border-right: 3px solid #3b82f6;
+}
+
+.deptIconGroup {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* 메인 컨텐츠 영역 */
+.contentSection {
+    flex: 1;
+    padding: 12px 0 0 0;
+    overflow-y: auto;
+    min-height: 0;
+    /* ← 추가 */
+}
+
+.dashboardWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    height: 100%;
+    /* ← 추가 */
+}
+
+.tabContentArea {
+    flex: 1;
+    /* ← 추가 */
+    min-height: 0;
+    /* ← 추가 */
+    display: flex;
+    flex-direction: column;
+}
+
+/* 요약 카드 그리드 */
+.summaryGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+}
+
+.cardSmall {
+    background: #ffffff;
+    padding: 10px 16px;
+    /* ← 1.5rem → 줄임 */
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.cardSmall p {
+    font-size: 0.8rem;
+    color: #64748b;
+    margin-bottom: 2px;
+}
+
+.cardSmall strong {
+    font-size: 1.3rem;
+    /* ← 줄임 */
+    color: #1e293b;
+}
+
+.tabSwitcher {
+    display: flex;
+    gap: 12px;
+}
+
+.tabSwitcher button {
+    padding: 7px 14px;
+    /* ← 줄임 */
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    background: #ffffff;
+    color: #64748b;
+    font-size: 0.8rem;
+    /* ← 줄임 */
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+    height: 34px;
+    /* ← 고정 */
+}
+
+.activeTab {
+    background-color: #3b82f6 !important;
+    color: #ffffff !important;
+    border-color: #3b82f6 !important;
+}
+
+/* 테이블 스타일 */
+.tableWrapper {
+    background: #ffffff;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+}
+
+.projectTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.projectTable th {
+    background-color: #f8fafc;
+    padding: 1rem;
+    text-align: left;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #475569;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.projectRow {
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.projectRow:hover {
+    background-color: #f8fafc;
+}
+
+.projectRow td {
+    padding: 1.2rem 1rem;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.textCenter {
+    text-align: center;
+}
+
+.statusBadge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background-color: #f1f5f9;
+    color: #475569;
+}
+
+/* 아코디언 내부 KPI 리스트 */
+.viewOnlyKpiGrid {
+    padding: 1.5rem;
+    background-color: #fbfcfd;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.viewKpiCard {
+    background: #ffffff;
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.viewKpiHeader {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+}
+
+.progressBar {
+    height: 8px;
+    background-color: #e2e8f0;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progressFill {
+    height: 100%;
+    transition: width 0.5s ease-out;
+}
+
+/* 리포트 탭 스타일 */
+.reportContainer {
+    background: #ffffff;
+    padding: 1rem;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    text-align: center;
+}
+
+.reportHeader h2 {
+    font-size: 1.8rem;
+    margin: 1rem 0;
+    color: #1e293b;
+}
+
+.reportGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 3rem;
+}
+
+.reportCard {
+    background: #f8fafc;
+    padding: 1.5rem;
+    border-radius: 12px;
+    text-align: left;
+    border: 1px solid #e2e8f0;
+}
+
+.reportCardTitle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 1rem;
+}
+
+.reportValue span {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #3b82f6;
+}
+
+.emptyState,
+.loadingState {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 300px;
+    color: #94a3b8;
+    font-size: 1.1rem;
+}
+
+.headerActions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+}
+
+.aiEvalBtn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 34px;
+    /* ← 탭과 동일 */
+    padding: 0 14px;
+    /* ← 줄임 */
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.8rem;
+    /* ← 줄임 */
+    cursor: pointer;
+    white-space: nowrap;
+    font-family: inherit;
+}
+
+.reportContainer {
+    padding: 20px;
+    background-color: #f8fafc;
+}
+
+.aiFullReportCard {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    padding: 40px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.aiHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.aiContentText {
+    white-space: pre-wrap;
+    /* AI가 준 줄바꿈 문자(\n)를 그대로 반영 */
+    line-height: 1.8;
+    font-size: 1.1rem;
+    color: #1e293b;
+    text-align: justify;
+}
+
+.aiDivider {
+    height: 1px;
+    background: linear-gradient(to right, #10b981, #e2e8f0);
+    margin-bottom: 30px;
+}
+
+.aiGradeBadge {
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 800;
+    font-size: 1rem;
+}
+
+.poor {
+    background-color: #fef2f2;
+    color: #ef4444;
+    border: 1px solid #fee2e2;
+}
+
+.good {
+    background-color: #eff6ff;
+    color: #3b82f6;
+    border: 1px solid #dbeafe;
+}
+
+.excellent {
+    background-color: #f0fdf4;
+    color: #10b981;
+    border: 1px solid #dcfce7;
+}
+
+/* 부모 컨테이너: 리포트 탭 전체 */
+.reportContainer {
+    display: flex;
+    flex-direction: column;
+}
+
+/* 데이터 없을 때의 전체 프레임 */
+.emptyAiReportFrame {
+    flex: 1;
+    /* 부모 컨테이너의 남는 높이를 다 차지함 */
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+/* 중앙 메시지 영역: 여기가 핵심입니다 */
+.emptyReportBody {
+    flex: 1;
+    /* 헤더와 푸터를 제외한 중앙의 모든 공간을 "다 먹음" */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    /* 수직 중앙 정렬 */
+    padding: 2rem;
+    text-align: center;
+    background: linear-gradient(to bottom, #ffffff, #fcfdfe);
+    /* 미세한 입체감 */
+}
+
+.iconCircleLarge {
+    width: 100px;
+    height: 100px;
+    background: #f8fafc;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+    border: 1px solid #f1f5f9;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    /* 아이콘에 시선 집중 */
+}
+
+/* 안내 문구 및 가이드 */
+.emptyReportBody h3 {
+    font-size: 1.5rem;
+    color: #334155;
+    margin-bottom: 16px;
+    font-weight: 700;
+}
+
+.emptyReportBody p {
+    color: #64748b;
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 40px;
+    max-width: 400px;
+    /* 너무 퍼지지 않게 가독성 확보 */
+}
+
+/* 가이드 그리드: 중앙 정렬 유지 */
+.guideGrid {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+}
+
+.guideItem {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    color: #475569;
+    background: #fff;
+    padding: 10px 20px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+/* 푸터 영역: 바닥에 딱 붙음 */
+.aiFooterPlaceholder {
+    padding: 24px 30px;
+    background: #f8fafc;
+    border-top: 1px solid #f1f5f9;
+    flex-shrink: 0;
+    /* 높이 감소 방지 */
+}
+
+
+
+
+/* 부서 성과 페이지 전체 레이아웃 */
+.mainContainer {
+    display: flex;
+    height: calc(100vh - 180px);
+    /* 헤더 제외 남은 높이 전체 */
+    overflow: hidden;
+}
+
+.contentSection {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+
+}
+
+/* 대시보드와 탭 영역이 함께 꽉 차게 */
+.dashboardWrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    /* 🚀 부모 높이 확보 */
+    gap: 20px;
+}
+
+/* 요약 카드를 제외한 실제 탭 내용 영역 */
+.tabContentArea {
+    flex: 1;
+    /* 🚀 남은 공간을 모두 차지하도록 설정 */
+    display: flex;
+    flex-direction: column;
+    min-height: 500px;
+    /* 최소 높이 보장 */
+}

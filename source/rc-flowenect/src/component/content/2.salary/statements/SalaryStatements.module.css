@@ -1,0 +1,383 @@
+.wrap {
+    height: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow: hidden;
+}
+
+.headerRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 18px;
+    border: 1px solid #e8eef7;
+    border-radius: 14px;
+    background: #fff;
+}
+
+.titleBox {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.title {
+    font-size: 18px;
+    font-weight: 900;
+    color: #1f2a44;
+}
+
+.subTitle {
+    font-size: 12px;
+    color: #64748b;
+}
+
+.headerActions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.filterRow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.monthField {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    min-width: 118px;
+    height: 38px;
+    padding: 0 14px 0 38px;
+    border: 1px solid #e8eef7;
+    border-radius: 10px;
+    background: #f6f8fc;
+    color: #334155;
+    box-sizing: border-box;
+    overflow: hidden;
+    cursor: pointer;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+
+.monthField:hover {
+    border-color: #d7dfee;
+    background: #f8faff;
+}
+
+.monthField:focus,
+.monthField:focus-within {
+    outline: none;
+    border-color: #c7d2fe;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+    background: #fff;
+}
+
+.monthFieldIcon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #64748b;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.monthFieldInput {
+    position: absolute;
+    width: 0;
+    height: 0;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.monthFieldText {
+    position: relative;
+    z-index: 1;
+    min-width: 56px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 900;
+    letter-spacing: 0.02em;
+    color: #1f2a44;
+    user-select: none;
+    pointer-events: none;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 12px;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    font-weight: 900;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.btnGhost {
+    background: #f6f8fc;
+    border-color: #e8eef7;
+    color: #334155;
+}
+
+.btnPrimary {
+    background: #4f46e5;
+    color: #fff;
+}
+
+.btn:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+}
+
+.contentSplit {
+    flex: 1;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: 1.05fr .95fr;
+    gap: 12px;
+}
+
+.leftPanel {
+    border: 1px solid #e8eef7;
+    border-radius: 14px;
+    background: #fff;
+    overflow: hidden;
+    padding: 12px;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.panelTopBar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #eef2f7;
+}
+
+.grid {
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+}
+
+.listActions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+}
+
+.rightPanel {
+    border: 1px solid #e8eef7;
+    border-radius: 14px;
+    background: #fff;
+    overflow: hidden;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.rightScroll {
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+    padding: 12px;
+}
+
+.sectionCard {
+    border: 1px solid #eef2f7;
+    border-radius: 14px;
+    padding: 12px;
+    background: #fff;
+    min-height: 100%;
+}
+
+.sectionHeaderRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.sectionHeader {
+    font-weight: 900;
+    color: #1f2a44;
+}
+
+.metaGrid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.metaItem {
+    border: 1px solid #eef2f7;
+    border-radius: 12px;
+    padding: 10px 12px;
+    background: #fbfcfe;
+}
+
+.metaLabel {
+    font-size: 11px;
+    font-weight: 900;
+    color: #64748b;
+    margin-bottom: 4px;
+}
+
+.metaValue {
+    font-weight: 900;
+    color: #1f2a44;
+}
+
+.gridSmall {
+    height: 360px;
+    width: 100%;
+}
+
+.empty {
+    color: #94a3b8;
+    font-weight: 800;
+    padding: 10px;
+}
+
+/* ── AG Grid: 정렬(셀/헤더) + 체크박스 컬럼 가운데 ── */
+.cellCenter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.headerCenter :global(.ag-header-cell-label) {
+    justify-content: center;
+}
+
+.wrap :global(.ag-header-cell.ag-selection-column),
+.wrap :global(.ag-cell.ag-selection-column) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+.wrap :global(.ag-selection-checkbox) {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ===== Payslip layout (right panel) ===== */
+.slipCard {
+    margin-top: 12px;
+    border: 1px solid #e8eef7;
+    border-radius: 14px;
+    background: #fff;
+    padding: 14px 14px 12px;
+}
+
+.slipTitle {
+    font-weight: 900;
+    color: #1f2a44;
+    letter-spacing: -0.2px;
+    margin-bottom: 10px;
+}
+
+.slipTables {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+.slipTableBox {
+    border: 1px solid #eef2f7;
+    border-radius: 12px;
+    padding: 10px;
+    background: #fbfdff;
+}
+
+.slipTableHead {
+    font-weight: 800;
+    font-size: 12px;
+    color: #334155;
+    margin-bottom: 6px;
+}
+
+.slipTable {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+.slipTable td {
+    padding: 6px 4px;
+    border-bottom: 1px dashed #e8eef7;
+}
+
+.slipName {
+    color: #0f172a;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 220px;
+}
+
+.slipAmt {
+    color: #0f172a;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.slipTotalRow td {
+    border-bottom: none;
+    padding-top: 8px;
+    font-weight: 900;
+}
+
+.slipNetRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid #e8eef7;
+}
+
+.slipNetLabel {
+    font-weight: 900;
+    color: #0f172a;
+}
+
+.slipNetAmt {
+    font-weight: 900;
+    color: #0f172a;
+    font-size: 16px;
+    font-variant-numeric: tabular-nums;
+}
+
+.rawDetail {
+    margin-top: 10px;
+    border: 1px solid #eef2f7;
+    border-radius: 12px;
+    padding: 10px;
+    background: #fff;
+}
+
+.rawDetail summary {
+    cursor: pointer;
+    font-weight: 800;
+    color: #334155;
+}

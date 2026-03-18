@@ -1,0 +1,754 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.flowenect.hr.emp.mapper.EmpMapper">
+
+  <!-- 1) 로그인 인증: 사용자 조회 (username = EMP_NO) -->
+  <select id="selectEmpForAuth" parameterType="string" resultType="EmpDTO">
+    SELECT
+      EMP_NO,
+      DEPT_CD,
+      POS_CD,
+      EMP_NM,
+      PWD,
+      HIRE_DT,
+      EMP_EMAIL,
+      HP_NO,
+      RRNO,
+      ZIP_CD,
+      ADDR1,
+      ADDR2,
+      EMP_STAT_CD,
+      ACNT_ACT_YN,
+      REG_DTM,
+      MOD_DTM
+    FROM EMP
+    WHERE EMP_NO = #{empNo}
+  </select>
+
+  <!-- 2) 권한 목록 조회 (EMP_ROLE + ROLE_MST)
+         - ROLE_MST.USE_YN='Y'만 -->
+  <select id="selectEmpRoleCds" parameterType="string" resultType="string">
+    SELECT ER.ROLE_CD
+    FROM EMP_ROLE ER
+    JOIN ROLE_MST RM ON RM.ROLE_CD = ER.ROLE_CD
+    WHERE ER.EMP_NO = #{empNo}
+      AND RM.USE_YN = 'Y'
+    ORDER BY ER.ROLE_CD
+  </select>
+
+  <!-- 직위 목록 조회 -->	
+  <select id="selectPosList" resultType="PositionDTO">
+  	SELECT
+      POS_CD,
+      POS_NM,
+      POS_LVL,
+      USE_YN,
+      REG_DTM
+	FROM POSITION_MST
+	<where>
+        <if test="useYn != null and useYn != ''">
+            AND USE_YN = #{useYn}
+        </if>
+    </where>
+	ORDER BY POS_LVL 
+  </select>	
+  
+  <!-- 직위 등록 -->
+  <insert id="insertPos" parameterType="PositionDTO">
+  	<selectKey keyProperty="posCd" resultType="string" order="BEFORE">
+        SELECT 
+            'POS_' || LPAD(NVL(MAX(SUBSTR(POS_CD, 5)), 0) + 1, 2, '0')
+        FROM POSITION_MST
+    </selectKey>
+  
+  	INSERT INTO POSITION_MST (
+	  POS_CD,
+	  POS_NM,
+	  POS_LVL,
+	  USE_YN,
+	  REG_DTM
+	) VALUES (
+	  #{posCd},
+	  #{posNm},
+	  #{posLvl},
+	  'Y',
+	  SYSDATE
+    )
+  </insert>
+  
+  <!-- 직위 수정 -->
+  <update id="updatePos" parameterType="PositionDTO">
+  	UPDATE POSITION_MST
+    SET 
+    	POS_NM = #{posNm},
+        POS_LVL = #{posLvl},
+        USE_YN = #{useYn}
+    WHERE POS_CD = #{posCd}
+  </update>
+  
+  <!-- 직위 삭제 -->
+  <update id="deletePos">
+  	UPDATE POSITION_MST
+    SET USE_YN = 'N'
+    WHERE POS_CD = #{posCd}
+  </update>
+  
+  <!-- 부서 목록 조회 -->
+  <select id="selectDeptList" resultType="DeptDTO">
+  	SELECT
+      DEPT_CD,
+      UP_DEPT_CD,
+      DEPT_TYPE_CD,
+      DEPT_HEAD_EMP_NO,
+      DEPT_NM,
+      DEPT_LOC,
+      DEPT_TEL,
+      DEL_YN,
+      REG_DTM,
+      MOD_DTM
+	FROM DEPT
+	WHERE DEL_YN = 'N'
+	ORDER BY DEPT_CD 
+  </select>
+
+  <!-- 3) 특정 사원 조회 -->
+  <select id="selectEmp" parameterType="string" resultType="EmpDTO">
+    SELECT
+      EMP_NO,
+      DEPT_CD,
+      POS_CD,
+      EMP_NM,
+      PWD,
+      HIRE_DT,
+      EMP_EMAIL,
+      HP_NO,
+      RRNO,
+      ZIP_CD,
+      ADDR1,
+      ADDR2,
+      EMP_STAT_CD,
+      ACNT_ACT_YN ,
+      REG_DTM,
+      MOD_DTM
+    FROM EMP
+    WHERE EMP_NO = #{empNo}
+  </select>
+
+  <!-- 4) 사원 목록 조회 -->
+  <select id="selectEmpList" resultType="EmpDTO">
+    SELECT
+      EMP_NO,
+      DEPT_CD,
+      POS_CD,
+      EMP_NM,
+      HIRE_DT,
+      EMP_EMAIL,
+      HP_NO,
+      EMP_STAT_CD,
+      ACNT_ACT_YN,
+      REG_DTM,
+      MOD_DTM
+    FROM EMP
+    ORDER BY EMP_NO DESC
+  </select>
+  
+  <!-- 5) 사원 등록 -->
+  <insert id="insertEmp" parameterType="EmpDTO">
+<selectKey keyProperty="empNo" resultType="string" order="BEFORE">
+    SELECT TO_CHAR(#{hireDt}, 'YYYYMM') || LPAD(SEQ_EMP_NO.NEXTVAL, 4, '0') FROM DUAL
+</selectKey>
+  <!--   <selectKey keyProperty="empNo" resultType="string" order="BEFORE">
+    	SELECT FN_GEN_EMP_NO_YM(#{hireDt}) FROM DUAL 
+    </selectKey> -->
+    <!-- <selectKey keyProperty="empNo" resultType="string" order="BEFORE">
+    	{ #{empNo, mode=OUT, jdbcType=VARCHAR} = call FN_GEN_EMP_NO_YM(#{hireDt}) }
+  	</selectKey> -->
+  	
+  	<!-- <selectKey keyProperty="empNo" resultType="string" order="BEFORE">
+            SELECT FN_GEN_EMP_NO_YM(#{hireDt}) FROM DUAL
+    </selectKey> -->
+    
+    INSERT INTO EMP (
+      EMP_NO,
+      DEPT_CD,
+      POS_CD,
+      EMP_NM,
+      PWD,
+      HIRE_DT,
+      EMP_EMAIL,
+      HP_NO,
+      RRNO,
+      ZIP_CD,
+      ADDR1,
+      ADDR2,
+      EMP_STAT_CD,
+      ACNT_ACT_YN,
+      REG_DTM,
+      MOD_DTM
+    ) VALUES (
+      #{empNo},     
+      #{deptCd},
+      #{posCd},
+      #{empNm},
+      #{pwd},
+      #{hireDt},
+      #{empEmail},
+      #{hpNo},
+      #{rrno},
+      #{zipCd},
+      #{addr1},
+      #{addr2},
+      #{empStatCd},
+      #{acntActYn},
+      SYSDATE,
+      NULL
+    )
+    
+  </insert>
+  	
+
+    <!-- 6) 사원 수정
+         - 비밀번호는 updatePassword에서만 변경 -->
+  <update id="updateEmp" parameterType="EmpDTO">
+    UPDATE EMP
+    SET
+      DEPT_CD      = #{deptCd},
+      POS_CD       = #{posCd},
+      EMP_NM       = #{empNm},
+      HIRE_DT      = #{hireDt},
+      EMP_EMAIL    = #{empEmail},
+      HP_NO        = #{hpNo},
+      RRNO         = #{rrno},
+      ZIP_CD       = #{zipCd},
+      ADDR1        = #{addr1},
+      ADDR2        = #{addr2},
+      EMP_STAT_CD  = #{empStatCd},
+      ACNT_ACT_YN  = #{acntActYn},
+      MOD_DTM      = SYSDATE
+    WHERE EMP_NO = #{empNo}
+  </update>
+
+  
+   <!-- 7) 사원 삭제 -->
+<update id="deleteEmp">
+  UPDATE EMP
+  SET
+    EMP_STAT_CD = 'RETIRE',
+    ACNT_ACT_YN = 'N',
+    MOD_DTM = SYSDATE
+  WHERE EMP_NO = #{empNo}
+</update>
+  
+
+  <!-- 8) 비밀번호 변경 (username = empNo 기준) -->
+  <update id="updatePassword" parameterType="EmpDTO">
+    UPDATE EMP
+    SET
+      PWD = #{pwd},
+      MOD_DTM = SYSDATE
+    WHERE EMP_NO = #{empNo}
+  </update>
+
+  <!-- 9) 권한 부여/회수 -->
+  <insert id="insertEmpRole">
+    INSERT INTO EMP_ROLE (EMP_NO, ROLE_CD, REG_DTM)
+    VALUES (#{empNo}, #{roleCd}, SYSDATE)
+  </insert>
+
+  <delete id="deleteEmpRole">
+    DELETE FROM EMP_ROLE
+    WHERE EMP_NO = #{empNo}
+      AND ROLE_CD = #{roleCd}
+  </delete>
+
+  <delete id="deleteEmpRoles">
+    DELETE FROM EMP_ROLE
+    WHERE EMP_NO = #{empNo}
+  </delete>
+
+  <!-- 사원 첨부파일 -->
+  <insert id="insertEmpFile" parameterType="FileDTO">
+  	INSERT INTO EMP_FILE (
+      FILE_NO,
+      EMP_NO,
+      FILE_TYPE_CD,
+      FILE_NM,
+      SAVE_FILE_NM,
+      FILE_PATH,
+      FILE_SIZE,
+      FILE_EXT,
+      USE_YN,
+      REG_DTM
+    ) VALUES (
+      SEQ_EMP_FILE_NO.NEXTVAL,
+      #{refNo},
+      #{fileTypeCd},
+      #{fileNm},
+      #{saveFileNm},
+      #{filePath},
+      #{fileSize},
+      #{fileExt},
+      'Y',
+      SYSDATE
+    )
+  </insert>
+
+	<!--  8) 로그인/인증 이력 -->
+	<!-- [접속이력] ACCESS_LOG 조회/저장 리팩토링
+	     - HttpOnly access_token 쿠키 기반 인증 반영
+	     - 부서/직위 스냅샷, 세션 만료 예정 시각, 토큰 저장 방식 조회 가능
+	-->
+
+	<insert id="insertAccessLog" parameterType="AccessLogDTO">
+		<selectKey keyProperty="accessLogNo" resultType="long" order="BEFORE">
+			SELECT SEQ_ACCESS_LOG_NO.NEXTVAL FROM DUAL
+		</selectKey>
+
+		INSERT INTO ACCESS_LOG (
+			ACCESS_LOG_NO,
+			EMP_NO,
+			EMP_NM,
+			DEPT_CD,
+			DEPT_NM,
+			POS_CD,
+			POS_NM,
+			AUTH_CHANNEL,
+			TOKEN_STORE_CD,
+			LOGIN_IP,
+			LOGIN_UA,
+			LOGIN_DTM,
+			SESSION_TIMEOUT_SEC,
+			SESSION_EXP_DTM,
+			TOKEN_JTI,
+			TOKEN_EXP_DTM
+		) VALUES (
+			#{accessLogNo},
+			#{empNo},
+			#{empNm},
+			#{deptCd},
+			#{deptNm},
+			#{posCd},
+			(SELECT P.POS_NM FROM POSITION_MST P WHERE P.POS_CD = #{posCd}),
+			#{authChannel},
+			#{tokenStoreCd},
+			#{loginIp},
+			#{loginUa},
+			SYSTIMESTAMP,
+			#{sessionTimeoutSec},
+			CASE
+				WHEN #{sessionTimeoutSec} IS NOT NULL THEN SYSTIMESTAMP + NUMTODSINTERVAL(#{sessionTimeoutSec}, 'SECOND')
+				ELSE NULL
+			END,
+			#{tokenJti},
+			#{tokenExpDtm}
+		)
+	</insert>
+
+	<update id="updateAccessLogLogout">
+		UPDATE ACCESS_LOG
+		SET
+			LOGOUT_IP = #{logoutIp},
+			LOGOUT_DTM = SYSTIMESTAMP,
+			LOGOUT_REASON = #{logoutReason}
+		WHERE ACCESS_LOG_NO = #{accessLogNo}
+		  AND LOGOUT_DTM IS NULL
+	</update>
+
+	<update id="updateAccessLogTimeout">
+		UPDATE ACCESS_LOG
+		SET
+			LOGOUT_DTM = SYSTIMESTAMP,
+			LOGOUT_REASON = #{logoutReason}
+		WHERE ACCESS_LOG_NO = #{accessLogNo}
+		  AND LOGOUT_DTM IS NULL
+	</update>
+
+	<update id="updateAccessLogTokenMeta">
+		UPDATE ACCESS_LOG
+		SET
+			AUTH_CHANNEL = #{authChannel},
+			TOKEN_JTI = #{tokenJti},
+			TOKEN_EXP_DTM = #{tokenExpDtm}
+		WHERE ACCESS_LOG_NO = #{accessLogNo}
+	</update>
+
+	<sql id="accessLogSearchCondition">
+		<where>
+			<if test="params.keyword != null and params.keyword != ''">
+				AND (
+					EMP_NO LIKE '%' || #{params.keyword} || '%'
+					OR EMP_NM LIKE '%' || #{params.keyword} || '%'
+					OR DEPT_NM LIKE '%' || #{params.keyword} || '%'
+				)
+			</if>
+			<if test="params.startDate != null and params.startDate != ''">
+				AND LOGIN_DTM &gt;= TO_TIMESTAMP(#{params.startDate} || ' 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
+			</if>
+			<if test="params.endDate != null and params.endDate != ''">
+				AND LOGIN_DTM &lt;= TO_TIMESTAMP(#{params.endDate} || ' 23:59:59', 'YYYY-MM-DD HH24:MI:SS')
+			</if>
+			<if test="params.deptNm != null and params.deptNm != '' and params.deptNm != 'ALL'">
+				AND DEPT_NM = #{params.deptNm}
+			</if>
+			<if test="params.empNo != null and params.empNo != ''">
+				AND EMP_NO LIKE '%' || #{params.empNo} || '%'
+			</if>
+			<if test="params.empNm != null and params.empNm != ''">
+				AND EMP_NM LIKE '%' || #{params.empNm} || '%'
+			</if>
+			<if test="params.posCd != null and params.posCd != '' and params.posCd != 'ALL'">
+				AND POS_CD = #{params.posCd}
+			</if>
+			<if test="params.authChannel != null and params.authChannel != '' and params.authChannel != 'ALL'">
+				AND AUTH_CHANNEL = #{params.authChannel}
+			</if>
+			<if test="params.logoutReason != null and params.logoutReason != '' and params.logoutReason != 'ALL'">
+				AND LOGOUT_REASON = #{params.logoutReason}
+			</if>
+			<if test="params.loginIp != null and params.loginIp != ''">
+				AND LOGIN_IP LIKE '%' || #{params.loginIp} || '%'
+			</if>
+			<if test='params.onlyActive == "Y"'>
+				AND LOGOUT_DTM IS NULL
+				AND (
+					(
+						CASE
+							WHEN SESSION_EXP_DTM IS NULL AND TOKEN_EXP_DTM IS NULL THEN NULL
+							ELSE LEAST(
+								NVL(SESSION_EXP_DTM, TIMESTAMP '9999-12-31 23:59:59'),
+								NVL(TOKEN_EXP_DTM, TIMESTAMP '9999-12-31 23:59:59')
+							)
+						END
+					) IS NULL
+					OR (
+						CASE
+							WHEN SESSION_EXP_DTM IS NULL AND TOKEN_EXP_DTM IS NULL THEN NULL
+							ELSE LEAST(
+								NVL(SESSION_EXP_DTM, TIMESTAMP '9999-12-31 23:59:59'),
+								NVL(TOKEN_EXP_DTM, TIMESTAMP '9999-12-31 23:59:59')
+							)
+						END
+					) &gt; SYSTIMESTAMP
+				)
+			</if>
+			<if test="params.statusCd != null and params.statusCd != '' and params.statusCd != 'ALL'">
+				<choose>
+					<when test="params.statusCd == 'ACTIVE'">
+						AND LOGOUT_DTM IS NULL
+						AND (
+							(
+								CASE
+									WHEN SESSION_EXP_DTM IS NULL AND TOKEN_EXP_DTM IS NULL THEN NULL
+									ELSE LEAST(
+										NVL(SESSION_EXP_DTM, TIMESTAMP '9999-12-31 23:59:59'),
+										NVL(TOKEN_EXP_DTM, TIMESTAMP '9999-12-31 23:59:59')
+									)
+								END
+							) IS NULL
+							OR (
+								CASE
+									WHEN SESSION_EXP_DTM IS NULL AND TOKEN_EXP_DTM IS NULL THEN NULL
+									ELSE LEAST(
+										NVL(SESSION_EXP_DTM, TIMESTAMP '9999-12-31 23:59:59'),
+										NVL(TOKEN_EXP_DTM, TIMESTAMP '9999-12-31 23:59:59')
+									)
+								END
+							) &gt; SYSTIMESTAMP
+						)
+					</when>
+					<when test="params.statusCd == 'LOGOUT'">
+						AND LOGOUT_REASON = 'LOGOUT'
+					</when>
+					<when test="params.statusCd == 'TIMEOUT'">
+						AND LOGOUT_REASON = 'TIMEOUT'
+					</when>
+					<when test="params.statusCd == 'FORCE'">
+						AND LOGOUT_REASON = 'FORCE'
+					</when>
+					<when test="params.statusCd == 'EXPIRED'">
+						AND LOGOUT_DTM IS NULL
+						AND (
+							CASE
+								WHEN SESSION_EXP_DTM IS NULL AND TOKEN_EXP_DTM IS NULL THEN NULL
+								ELSE LEAST(
+									NVL(SESSION_EXP_DTM, TIMESTAMP '9999-12-31 23:59:59'),
+									NVL(TOKEN_EXP_DTM, TIMESTAMP '9999-12-31 23:59:59')
+								)
+							END
+						) IS NOT NULL
+						AND (
+							CASE
+								WHEN SESSION_EXP_DTM IS NULL AND TOKEN_EXP_DTM IS NULL THEN NULL
+								ELSE LEAST(
+									NVL(SESSION_EXP_DTM, TIMESTAMP '9999-12-31 23:59:59'),
+									NVL(TOKEN_EXP_DTM, TIMESTAMP '9999-12-31 23:59:59')
+								)
+							END
+						) &lt;= SYSTIMESTAMP
+					</when>
+				</choose>
+			</if>
+		</where>
+	</sql>
+
+	<select id="selectAccessLogList" resultType="AccessLogDTO">
+		SELECT
+			ACCESS_LOG_NO AS accessLogNo,
+			EMP_NO AS empNo,
+			EMP_NM AS empNm,
+			DEPT_CD AS deptCd,
+			DEPT_NM AS deptNm,
+			POS_CD AS posCd,
+			NVL(POS_NM, POS_CD) AS posNm,
+			AUTH_CHANNEL AS authChannel,
+			TOKEN_STORE_CD AS tokenStoreCd,
+			LOGIN_IP AS loginIp,
+			LOGIN_UA AS loginUa,
+			LOGIN_DTM AS loginDtm,
+			SESSION_TIMEOUT_SEC AS sessionTimeoutSec,
+			SESSION_EXP_DTM AS sessionExpDtm,
+			LOGOUT_IP AS logoutIp,
+			LOGOUT_DTM AS logoutDtm,
+			LOGOUT_REASON AS logoutReason,
+			TOKEN_JTI AS tokenJti,
+			TOKEN_EXP_DTM AS tokenExpDtm,
+			CASE
+				WHEN SESSION_EXP_DTM IS NULL AND TOKEN_EXP_DTM IS NULL THEN NULL
+				ELSE LEAST(
+					NVL(SESSION_EXP_DTM, TIMESTAMP '9999-12-31 23:59:59'),
+					NVL(TOKEN_EXP_DTM, TIMESTAMP '9999-12-31 23:59:59')
+				)
+			END AS accessExpireDtm,
+			CASE
+				WHEN LOGOUT_DTM IS NOT NULL THEN
+					ROUND((CAST(LOGOUT_DTM AS DATE) - CAST(LOGIN_DTM AS DATE)) * 24 * 60)
+				ELSE NULL
+			END AS stayMin,
+			CASE
+				WHEN LOGOUT_REASON = 'LOGOUT' THEN 'LOGOUT'
+				WHEN LOGOUT_REASON = 'TIMEOUT' THEN 'TIMEOUT'
+				WHEN LOGOUT_REASON = 'FORCE' THEN 'FORCE'
+				WHEN LOGOUT_DTM IS NULL
+					AND (
+						CASE
+							WHEN SESSION_EXP_DTM IS NULL AND TOKEN_EXP_DTM IS NULL THEN NULL
+							ELSE LEAST(
+								NVL(SESSION_EXP_DTM, TIMESTAMP '9999-12-31 23:59:59'),
+								NVL(TOKEN_EXP_DTM, TIMESTAMP '9999-12-31 23:59:59')
+							)
+						END
+					) IS NOT NULL
+					AND (
+						CASE
+							WHEN SESSION_EXP_DTM IS NULL AND TOKEN_EXP_DTM IS NULL THEN NULL
+							ELSE LEAST(
+								NVL(SESSION_EXP_DTM, TIMESTAMP '9999-12-31 23:59:59'),
+								NVL(TOKEN_EXP_DTM, TIMESTAMP '9999-12-31 23:59:59')
+							)
+						END
+					) &lt;= SYSTIMESTAMP THEN 'EXPIRED'
+				WHEN LOGOUT_DTM IS NULL THEN 'ACTIVE'
+				ELSE 'UNKNOWN'
+			END AS statusCd,
+			CASE
+				WHEN LOGOUT_DTM IS NULL AND (
+					CASE
+						WHEN SESSION_EXP_DTM IS NULL AND TOKEN_EXP_DTM IS NULL THEN NULL
+						ELSE LEAST(
+							NVL(SESSION_EXP_DTM, TIMESTAMP '9999-12-31 23:59:59'),
+							NVL(TOKEN_EXP_DTM, TIMESTAMP '9999-12-31 23:59:59')
+						)
+					END
+				) IS NOT NULL THEN ROUND((CAST((
+					CASE
+						WHEN SESSION_EXP_DTM IS NULL AND TOKEN_EXP_DTM IS NULL THEN NULL
+						ELSE LEAST(
+							NVL(SESSION_EXP_DTM, TIMESTAMP '9999-12-31 23:59:59'),
+							NVL(TOKEN_EXP_DTM, TIMESTAMP '9999-12-31 23:59:59')
+						)
+					END
+				) AS DATE) - CAST(SYSTIMESTAMP AS DATE)) * 24 * 60)
+				ELSE NULL
+			END AS expireRemainMin,
+			CASE
+				WHEN LOGOUT_DTM IS NULL AND TOKEN_EXP_DTM IS NOT NULL THEN ROUND((CAST(TOKEN_EXP_DTM AS DATE) - CAST(SYSTIMESTAMP AS DATE)) * 24 * 60)
+				ELSE NULL
+			END AS tokenRemainMin,
+			CASE
+				WHEN LOGOUT_DTM IS NULL AND SESSION_EXP_DTM IS NOT NULL THEN ROUND((CAST(SESSION_EXP_DTM AS DATE) - CAST(SYSTIMESTAMP AS DATE)) * 24 * 60)
+				ELSE NULL
+			END AS sessionRemainMin,
+			CASE
+				WHEN LOGOUT_DTM IS NULL
+					AND (
+						(
+							CASE
+								WHEN SESSION_EXP_DTM IS NULL AND TOKEN_EXP_DTM IS NULL THEN NULL
+								ELSE LEAST(
+									NVL(SESSION_EXP_DTM, TIMESTAMP '9999-12-31 23:59:59'),
+									NVL(TOKEN_EXP_DTM, TIMESTAMP '9999-12-31 23:59:59')
+								)
+							END
+						) IS NULL
+						OR (
+							CASE
+								WHEN SESSION_EXP_DTM IS NULL AND TOKEN_EXP_DTM IS NULL THEN NULL
+								ELSE LEAST(
+									NVL(SESSION_EXP_DTM, TIMESTAMP '9999-12-31 23:59:59'),
+									NVL(TOKEN_EXP_DTM, TIMESTAMP '9999-12-31 23:59:59')
+								)
+							END
+						) &gt; SYSTIMESTAMP
+					)
+				THEN 'Y'
+				ELSE 'N'
+			END AS activeYn
+		FROM ACCESS_LOG
+		<include refid="accessLogSearchCondition" />
+		ORDER BY LOGIN_DTM DESC
+		OFFSET (#{paging.page} - 1) * #{paging.recordSize} ROWS
+		FETCH NEXT #{paging.recordSize} ROWS ONLY
+	</select>
+
+	<select id="selectAccessLogCount" resultType="int">
+		SELECT COUNT(*)
+		FROM ACCESS_LOG
+		<include refid="accessLogSearchCondition" />
+	</select>
+
+	<select id="selectAccessLogDetail" resultType="AccessLogDTO">
+		SELECT
+			ACCESS_LOG_NO AS accessLogNo,
+			EMP_NO AS empNo,
+			EMP_NM AS empNm,
+			DEPT_CD AS deptCd,
+			DEPT_NM AS deptNm,
+			POS_CD AS posCd,
+			NVL(POS_NM, POS_CD) AS posNm,
+			AUTH_CHANNEL AS authChannel,
+			TOKEN_STORE_CD AS tokenStoreCd,
+			LOGIN_IP AS loginIp,
+			LOGIN_UA AS loginUa,
+			LOGIN_DTM AS loginDtm,
+			SESSION_TIMEOUT_SEC AS sessionTimeoutSec,
+			SESSION_EXP_DTM AS sessionExpDtm,
+			LOGOUT_IP AS logoutIp,
+			LOGOUT_DTM AS logoutDtm,
+			LOGOUT_REASON AS logoutReason,
+			TOKEN_JTI AS tokenJti,
+			TOKEN_EXP_DTM AS tokenExpDtm,
+			CASE
+				WHEN SESSION_EXP_DTM IS NULL AND TOKEN_EXP_DTM IS NULL THEN NULL
+				ELSE LEAST(
+					NVL(SESSION_EXP_DTM, TIMESTAMP '9999-12-31 23:59:59'),
+					NVL(TOKEN_EXP_DTM, TIMESTAMP '9999-12-31 23:59:59')
+				)
+			END AS accessExpireDtm,
+			CASE
+				WHEN LOGOUT_DTM IS NOT NULL THEN
+					ROUND((CAST(LOGOUT_DTM AS DATE) - CAST(LOGIN_DTM AS DATE)) * 24 * 60)
+				ELSE NULL
+			END AS stayMin,
+			CASE
+				WHEN LOGOUT_REASON = 'LOGOUT' THEN 'LOGOUT'
+				WHEN LOGOUT_REASON = 'TIMEOUT' THEN 'TIMEOUT'
+				WHEN LOGOUT_REASON = 'FORCE' THEN 'FORCE'
+				WHEN LOGOUT_DTM IS NULL
+					AND (
+						CASE
+							WHEN SESSION_EXP_DTM IS NULL AND TOKEN_EXP_DTM IS NULL THEN NULL
+							ELSE LEAST(
+								NVL(SESSION_EXP_DTM, TIMESTAMP '9999-12-31 23:59:59'),
+								NVL(TOKEN_EXP_DTM, TIMESTAMP '9999-12-31 23:59:59')
+							)
+						END
+					) IS NOT NULL
+					AND (
+						CASE
+							WHEN SESSION_EXP_DTM IS NULL AND TOKEN_EXP_DTM IS NULL THEN NULL
+							ELSE LEAST(
+								NVL(SESSION_EXP_DTM, TIMESTAMP '9999-12-31 23:59:59'),
+								NVL(TOKEN_EXP_DTM, TIMESTAMP '9999-12-31 23:59:59')
+							)
+						END
+					) &lt;= SYSTIMESTAMP THEN 'EXPIRED'
+				WHEN LOGOUT_DTM IS NULL THEN 'ACTIVE'
+				ELSE 'UNKNOWN'
+			END AS statusCd,
+			CASE
+				WHEN LOGOUT_DTM IS NULL AND (
+					CASE
+						WHEN SESSION_EXP_DTM IS NULL AND TOKEN_EXP_DTM IS NULL THEN NULL
+						ELSE LEAST(
+							NVL(SESSION_EXP_DTM, TIMESTAMP '9999-12-31 23:59:59'),
+							NVL(TOKEN_EXP_DTM, TIMESTAMP '9999-12-31 23:59:59')
+						)
+					END
+				) IS NOT NULL THEN ROUND((CAST((
+					CASE
+						WHEN SESSION_EXP_DTM IS NULL AND TOKEN_EXP_DTM IS NULL THEN NULL
+						ELSE LEAST(
+							NVL(SESSION_EXP_DTM, TIMESTAMP '9999-12-31 23:59:59'),
+							NVL(TOKEN_EXP_DTM, TIMESTAMP '9999-12-31 23:59:59')
+						)
+					END
+				) AS DATE) - CAST(SYSTIMESTAMP AS DATE)) * 24 * 60)
+				ELSE NULL
+			END AS expireRemainMin,
+			CASE
+				WHEN LOGOUT_DTM IS NULL AND TOKEN_EXP_DTM IS NOT NULL THEN ROUND((CAST(TOKEN_EXP_DTM AS DATE) - CAST(SYSTIMESTAMP AS DATE)) * 24 * 60)
+				ELSE NULL
+			END AS tokenRemainMin,
+			CASE
+				WHEN LOGOUT_DTM IS NULL AND SESSION_EXP_DTM IS NOT NULL THEN ROUND((CAST(SESSION_EXP_DTM AS DATE) - CAST(SYSTIMESTAMP AS DATE)) * 24 * 60)
+				ELSE NULL
+			END AS sessionRemainMin,
+			CASE
+				WHEN LOGOUT_DTM IS NULL
+					AND (
+						(
+							CASE
+								WHEN SESSION_EXP_DTM IS NULL AND TOKEN_EXP_DTM IS NULL THEN NULL
+								ELSE LEAST(
+									NVL(SESSION_EXP_DTM, TIMESTAMP '9999-12-31 23:59:59'),
+									NVL(TOKEN_EXP_DTM, TIMESTAMP '9999-12-31 23:59:59')
+								)
+							END
+						) IS NULL
+						OR (
+							CASE
+								WHEN SESSION_EXP_DTM IS NULL AND TOKEN_EXP_DTM IS NULL THEN NULL
+								ELSE LEAST(
+									NVL(SESSION_EXP_DTM, TIMESTAMP '9999-12-31 23:59:59'),
+									NVL(TOKEN_EXP_DTM, TIMESTAMP '9999-12-31 23:59:59')
+								)
+							END
+						) &gt; SYSTIMESTAMP
+					)
+				THEN 'Y'
+				ELSE 'N'
+			END AS activeYn
+		FROM ACCESS_LOG
+		WHERE ACCESS_LOG_NO = #{accessLogNo}
+	</select>
+
+<select id="selectDeptInfoByEmpNo" parameterType="String" resultType="DeptDTO">
+    SELECT 
+        D.DEPT_CD,
+        D.DEPT_NM,
+        D.UP_DEPT_CD,        /* 상위 부서 코드 */
+        D.DEPT_HEAD_EMP_NO,  /* 부서장 사번 */
+        D.DEPT_TYPE_CD,      /* 부서 유형 */
+        D.DEPT_LOC           /* 부서 위치 */
+    FROM EMP E
+    INNER JOIN DEPT D ON E.DEPT_CD = D.DEPT_CD
+    WHERE E.EMP_NO = #{empNo}
+      AND D.DEL_YN = 'N'    /* 삭제되지 않은 부서만 */
+      AND E.ACNT_ACT_YN = 'Y'    /* 재직 중인 사원만 */
+</select>
+	 
+
+</mapper>

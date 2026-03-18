@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.flowenect.hr.resign.mapper.ResignMapper">
+
+    <!-- ================================================== -->
+    <!-- 공통 SELECT 절                                       -->
+    <!-- ================================================== -->
+    <sql id="selectResignBase">
+        SELECT
+              D.APRV_NO
+            , D.FORM_CD
+            , D.SUBMIT_DTM
+            , D.FINAL_DTM
+            , D.STAT_CD
+            , D.DOC_WRTR_EMP_NM
+            , D.DOC_WRTR_POS_CD
+            , D.DOC_WRTR_DEPT_CD
+            , R.RETR_NO
+            , R.EMP_NO
+            , R.EXP_RETR_DT
+            , R.RETR_RSN
+            , R.REQ_DTM
+            , E.EMP_NM          -- 사원명
+            , E.DEPT_CD         -- 부서코드
+            , E.POS_CD          -- 직위코드
+        FROM APRV_DOC D
+        JOIN APRV_RETIRE R ON D.APRV_NO = R.APRV_NO
+        JOIN EMP E         ON R.EMP_NO  = E.EMP_NO
+        WHERE D.FORM_CD = 'RETIRE'
+    </sql>
+
+
+    <!-- ================================================== -->
+    <!-- 1. 퇴직 목록 조회                                    -->
+    <!--    대기중 = STAT_CD = 'APPROVED'                     -->
+    <!--    완료   = STAT_CD = 'COMPLETED'                    -->
+    <!--    반려   = STAT_CD = 'REJECTED'                     -->
+    <!-- ================================================== -->
+    <select id="selectResignList"
+            parameterType="com.flowenect.hr.dto.resign.ResignDTO"
+            resultType="com.flowenect.hr.dto.resign.ResignDTO">
+        <include refid="selectResignBase" />
+        <if test="statCd != null and statCd != ''">
+            AND D.STAT_CD = #{statCd}
+        </if>
+        <if test="empNo != null and empNo != ''">
+            AND R.EMP_NO = #{empNo}
+        </if>
+        <if test="aprvNo != null and aprvNo != ''">
+            AND D.APRV_NO = #{aprvNo}
+        </if>
+        ORDER BY
+            CASE WHEN D.STAT_CD = 'APPROVED' THEN 0 ELSE 1 END,
+            D.SUBMIT_DTM DESC
+    </select>
+
+
+    <!-- ================================================== -->
+    <!-- 2. 단건 조회                                         -->
+    <!-- ================================================== -->
+    <select id="selectResignDetail"
+            parameterType="string"
+            resultType="com.flowenect.hr.dto.resign.ResignDTO">
+        <include refid="selectResignBase" />
+        AND D.APRV_NO = #{aprvNo}
+    </select>
+
+
+    <!-- ================================================== -->
+    <!-- 3. 전체 건수                                         -->
+    <!-- ================================================== -->
+    <select id="selectResignCount"
+            parameterType="com.flowenect.hr.dto.resign.ResignDTO"
+            resultType="int">
+        SELECT COUNT(*)
+        FROM APRV_DOC D
+        JOIN APRV_RETIRE R ON D.APRV_NO = R.APRV_NO
+        WHERE D.FORM_CD = 'RETIRE'
+        <if test="statCd != null and statCd != ''">
+            AND D.STAT_CD = #{statCd}
+        </if>
+        <if test="empNo != null and empNo != ''">
+            AND R.EMP_NO = #{empNo}
+        </if>
+    </select>
+
+
+    <!-- ================================================== -->
+    <!-- 4. [단건] APRV_DOC.STAT_CD 업데이트                  -->
+    <!-- ================================================== -->
+    <update id="updateAprvDocStat"
+            parameterType="com.flowenect.hr.dto.resign.ResignApproveDTO">
+        UPDATE APRV_DOC
+           SET STAT_CD   = #{statCd}
+             , FINAL_DTM = SYSDATE
+         WHERE APRV_NO   = #{aprvNo}
+           AND FORM_CD   = 'RETIRE'
+    </update>
+
+
+    <!-- ================================================== -->
+    <!-- 5. [다건] APRV_DOC.STAT_CD 일괄 업데이트             -->
+    <!-- ================================================== -->
+    <update id="updateAprvDocStatBulk"
+            parameterType="com.flowenect.hr.dto.resign.ResignApproveDTO">
+        UPDATE APRV_DOC
+           SET STAT_CD   = #{statCd}
+             , FINAL_DTM = SYSDATE
+         WHERE FORM_CD   = 'RETIRE'
+           AND APRV_NO IN
+        <foreach collection="aprvNos" item="no" open="(" separator="," close=")">
+            #{no}
+        </foreach>
+    </update>
+
+
+    <!-- ================================================== -->
+    <!-- 6. 완료(COMPLETED) 시 EMP.ACNT_ACT_YN = 'N'         -->
+    <!-- ================================================== -->
+    <update id="updateEmpInactive"
+            parameterType="string">
+        UPDATE EMP
+           SET ACNT_ACT_YN = 'N'
+             , MOD_DTM     = SYSDATE
+         WHERE EMP_NO = #{empNo}
+    </update>
+
+
+    <!-- ================================================== -->
+    <!-- 7. 다건 완료 시 empNo 조회용                          -->
+    <!-- ================================================== -->
+    <select id="selectResignDetailsByAprvNos"
+            resultType="com.flowenect.hr.dto.resign.ResignDTO">
+        SELECT D.APRV_NO
+             , R.EMP_NO
+        FROM APRV_DOC D
+        JOIN APRV_RETIRE R ON D.APRV_NO = R.APRV_NO
+        WHERE D.FORM_CD = 'RETIRE'
+          AND D.APRV_NO IN
+        <foreach collection="list" item="no" open="(" separator="," close=")">
+            #{no}
+        </foreach>
+    </select>
+
+</mapper>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.flowenect.hr.department.kpi.mapper.ProjectListReadMapper">
+	<select id="selectProjectForView" resultType="ProjectDTO">
+
+		SELECT
+		PROJECT_NO,
+		PROJECT_NM,
+		PROJECT_STAT_CD,
+		START_DTM,
+		END_DTM
+		FROM PROJECT
+		WHERE USE_YN = 'Y'
+		<if test="deptCd != null and deptCd != ''">
+			AND DEPT_CD = #{deptCd}
+		</if>
+		ORDER BY PROJECT_NO DESC
+
+	</select>
+
+
+</mapper>

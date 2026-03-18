@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.flowenect.hr.commons.file.mapper.FileMapper">
+	<insert id="insertFileMeta"
+		parameterType="com.flowenect.hr.dto.FileDTO">
+		INSERT INTO EMP_FILE (
+            file_no
+            , file_type_cd 
+            , emp_no        
+            , file_nm        
+            , save_file_nm 
+            , file_path      
+            , file_size      
+            , file_ext      
+            , use_yn        
+            , reg_dtm         
+        ) VALUES (
+            SEQ_EMP_FILE_NO.NEXTVAL,
+            #{fileTypeCd},
+            #{refNo},
+            #{fileMeta.fileNm},
+            #{fileMeta.saveFileNm},
+            #{fileMeta.filePath},
+            #{fileMeta.fileSize},
+            #{fileMeta.fileExt},
+            'Y',
+            SYSDATE
+        )
+	</insert>
+	
+	   <resultMap id="FileDTOResultMap" type="com.flowenect.hr.dto.FileDTO">
+        <result property="refNo" column="DEPT_CD" />
+        <result property="fileTypeCd" column="FILE_TYPE_CD" />
+
+        <association property="fileMeta" javaType="com.flowenect.hr.dto.FileMetaDTO">
+            <id property="fileNo" column="WORK_DRIVE_NO" />
+            <result property="fileNm" column="FILE_NM" />
+            <result property="saveFileNm" column="SAVE_FILE_NM" />
+            <result property="filePath" column="FILE_PATH" />
+            <result property="fileSize" column="FILE_SIZE" />
+            <result property="fileExt" column="FILE_EXT" />
+            <result property="empNm" column="EMP_NM" />
+            <result property="regDtm" column="REG_DTM" />
+            <result property="delYn" column="USE_YN" />
+        </association>
+    </resultMap>
+
+    <select id="selectFileListByDept" parameterType="string" resultMap="FileDTOResultMap">
+        SELECT
+            WORK_DRIVE_NO,
+            DEPT_CD,
+            FILE_TYPE_CD,
+            FILE_NM,
+            SAVE_FILE_NM,
+            FILE_PATH,
+            FILE_SIZE,
+            FILE_EXT,
+            EMP_NM,  
+            USE_YN,
+            REG_DTM
+        FROM WORK_DRIVE
+        WHERE DEPT_CD = #{deptCd}
+          AND USE_YN = 'Y'
+        ORDER BY REG_DTM DESC
+    </select>
+
+    <insert id="insertFile" parameterType="com.flowenect.hr.dto.FileDTO">
+        INSERT INTO WORK_DRIVE (
+            WORK_DRIVE_NO, 
+            DEPT_CD, 
+            FILE_TYPE_CD, 
+            FILE_NM,
+            SAVE_FILE_NM, 
+            FILE_PATH, 
+            FILE_SIZE, 
+            FILE_EXT,
+            EMP_NM    
+        ) VALUES (
+            SEQ_WORK_DRIVE.NEXTVAL, 
+            #{refNo}, 
+            #{fileTypeCd}, 
+            #{fileMeta.fileNm},
+            #{fileMeta.saveFileNm}, 
+            #{fileMeta.filePath}, 
+            #{fileMeta.fileSize}, 
+            #{fileMeta.fileExt},
+            #{fileMeta.empNm} 
+        )
+    </insert>
+
+    <update id="updateUseYn" parameterType="list">
+        UPDATE WORK_DRIVE
+        SET USE_YN = 'N'
+        WHERE WORK_DRIVE_NO IN
+        <foreach item="no" collection="list" open="(" separator="," close=")">
+            #{no}
+        </foreach>
+    </update>
+    
+    <insert id="insertEmpFile">
+	    INSERT INTO EMP_FILE (
+	        FILE_NO,
+	        EMP_NO,        
+	        FILE_TYPE_CD,  
+	        FILE_NM,       
+	        SAVE_FILE_NM,  
+	        FILE_PATH,     
+	        FILE_SIZE,     
+	        FILE_EXT,      
+	        USE_YN,        
+	        REG_DTM        
+	    ) VALUES (
+	        SEQ_EMP_FILE.NEXTVAL,
+	        #{refNo},          
+	        #{fileTypeCd},
+	        #{fileMeta.fileNm},      
+	        #{fileMeta.saveFileNm},  
+	        #{fileMeta.filePath},
+	        #{fileMeta.fileSize},
+	        #{fileMeta.fileExt},
+	        'Y',
+	        SYSDATE
+	    )
+	</insert>
+
+<select id="selectLatestProfile" resultType="com.flowenect.hr.dto.FileDTO">
+    SELECT 
+        EMP_NO as refNo,
+        FILE_TYPE_CD as fileTypeCd,
+        FILE_NM as "fileMeta.fileNm",
+        SAVE_FILE_NM as "fileMeta.saveFileNm",
+        FILE_PATH as "fileMeta.filePath",
+        FILE_SIZE as "fileMeta.fileSize",
+        FILE_EXT as "fileMeta.fileExt"
+    FROM EMP_FILE
+    WHERE EMP_NO = #{empNo}
+      AND FILE_TYPE_CD = 'PROFILE'
+      AND USE_YN = 'Y'
+</select>
+	
+	<update id="updatePreviousProfileDisabled">
+	    UPDATE EMP_FILE
+	       SET USE_YN = 'N'
+	     WHERE EMP_NO = #{empNo}
+	       AND FILE_TYPE_CD = 'PROFILE'
+	       AND USE_YN = 'Y'
+	</update>
+	
+</mapper>

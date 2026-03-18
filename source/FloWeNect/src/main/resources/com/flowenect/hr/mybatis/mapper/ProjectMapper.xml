@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.flowenect.hr.project.mapper.ProjectMapper">
+
+  <select id="selectProjectManageList" resultType="ProjectDTO">
+    SELECT
+      P.PROJECT_NO,
+      P.REG_EMP_NO,
+      P.DEPT_CD,
+      P.PROJECT_NM,
+      P.PROJECT_DESC,
+      P.PROJECT_STAT_CD,
+      P.START_DTM,
+      P.END_DTM,
+      P.USE_YN,
+      P.MAIN_IMG_PATH,
+      D.DEPT_NM             AS DEPT_NM,
+      E.EMP_NM              AS REG_EMP_NM,
+      D.DEPT_HEAD_EMP_NO    AS DEPT_HEAD_EMP_NO,
+      EH.EMP_NM             AS DEPT_HEAD_EMP_NM
+    FROM PROJECT P
+      JOIN DEPT D ON D.DEPT_CD = P.DEPT_CD
+      LEFT JOIN EMP E ON E.EMP_NO = P.REG_EMP_NO
+      LEFT JOIN EMP EH ON EH.EMP_NO = D.DEPT_HEAD_EMP_NO
+    WHERE D.DEL_YN = 'N'
+      <if test="cond != null and cond.deptCd != null and cond.deptCd != '' and cond.deptCd != 'ALL'">
+        AND P.DEPT_CD = #{cond.deptCd}
+      </if>
+      <if test="cond != null and cond.projectStatCd != null and cond.projectStatCd != '' and cond.projectStatCd != 'ALL'">
+        AND P.PROJECT_STAT_CD = #{cond.projectStatCd}
+      </if>
+      <if test="cond != null and cond.useYn != null and cond.useYn != '' and cond.useYn != 'ALL'">
+        AND P.USE_YN = #{cond.useYn}
+      </if>
+      <if test="cond != null and cond.keyword != null and cond.keyword != ''">
+        AND (
+          P.PROJECT_NM LIKE '%' || #{cond.keyword} || '%'
+          OR P.PROJECT_DESC LIKE '%' || #{cond.keyword} || '%'
+        )
+      </if>
+    ORDER BY P.PROJECT_NO DESC
+  </select>
+
+  <select id="selectProjectManage" resultType="ProjectDTO">
+    SELECT
+      P.PROJECT_NO,
+      P.REG_EMP_NO,
+      P.DEPT_CD,
+      P.PROJECT_NM,
+      P.PROJECT_DESC,
+      P.PROJECT_STAT_CD,
+      P.START_DTM,
+      P.END_DTM,
+      P.USE_YN,
+      P.MAIN_IMG_PATH,
+      D.DEPT_NM             AS DEPT_NM,
+      E.EMP_NM              AS REG_EMP_NM,
+      D.DEPT_HEAD_EMP_NO    AS DEPT_HEAD_EMP_NO,
+      EH.EMP_NM             AS DEPT_HEAD_EMP_NM
+    FROM PROJECT P
+      JOIN DEPT D ON D.DEPT_CD = P.DEPT_CD
+      LEFT JOIN EMP E ON E.EMP_NO = P.REG_EMP_NO
+      LEFT JOIN EMP EH ON EH.EMP_NO = D.DEPT_HEAD_EMP_NO
+    WHERE P.PROJECT_NO = #{projectNo}
+      AND D.DEL_YN = 'N'
+  </select>
+
+  <insert id="insertProject">
+    INSERT INTO PROJECT (
+      PROJECT_NO,
+      REG_EMP_NO,
+      DEPT_CD,
+      PROJECT_NM,
+      PROJECT_DESC,
+      PROJECT_STAT_CD,
+      START_DTM,
+      END_DTM,
+      USE_YN,
+      MAIN_IMG_PATH
+    ) VALUES (
+      SEQ_PROJECT_NO.NEXTVAL,
+      #{regEmpNo},
+      #{req.deptCd},
+      #{req.projectNm},
+      #{req.projectDesc},
+      #{req.projectStatCd},
+      #{req.startDtm},
+      #{req.endDtm},
+      #{req.useYn},
+      NULL
+    )
+  </insert>
+
+  <update id="updateProject">
+    UPDATE PROJECT
+    SET
+      DEPT_CD         = #{req.deptCd},
+      PROJECT_NM      = #{req.projectNm},
+      PROJECT_DESC    = #{req.projectDesc},
+      PROJECT_STAT_CD = #{req.projectStatCd},
+      START_DTM       = #{req.startDtm},
+      END_DTM         = #{req.endDtm},
+      USE_YN          = #{req.useYn}
+    WHERE PROJECT_NO  = #{req.projectNo}
+  </update>
+
+  <update id="updateProjectUseYn">
+    UPDATE PROJECT
+    SET USE_YN = #{useYn}
+    WHERE PROJECT_NO = #{projectNo}
+  </update>
+
+</mapper>

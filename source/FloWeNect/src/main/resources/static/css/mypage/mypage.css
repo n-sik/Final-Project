@@ -1,0 +1,252 @@
+/* ==============================
+   MyPage Modal (공용)
+   - 기존 프로젝트에서 페이지별로만 존재하던 modal 스타일(bt-modal)을
+     전역에서 재사용할 수 있도록 분리
+   ============================== */
+
+:root{
+  --mp-bg: #ffffff;
+  --mp-text: #0f172a;
+  --mp-muted: rgba(15, 23, 42, .6);
+  --mp-border: rgba(15, 23, 42, .12);
+  --mp-backdrop: rgba(15,23,42,.35);
+  --mp-shadow: 0 20px 45px rgba(2,6,23,.18);
+}
+
+.light-mode :root{ /* 라이트 모드 유지용(프로젝트 테마 로직과 충돌 방지) */
+}
+
+.bt-modal{
+  position: fixed;
+  inset: 0;
+  display: none;
+  /* 헤더/사이드바보다 항상 위 */
+  z-index: 100;
+
+  /* ✅ 화면 중앙 정렬 */
+  align-items: center;
+  justify-content: center;
+
+  /* 모바일에서 가장자리 여백 확보 */
+  padding: 16px;
+}
+.bt-modal.is-open{ display:flex; }
+.bt-modal__backdrop{ position:absolute; inset:0; background:var(--mp-backdrop); }
+.bt-modal__card{
+  position:relative;
+  width:min(720px, calc(100vw - 32px));
+  
+  height: min(720px, calc(100vh - 32px));
+  display:flex;
+  flex-direction:column;
+  
+  max-height: calc(100vh - 32px);
+  margin: 0;
+  background: var(--mp-bg);
+  color: var(--mp-text);
+  border: 1px solid var(--mp-border);
+  border-radius: 14px;
+  box-shadow: var(--mp-shadow);
+  overflow:hidden;
+}
+.bt-modal__card--wide{ width:min(880px, calc(100vw - 32px)); }
+
+/* Step UI
+   - 1개의 모달 안에서(비밀번호 확인 → 내정보 폼) 섹션만 전환
+   - ✅ 두 단계 모두 동일한 카드 사이즈를 사용해야 "모달이 바뀌는 느낌"이 사라짐
+   - 따라서 단계별 width 변경은 사용하지 않음
+*/
+
+.bt-modal__head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding: 14px 16px;
+  border-bottom:1px solid var(--mp-border);
+}
+.bt-modal__title{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight: 800;
+  font-size: 16px;
+}
+.bt-modal__title i{ color: var(--mp-muted); }
+
+.bt-modal__close{
+  border:0;
+  background:transparent;
+  cursor:pointer;
+  padding: 8px;
+  border-radius: 10px;
+  color: var(--mp-muted);
+}
+.bt-modal__close:hover{ background: rgba(15,23,42,.06); color: var(--mp-text); }
+
+.bt-modal__body{
+  padding: 14px 16px;
+  overflow:auto;
+
+  /* ⭐ 카드 내부에서 남은 공간을 차지 */
+  flex:1;
+}
+
+/* ==============================
+   Step1(비밀번호 확인) 중앙 정렬
+   - 모달 카드는 동일 크기 유지
+   - body 영역에서만 verify 박스를 가로/세로 중앙 배치
+   ============================== */
+.bt-modal__body.is-verify{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.bt-modal__body.is-verify .mp-verify{
+  width:100%;
+  max-width:520px;
+  margin:0;
+}
+.bt-modal__foot{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:10px;
+  padding: 12px 16px;
+  border-top:1px solid var(--mp-border);
+}
+
+.hidden{ display:none !important; }
+
+/* 보안 확인 영역 */
+.mp-verify{
+  border: 1px dashed rgba(15,23,42,.18);
+  border-radius: 12px;
+  padding: 12px;
+  background: rgba(15,23,42,.03);
+  margin-bottom: 12px;
+}
+.mp-verify__title{ font-weight: 900; font-size: 14px; }
+.mp-verify__desc{ margin-top: 6px; color: var(--mp-muted); font-size: 12px; }
+.mp-verify__row{ display:flex; gap:10px; margin-top: 10px; }
+.mp-verify__row input{
+  flex: 1;
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid var(--mp-border);
+  padding: 0 12px;
+}
+.mp-verify__msg{ margin-top: 8px; font-size: 12px; color: var(--mp-muted); }
+.mp-verify__msg.is-error{ color: #b42318; }
+.mp-verify__msg.is-ok{ color: #15803D; }
+
+/* 폼 */
+.mp-grid{ display:grid; grid-template-columns: 1fr 1fr; gap: 12px 14px; }
+.mp-grid .mp-row--full{ grid-column: 1 / -1; }
+
+.mp-field label{
+  display:block;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--mp-muted);
+  margin: 0 0 6px;
+}
+.mp-field input{
+  width:100%;
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid var(--mp-border);
+  padding: 0 12px;
+  outline:none;
+  background:#fff;
+}
+.mp-field input:focus{ border-color: rgba(37, 99, 235, .45); box-shadow: 0 0 0 4px rgba(37,99,235,.12); }
+.mp-field input[readonly],
+.mp-field input:disabled{
+  background: rgba(15,23,42,.04);
+  color: rgba(15,23,42,.72);
+  cursor:not-allowed;
+}
+
+.mp-hint{
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--mp-muted);
+}
+
+/* 버튼 */
+.mp-btn{
+  height: 40px;
+  padding: 0 14px;
+  border-radius: 10px;
+  border: 1px solid var(--mp-border);
+  background:#fff;
+  cursor:pointer;
+  font-weight: 800;
+}
+.mp-btn:disabled{ opacity: .55; cursor:not-allowed; }
+.mp-btn:hover{ background: rgba(15,23,42,.05); }
+.mp-btn--primary{
+  border-color: rgba(37,99,235,.35);
+  background: rgba(37,99,235,.10);
+}
+.mp-btn--primary:hover{ background: rgba(37,99,235,.16); }
+
+/* 우편번호/주소검색 */
+.mp-zip__row{ display:flex; gap:10px; align-items:center; }
+.mp-zip__row input{ flex: 1; }
+
+@media (max-width: 720px){
+  .mp-grid{ grid-template-columns: 1fr; }
+}
+
+/* 프로필 섹션 스타일 */
+.mp-profile-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    background: #fcfcfc;
+    border: 1px dashed #ddd;
+    border-radius: 8px;
+}
+
+.mp-profile-img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.mp-profile-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.mp-profile-controls {
+    display: flex;
+    gap: 5px;
+}
+
+/* 작은 버튼 스타일 */
+.mp-btn-sm {
+    padding: 4px 12px;
+    font-size: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: #fff;
+    cursor: pointer;
+}
+
+.mp-btn-sm.btn-del {
+    color: #ff4d4f;
+    border-color: #ff4d4f;
+}
+
+.mp-btn-sm:hover {
+    background: #f0f0f0;
+}

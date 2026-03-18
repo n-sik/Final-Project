@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.flowenect.hr.dept.mapper.DeptMapper">
+
+  <!-- 부서관리 목록 -->
+  <select id="selectDeptManageList" resultType="DeptManageDTO">
+    SELECT
+      D.DEPT_CD,
+      D.UP_DEPT_CD,
+      UPD.DEPT_NM           AS UP_DEPT_NM,
+      D.DEPT_TYPE_CD,
+      DT.DEPT_TYPE_NM       AS DEPT_TYPE_NM,
+      D.DEPT_HEAD_EMP_NO,
+      EH.EMP_NM             AS DEPT_HEAD_EMP_NM,
+      D.DEPT_NM,
+      D.DEPT_LOC,
+      D.DEPT_TEL,
+      D.DEL_YN,
+      D.REG_DTM,
+      D.MOD_DTM
+    FROM DEPT D
+      LEFT JOIN DEPT UPD ON UPD.DEPT_CD = D.UP_DEPT_CD
+      LEFT JOIN DEPT_TYPE DT ON DT.DEPT_TYPE_CD = D.DEPT_TYPE_CD
+      LEFT JOIN EMP EH ON EH.EMP_NO = D.DEPT_HEAD_EMP_NO
+    WHERE 1=1
+      <if test="cond != null and cond.delYn != null and cond.delYn != '' and cond.delYn != 'ALL'">
+        AND D.DEL_YN = #{cond.delYn}
+      </if>
+      <if test="cond != null and cond.keyword != null and cond.keyword != ''">
+        <choose>
+          <when test="cond.searchField == null or cond.searchField == '' or cond.searchField == 'ALL'">
+            AND (
+              D.DEPT_CD LIKE '%' || #{cond.keyword} || '%'
+              OR D.DEPT_NM LIKE '%' || #{cond.keyword} || '%'
+              OR NVL(DT.DEPT_TYPE_NM, '') LIKE '%' || #{cond.keyword} || '%'
+              OR NVL(UPD.DEPT_NM, '') LIKE '%' || #{cond.keyword} || '%'
+              OR NVL(EH.EMP_NM, '') LIKE '%' || #{cond.keyword} || '%'
+              OR NVL(D.DEPT_TEL, '') LIKE '%' || #{cond.keyword} || '%'
+              OR NVL(D.DEPT_LOC, '') LIKE '%' || #{cond.keyword} || '%'
+            )
+          </when>
+          <when test="cond.searchField == 'deptCd'">
+            AND D.DEPT_CD LIKE '%' || #{cond.keyword} || '%'
+          </when>
+          <when test="cond.searchField == 'deptNm'">
+            AND D.DEPT_NM LIKE '%' || #{cond.keyword} || '%'
+          </when>
+          <when test="cond.searchField == 'deptTypeNm'">
+            AND NVL(DT.DEPT_TYPE_NM, '') LIKE '%' || #{cond.keyword} || '%'
+          </when>
+          <when test="cond.searchField == 'upDeptNm'">
+            AND NVL(UPD.DEPT_NM, '') LIKE '%' || #{cond.keyword} || '%'
+          </when>
+          <when test="cond.searchField == 'deptHeadEmpNm'">
+            AND NVL(EH.EMP_NM, '') LIKE '%' || #{cond.keyword} || '%'
+          </when>
+          <when test="cond.searchField == 'deptTel'">
+            AND NVL(D.DEPT_TEL, '') LIKE '%' || #{cond.keyword} || '%'
+          </when>
+          <when test="cond.searchField == 'deptLoc'">
+            AND NVL(D.DEPT_LOC, '') LIKE '%' || #{cond.keyword} || '%'
+          </when>
+          <otherwise>
+            AND (
+              D.DEPT_CD LIKE '%' || #{cond.keyword} || '%'
+              OR D.DEPT_NM LIKE '%' || #{cond.keyword} || '%'
+              OR NVL(DT.DEPT_TYPE_NM, '') LIKE '%' || #{cond.keyword} || '%'
+              OR NVL(UPD.DEPT_NM, '') LIKE '%' || #{cond.keyword} || '%'
+              OR NVL(EH.EMP_NM, '') LIKE '%' || #{cond.keyword} || '%'
+              OR NVL(D.DEPT_TEL, '') LIKE '%' || #{cond.keyword} || '%'
+              OR NVL(D.DEPT_LOC, '') LIKE '%' || #{cond.keyword} || '%'
+            )
+          </otherwise>
+        </choose>
+      </if>
+    ORDER BY D.DEPT_CD
+  </select>
+
+  <!-- 부서관리 상세 -->
+  <select id="selectDeptManage" resultType="DeptManageDTO">
+    SELECT
+      D.DEPT_CD,
+      D.UP_DEPT_CD,
+      UPD.DEPT_NM           AS UP_DEPT_NM,
+      D.DEPT_TYPE_CD,
+      DT.DEPT_TYPE_NM       AS DEPT_TYPE_NM,
+      D.DEPT_HEAD_EMP_NO,
+      EH.EMP_NM             AS DEPT_HEAD_EMP_NM,
+      D.DEPT_NM,
+      D.DEPT_LOC,
+      D.DEPT_TEL,
+      D.DEL_YN,
+      D.REG_DTM,
+      D.MOD_DTM
+    FROM DEPT D
+      LEFT JOIN DEPT UPD ON UPD.DEPT_CD = D.UP_DEPT_CD
+      LEFT JOIN DEPT_TYPE DT ON DT.DEPT_TYPE_CD = D.DEPT_TYPE_CD
+      LEFT JOIN EMP EH ON EH.EMP_NO = D.DEPT_HEAD_EMP_NO
+    WHERE D.DEPT_CD = #{deptCd}
+  </select>
+
+  <!-- 기본 확인용(존재/DEL_YN/UP_DEPT_CD 확인) -->
+  <select id="selectDeptBasic" resultType="DeptDTO">
+    SELECT
+      DEPT_CD,
+      UP_DEPT_CD,
+      DEPT_TYPE_CD,
+      DEPT_HEAD_EMP_NO,
+      DEPT_NM,
+      DEPT_LOC,
+      DEPT_TEL,
+      DEL_YN,
+      REG_DTM,
+      MOD_DTM
+    FROM DEPT
+    WHERE DEPT_CD = #{deptCd}
+  </select>
+
+  <!-- 상위부서 코드만 -->
+  <select id="selectUpDeptCd" resultType="string">
+    SELECT UP_DEPT_CD
+    FROM DEPT
+    WHERE DEPT_CD = #{deptCd}
+  </select>
+
+  <!-- 소속 사원 수 -->
+  <select id="countEmpByDeptCd" resultType="int">
+    SELECT COUNT(*)
+    FROM EMP
+    WHERE DEPT_CD = #{deptCd}
+  </select>
+
+  <!-- 하위 부서 수 -->
+  <select id="countChildDeptByDeptCd" resultType="int">
+    SELECT COUNT(*)
+    FROM DEPT
+    WHERE UP_DEPT_CD = #{deptCd}
+  </select>
+
+  <!-- 등록 -->
+  <insert id="insertDept">
+    INSERT INTO DEPT (
+      DEPT_CD,
+      UP_DEPT_CD,
+      DEPT_TYPE_CD,
+      DEPT_HEAD_EMP_NO,
+      DEPT_NM,
+      DEPT_LOC,
+      DEPT_TEL,
+      DEL_YN,
+      REG_DTM,
+      MOD_DTM
+    ) VALUES (
+      #{req.deptCd},
+      #{req.upDeptCd},
+      #{req.deptTypeCd},
+      #{req.deptHeadEmpNo},
+      #{req.deptNm},
+      #{req.deptLoc},
+      #{req.deptTel},
+      'N',
+      SYSDATE,
+      NULL
+    )
+  </insert>
+
+  <!-- 수정(+ 복구 포함) -->
+  <update id="updateDept">
+    UPDATE DEPT
+    SET
+      UP_DEPT_CD        = #{req.upDeptCd},
+      DEPT_TYPE_CD      = #{req.deptTypeCd},
+      DEPT_HEAD_EMP_NO  = #{req.deptHeadEmpNo},
+      DEPT_NM           = #{req.deptNm},
+      DEPT_LOC          = #{req.deptLoc},
+      DEPT_TEL          = #{req.deptTel},
+      DEL_YN            = #{req.delYn},
+      MOD_DTM           = SYSDATE
+    WHERE DEPT_CD = #{req.deptCd}
+  </update>
+
+  <!-- DEL_YN 토글(사용중지/복구) -->
+  <update id="updateDeptDelYn">
+    UPDATE DEPT
+    SET
+      DEL_YN = #{delYn},
+      MOD_DTM = SYSDATE
+    WHERE DEPT_CD = #{deptCd}
+  </update>
+
+  <!-- 부서종류 목록(드롭다운) -->
+  <select id="selectDeptTypeList" resultType="DeptTypeDTO">
+    SELECT
+      DEPT_TYPE_CD,
+      DEPT_TYPE_NM,
+      USE_YN,
+      REG_DTM,
+      MOD_DTM
+    FROM DEPT_TYPE
+    WHERE USE_YN = 'Y'
+    ORDER BY DEPT_TYPE_CD
+  </select>
+
+</mapper>

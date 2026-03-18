@@ -1,0 +1,23 @@
+.backdrop{position:fixed; inset:0; background:rgba(15,23,42,.55); display:flex; align-items:center; justify-content:center; z-index:9999;}
+.modal{width:min(980px, 92vw); background:#fff; border-radius:16px; border:1px solid #e8eef7; box-shadow:0 18px 60px rgba(2,6,23,.35); overflow:hidden;}
+.modalHeader{display:flex; align-items:center; justify-content:space-between; padding:14px 16px; background:#fbfcfe; border-bottom:1px solid #eef2f7;}
+.modalTitle{font-weight:900; color:#1f2a44;}
+.iconBtn{border:none; background:transparent; cursor:pointer; padding:6px; border-radius:10px;}
+.iconBtn:hover{background:#f1f5f9;}
+
+.modalBody{padding:14px 16px;}
+.split{display:grid; grid-template-columns: 3fr 1fr; gap:12px;}
+.left,.right{border:1px solid #eef2f7; border-radius:14px; padding:12px;}
+.sectionTitle{font-weight:900; color:#1f2a44; margin-bottom:10px;}
+.grid{height:420px; width:100%;}
+
+.pickedList{height:420px; overflow:auto; display:flex; flex-direction:column; gap:8px;}
+.pickedItem{border:1px solid #eef2f7; border-radius:12px; padding:10px 12px; display:flex; align-items:center; justify-content:space-between; gap:10px;}
+.pickedName{font-weight:900; color:#1f2a44; text-align:left; flex:1;}
+.pickedCode{font-size:12px; color:#64748b; text-align:right; white-space:nowrap;}
+.empty{color:#94a3b8; font-weight:700; padding:10px;}
+
+.modalFooter{display:flex; justify-content:flex-end; gap:8px; padding:12px 16px; border-top:1px solid #eef2f7; background:#fbfcfe;}
+.btn{display:inline-flex; align-items:center; gap:8px; padding:9px 12px; border-radius:10px; border:1px solid transparent; font-weight:900; font-size:13px; cursor:pointer;}
+.btnGhost{background:#fff; border-color:#e8eef7; color:#334155;}
+.btnPrimary{background:#4f46e5; color:#fff;}

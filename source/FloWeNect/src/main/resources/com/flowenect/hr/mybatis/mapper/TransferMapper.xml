@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.flowenect.hr.transfer.mapper.TransferMapper">
+
+    <!-- ================================================== -->
+    <!-- 1. 인사발령 결재 목록 조회                            -->
+    <!-- ================================================== -->
+    <select id="selectTransferList"
+            parameterType="TransferDTO"
+            resultType="TransferDTO">
+        SELECT
+              D.APRV_NO
+            , D.SUBMIT_DTM
+            , D.EMP_NO
+            , D.DOC_WRTR_EMP_NM
+            , D.STAT_CD
+            , D.DOC_WRTR_EMP_NM || ' ' || D.DOC_WRTR_POS_CD AS DRAFTER
+            , A.TARGET_EMP_NO        -- ★ 발령 대상 사원번호
+            , E.EMP_NM   AS TARGET_EMP_NM  -- ★ 발령 대상 사원명
+            , A.APPT_TYPE_CD
+            , A.BEF_DEPT_CD
+            , A.AFT_DEPT_CD
+            , A.BEF_POS_CD
+            , A.AFT_POS_CD
+            , A.EFFECTIVE_DT
+            , A.REASON
+        FROM APRV_DOC D
+        JOIN APRV_APPOINTMENT A ON D.APRV_NO = A.APRV_NO
+        JOIN EMP E              ON A.TARGET_EMP_NO = E.EMP_NO
+        <where>
+            <if test="empNo != null and empNo != ''">
+                AND D.EMP_NO = #{empNo}
+            </if>
+            <if test="statCd != null and statCd != ''">
+                AND D.STAT_CD = #{statCd}
+            </if>
+            <if test="aprvNo != null and aprvNo != ''">
+                AND D.APRV_NO = #{aprvNo}
+            </if>
+        </where>
+        ORDER BY D.SUBMIT_DTM DESC
+    </select>
+
+
+    <!-- ================================================== -->
+    <!-- 2. 단건 조회                                         -->
+    <!-- ================================================== -->
+    <select id="selectTransferDetail"
+            parameterType="string"
+            resultType="TransferDTO">
+        SELECT
+              D.APRV_NO
+            , D.SUBMIT_DTM
+            , D.EMP_NO
+            , D.DOC_WRTR_EMP_NM
+            , D.STAT_CD
+            , D.DOC_WRTR_EMP_NM || ' ' || D.DOC_WRTR_POS_CD AS DRAFTER
+            , A.TARGET_EMP_NO        -- ★ 발령 대상 사원번호
+            , E.EMP_NM   AS TARGET_EMP_NM  -- ★ 발령 대상 사원명
+            , A.APPT_TYPE_CD
+            , A.BEF_DEPT_CD
+            , A.AFT_DEPT_CD
+            , A.BEF_POS_CD
+            , A.AFT_POS_CD
+            , A.EFFECTIVE_DT
+            , A.REASON
+        FROM APRV_DOC D
+        JOIN APRV_APPOINTMENT A ON D.APRV_NO = A.APRV_NO
+        JOIN EMP E              ON A.TARGET_EMP_NO = E.EMP_NO
+        WHERE D.APRV_NO = #{aprvNo}
+    </select>
+
+
+    <!-- ================================================== -->
+    <!-- 3. 전체 건수 (페이징용)                               -->
+    <!-- ================================================== -->
+    <select id="selectTransferCount"
+            parameterType="TransferDTO"
+            resultType="int">
+        SELECT COUNT(*)
+        FROM APRV_DOC D
+        JOIN APRV_APPOINTMENT A ON D.APRV_NO = A.APRV_NO
+        <where>
+            <if test="empNo != null and empNo != ''">
+                AND D.EMP_NO = #{empNo}
+            </if>
+            <if test="statCd != null and statCd != ''">
+                AND D.STAT_CD = #{statCd}
+            </if>
+            <if test="aprvNo != null and aprvNo != ''">
+                AND D.APRV_NO = #{aprvNo}
+            </if>
+        </where>
+    </select>
+
+
+    <!-- ================================================== -->
+    <!-- 4. [단건] APRV_DOC 결재 상태 업데이트                -->
+    <!-- ================================================== -->
+    <update id="updateAprvDocStatus"
+            parameterType="com.flowenect.hr.dto.transfer.TransferApproveDTO">
+        UPDATE APRV_DOC
+           SET STAT_CD   = #{statCd}
+             , FINAL_DTM = SYSDATE
+         WHERE APRV_NO   = #{aprvNo}
+    </update>
+
+
+    <!-- ================================================== -->
+    <!-- 5. [다건] APRV_DOC 결재 상태 일괄 업데이트            -->
+    <!-- ================================================== -->
+    <update id="updateAprvDocStatusBulk"
+            parameterType="com.flowenect.hr.dto.transfer.TransferApproveDTO">
+        UPDATE APRV_DOC
+           SET STAT_CD   = #{statCd}
+             , FINAL_DTM = SYSDATE
+         WHERE APRV_NO IN
+        <foreach collection="aprvNos" item="no" open="(" separator="," close=")">
+            #{no}
+        </foreach>
+    </update>
+
+
+    <!-- ================================================== -->
+    <!-- 6. 승인 확정 시 EMP 부서 변경                         -->
+    <!--    ★ EMP_NO 가 아닌 TARGET_EMP_NO 기준으로 변경!     -->
+    <!-- ================================================== -->
+    <update id="updateEmpDept"
+            parameterType="com.flowenect.hr.dto.transfer.TransferDTO">
+        UPDATE EMP
+           SET DEPT_CD = #{aftDeptCd}
+             , MOD_DTM = SYSDATE
+         WHERE EMP_NO  = #{targetEmpNo}
+    </update>
+
+
+    <!-- ================================================== -->
+    <!-- 7. 다건 승인 시 targetEmpNo + aftDeptCd 일괄 조회    -->
+    <!-- ================================================== -->
+    <select id="selectTransferDetailsByAprvNos"
+            resultType="com.flowenect.hr.dto.transfer.TransferDTO">
+        SELECT D.APRV_NO
+             , A.TARGET_EMP_NO
+             , A.AFT_DEPT_CD
+        FROM APRV_DOC D
+        JOIN APRV_APPOINTMENT A ON D.APRV_NO = A.APRV_NO
+        WHERE D.APRV_NO IN
+        <foreach collection="list" item="no" open="(" separator="," close=")">
+            #{no}
+        </foreach>
+    </select>
+
+</mapper>

@@ -1,0 +1,423 @@
+/* 1. 전체 레이아웃 */
+.schedule-page-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+}
+
+.card-style {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    border: 1px solid #eef2f6;
+}
+
+/* 2. 상단 필터바 */
+.schedule-header-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0px 16px;
+    height: 64px;
+}
+
+.filter-options {
+    display: flex;
+    gap: 20px;
+}
+
+.filter-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+/* 3. 캘린더 영역 */
+.calendar-main-area {
+    flex: 1;
+    padding: 15px;
+    min-height: 0;
+}
+
+#calendar {
+    height: 100% !important;
+}
+
+/* 4. FullCalendar UI 커스텀 */
+.fc-scrollgrid {
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #e2e8f0 !important;
+}
+
+.fc-theme-standard td, .fc-theme-standard th {
+    border: 1px solid #f1f5f9 !important;
+}
+
+.fc-col-header-cell {
+    background: #f8fafc !important;
+}
+
+.fc-col-header-cell-cushion {
+    font-weight: 600;
+    color: #64748b !important;
+    text-decoration: none !important;
+}
+
+/* 5. [문제점 2 해결] 이벤트 점(Dot) 스타일 디자인 */
+.fc-daygrid-event {
+    background: transparent !important; /* 배경 막대 제거 */
+    border: none !important;
+    box-shadow: none !important;
+    padding: 2px 5px !important;
+}
+
+/* 점(Dot) 크기 및 모양 */
+.fc-daygrid-event-dot {
+    border-width: 5px !important; /* 점 크기 */
+    border-radius: 50% !important;
+    margin-right: 5px !important;
+}
+
+/* 이벤트 텍스트 (시간 + 제목) */
+.fc-event-title, .fc-event-time {
+    color: #334155 !important;
+    font-size: 0.8rem !important;
+    font-weight: 500 !important;
+}
+
+/* 6. 오늘 날짜 강조 */
+.fc-day-today {
+    background-color: #f0f9ff !important;
+}
+
+.fc-day-today .fc-daygrid-day-number {
+    color: #3b82f6 !important;
+    font-weight: 800 !important;
+}
+
+.fc-daygrid-day-number {
+    text-decoration: none !important;
+    color: #64748b;
+    font-size: 0.85rem;
+    padding: 8px !important;
+}
+
+/* 7. [문제점 1 해결] 툴바 및 숨겨진 날짜 입력기 */
+.fc-toolbar-chunk:nth-child(2) {
+    display: flex !important;
+    align-items: center;
+
+}
+
+#hiddenDateInput {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.fc .fc-toolbar-title {
+    font-size: 1.3rem !important;
+    font-weight: 700;
+
+    border-radius: 6px;
+}
+
+.fc .fc-toolbar-title:hover {
+    background: #f1f5f9;
+}
+
+/* 버튼 디자인 */
+.fc .fc-button-primary {
+    background-color: #fff !important;
+    border: 1px solid #e2e8f0 !important;
+    color: #64748b !important;
+}
+
+.fc .fc-button-primary:hover {
+    background-color: #f8fafc !important;
+}
+
+/* 상태 표시 점(Dot) - 필터바용 */
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+}
+.edu { background-color: #553c9a; }
+.leave { background-color: #dd6b20; }
+.recruit { background-color: #38a169; }
+
+
+/* --- [추가] 모달 스타일 시작 --- */
+
+/* 1. 모달 배경 오버레이 (어두운 배경) */
+.modal-overlay {
+    display: none; /* 기본적으로 숨김 */
+    position: fixed;
+    z-index: 1000; /* 캘린더보다 위에 떠야 함 */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4); /* 반투명 검은색 */
+    backdrop-filter: blur(2px); /* 배경 살짝 흐리게 효과 (선택사항) */
+    align-items: center;
+    justify-content: center;
+}
+
+/* 2. 모달 콘텐츠 박스 */
+.modal-content {
+    background-color: #fefefe;
+    margin: auto; /* 중앙 정렬용 */
+    padding: 0;
+    border: none;
+    width: 100%;
+    max-height: 700px;
+    max-width: 500px; /* 최대 너비 설정 */
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    animation: modalFadeIn 0.3s ease; /* 부드럽게 나타나는 효과 */
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+@keyframes modalFadeIn {
+    from {opacity: 0; transform: translateY(-60%);}
+    to {opacity: 1; transform: translateY(-50%);}
+}
+
+/* 3. 모달 헤더 */
+.modal-header {
+    padding: 15px 20px;
+    border-bottom: 1px solid #eef2f6;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* 닫기 버튼 (X) */
+.close-btn {
+    color: #aaa;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.2s;
+    line-height: 1;
+}
+
+.close-btn:hover,
+.close-btn:focus {
+    color: #000;
+    text-decoration: none;
+}
+
+/* 4. 모달 바디 및 내용 배치 */
+.modal-body {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.modal-row {
+    display: flex;
+    align-items: flex-start;
+}
+
+.modal-row.full-width {
+    display: block;
+}
+
+.modal-label {
+    font-weight: 600;
+    color: #64748b;
+    width: 60px; /* 라벨 고정 너비 */
+    min-width: 60px;
+}
+
+.modal-data {
+    color: #1e293b;
+    font-weight: 500;
+    flex: 1;
+}
+
+/* 구분 뱃지 스타일 */
+.badge {
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    color: white;
+    display: inline-block;
+}
+
+/* 상세 내용 박스 */
+.modal-description-box {
+    background: #f8fafc;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    min-height: 80px;
+    white-space: pre-wrap; /* 줄바꿈 문자 인식 */
+    font-size: 0.9rem;
+    color: #334155;
+}
+/* --- 모달 스타일 끝 --- */
+
+/* 모달 내 구분(점+텍스트) 정렬 */
+.category-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* 기존 .badge 스타일은 삭제하거나 아래처럼 덮어씌우세요 */
+.modal-data.badge {
+    background-color: transparent !important; /* 배경 제거 */
+    padding: 0 !important;
+    color: #1e293b !important;
+}
+
+#modalTypeDot {
+    width: 10px;
+    height: 10px;
+    flex-shrink: 0; /* 크기 고정 */
+}
+
+/* 1. 박스 크기 고정 및 들쑥날쑥 방지 */
+.fc .fc-daygrid-day-frame {
+    height: 100px !important; /* 높이 고정 */
+    overflow: hidden; 
+}
+
+/* 2. 일정 호버 효과 */
+.fc-daygrid-event {
+    transition: background-color 0.2s, transform 0.1s;
+    cursor: pointer;
+}
+.fc-daygrid-event:hover {
+    background-color: #f1f5f9 !important; /* 연한 회색 배경 */
+    transform: translateX(2px); /* 살짝 오른쪽으로 이동 */
+}
+
+/* 3. '+more' 버튼 스타일 커스텀 */
+.fc-daygrid-more-link {
+    font-size: 0.75rem !important;
+    font-weight: 700 !important;
+    color: #3b82f6 !important;
+    padding-left: 5px;
+    text-decoration: none !important;
+}
+
+/* 4. 날짜 칸 자체에 대한 호버 (선택사항) */
+.fc-daygrid-day:hover {
+    background-color: #fafafa;
+}
+/* 상단 툴바 전체 레이아웃 */
+.fc .fc-header-toolbar {
+    display: flex;
+    justify-content: flex-start; /* 전체적으로 좌측 정렬 기반으로 변경 */
+    align-items: center;
+    position: relative;
+}
+
+.fc-toolbar-chunk:nth-child(1) {
+    margin-right: 15px; 
+}
+
+.fc-toolbar-chunk:nth-child(2) {
+    display: flex !important;
+    align-items: center;
+    margin-left: 36%; 
+}
+/* 툴바 내부 버튼들 호버 효과 유지 */
+.fc .fc-button-primary {
+    transition: all 0.2s ease;
+}
+
+.fc .fc-toolbar.fc-header-toolbar {
+    margin-bottom: 0.5em;
+}
+.day-list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    margin-bottom: 8px;
+    background: #f8f9fa;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.day-list-item:hover {
+    background: #edf2f7;
+}
+
+.view-detail-btn {
+    background: #4a5568;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.view-detail-btn:hover {
+    background: #2d3748;
+}
+
+/* schedule.css 추가 */
+.fc-daygrid-more-link {
+/*     cursor: default !important; 손가락 모양 대신 기본 화살표 */
+    pointer-events: none;       /* 클릭 이벤트 자체를 무시 (JS 설정과 중첩 방어) */
+/*     text-decoration: none !important; 밑줄 제거 */
+/*     color: #888 !important;     색상을 조금 연하게 해서 '정보 표시용'임을 강조 */
+}
+
+/* schedule.css 추가 */
+.fc-event {
+    border-radius: 4px !important; /* 모서리 둥글게 */
+    padding: 2px 4px !important;   /* 막대 내부 여백 */
+    border: none !important;       /* 테두리 제거 */
+    font-size: 0.85em !important;  /* 글자 크기 살짝 조절 */
+    cursor: pointer;
+}
+
+/* 시간이 표시될 경우 제목과의 간격 */
+.fc-event-title {
+    font-weight: 500;
+}
+
+/*=======================================*/
+.schedule-header-bar h2,
+.schedule-header-bar h3 {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0 0 2px 0;
+}
+
+.schedule-header-bar p {
+    font-size: 11px;
+    color: #94a3b8;
+    margin: 0;
+}
+
+.schedule-header-bar h3 {
+    font-family: "Noto Sans KR", sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+}

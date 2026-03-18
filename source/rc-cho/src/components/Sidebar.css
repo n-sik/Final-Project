@@ -1,0 +1,245 @@
+/* 1. 기본 설정 및 변수 */
+:root {
+  --accent-primary: #3b82f6;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --border-color: rgba(255, 255, 255, 0.08);
+  --hover-border: rgba(255, 255, 255, 0.15);
+}
+
+.sidebar {
+  position: fixed;
+  width: 150px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+  overflow: hidden;
+  box-sizing: border-box;
+  height: auto;
+  /* [평소 상태] */
+  opacity: 0.5;
+  min-height: min-content;
+  user-select: none;
+  -webkit-user-select: none;
+
+  /* [핵심 로직] 마우스가 나갈 때(기본 상태로 복귀 시) 적용되는 애니메이션 */
+  /* opacity 항목의 맨 마지막 3s가 3초 대기를 의미합니다. */
+  transition:
+    height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.3s ease,
+    box-shadow 0.4s ease,
+    opacity 0.5s ease 1s !important;
+}
+
+.sidebar.expanded {
+  max-height: 600px;
+}
+
+.sidebar.collapsed {
+  opacity: 1 !important;
+  /* 접혔을 때 내부 요소들이 삐져나오지 않도록 높이를 최적화 */
+  max-height: 80px;
+  overflow: hidden;
+  /* 스크롤 절대 방지 */
+  transition: opacity 0.2s ease 0s, max-height 0.4s ease;
+}
+
+/* 접혔을 때의 푸터 여백 (버튼 주변) */
+.sidebar.collapsed .sidebar-footer {
+  padding: 10px 0;
+}
+
+/* 접혔을 때 헤더 하단 선과 푸터 상단 선 제거 */
+.sidebar.collapsed .sidebar-header {
+  border-bottom: 1px solid transparent;
+}
+
+.sidebar.collapsed .sidebar-footer {
+  border-top: 1px solid transparent;
+}
+
+/* 추가 팁: 접혔을 때 토글 버튼 상단 선도 지우고 싶다면 */
+.sidebar.collapsed .toggle-btn {
+  border-top: none;
+}
+
+.sidebar.dragging {
+  /* 드래그 중에는 딜레이가 있으면 잔상이 남으므로 즉시 반응 */
+  transition: none !important;
+  opacity: 0.95 !important;
+}
+
+.sidebar:hover {
+  opacity: 1 !important;
+  border-color: var(--hover-border);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  /* 호버 시에는 3초 딜레이를 0초로 덮어씁니다. */
+  transition: opacity 0.2s ease 0s !important;
+}
+
+.sidebar::before {
+  display: none;
+}
+
+.sidebar-header {
+  padding: 10px;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+  cursor: grab;
+}
+
+.sidebar-header:active {
+  cursor: grabbing;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 10px;
+}
+
+.logo h1 {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
+  background: none;
+  -webkit-text-fill-color: initial;
+}
+
+/* 4. 네비게이션 영역 */
+.sidebar-nav {
+  flex: 1;
+  padding: 20px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow-y: auto;
+  position: relative;
+  z-index: 1;
+  transition: all 0.4s ease;
+  overflow: hidden;
+}
+
+.toggle-btn {
+  width: 100%;
+  padding: 10px 0;
+  background: transparent;
+
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+}
+
+.toggle-btn:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.sidebar.collapsed .sidebar-nav {
+  max-height: 0;
+  padding: 0;
+  opacity: 0;
+}
+
+.nav-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 14px 25px;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-align: left;
+  border-left: 3px solid transparent;
+  border-radius: 0 12px 12px 0;
+  margin-right: 10px;
+  white-space: nowrap;
+}
+
+.nav-item:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.nav-item.active {
+  color: var(--text-primary);
+  border-left: 3px solid var(--accent-primary);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.nav-indicator {
+  position: absolute;
+  right: 25px;
+  width: 6px;
+  height: 6px;
+  background: var(--accent-primary);
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.nav-item.active .nav-indicator {
+  opacity: 1;
+  background: var(--accent-primary);
+  width: 4px;
+  height: 4px;
+  right: 20px;
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 240, 255, 0.7);
+  }
+
+  50% {
+    box-shadow: 0 0 0 8px rgba(0, 240, 255, 0);
+  }
+}
+
+/* 5. 푸터 */
+.sidebar-footer {
+  border-top: 1px solid var(--border-color);
+  flex-shrink: 0;
+  /* 크기 줄어듦 방지 */
+  margin-top: auto;
+  /* 핵심: 위쪽 여백을 자동으로 채워 맨 아래로 밀착 */
+  padding: 20px;
+  z-index: 1;
+}
+
+.copyright {
+  text-align: center;
+  font-size: 11px;
+  color: var(--text-secondary);
+  opacity: 0.7;
+}
+
+/* 스크롤바 커스텀 */
+.sidebar-nav::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+/* 6. 반응형 (드래그 위치 유지) */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 240px;
+    height: 60vh;
+  }
+}

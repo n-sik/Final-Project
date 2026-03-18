@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.flowenect.hr.board.mapper.CommonScheduleMapper">
+	
+	<insert id="insertSchedule">
+        INSERT INTO SCHEDULE (
+            SCHD_NO,
+            EMP_NO,
+            REF_POST_NO,
+            SCHD_DIV_CD,
+            SCHD_TITLE,
+            SCHD_CN,
+            SCHD_ST_DTM,
+            SCHD_ED_DTM,
+            ALL_DAY_YN,
+            DEL_YN,
+            REG_DTM,
+            SCHD_PRIO
+        ) VALUES (
+            SEQ_SCHD_NO.NEXTVAL,  #{empNo},
+            #{refPostNo},
+            #{schdDivCd},
+            #{schdTitle},
+            #{schdCn},
+            #{schdStDtm},
+            #{schdEdDtm},
+            #{allDayYn},
+            'N',
+            SYSDATE,
+            #{schdPrio}
+        )
+    </insert>
+
+    <delete id="deleteSchedule">
+        DELETE FROM SCHEDULE
+        WHERE REF_POST_NO = #{refPostNo}
+    </delete>
+
+    <delete id="deleteScheduleByNo">
+        DELETE FROM SCHEDULE
+        WHERE SCHD_NO = #{schdNo}
+    </delete>
+	
+</mapper>

@@ -1,0 +1,592 @@
+/* ==========================================================================
+   1. 전체 레이아웃
+   ========================================================================== */
+.qual-content-wrapper {
+	display: flex;
+	flex: 1;
+	overflow: hidden;
+	gap: 12px;
+}
+
+.qual-sidebar {
+	flex: 1; min-width: 0;
+	height: 100%;
+}
+.qual-content-wrapper .qual-main-content { flex: 3; }
+
+.qual-main-content {
+	flex: 1; 
+	display: flex;
+	flex-direction: column;
+}
+
+.qual-eval-layout {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	height: 100%;
+	gap: 12px;
+}
+
+.qual-main-content {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	background-color: #ffffff;
+	border-radius: 8px;
+	border: 1px solid #e2e8f0;
+	overflow: hidden;
+}
+
+/* ==========================================================================
+   2. 상단 헤더 & 하단 네비게이션
+   ========================================================================== */
+.qual-header {
+	padding: 30px 40px;
+	background-color: #ffffff;
+	z-index: 10;
+}
+
+.qual-title {
+	margin: 0;
+	font-size: 1.4rem;
+	color: #1e293b;
+	font-weight: 800;
+	display: flex;
+	align-items: center;
+}
+
+.nav-area {
+	padding: 25px 40px;
+	background-color: #ffffff;
+}
+
+.nav-wrapper {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 1rem;
+}
+
+.btn-nav, .btn-final-submit {
+	padding: 14px 35px;
+	border-radius: 8px;
+	font-weight: 700;
+	font-size: 1.05rem;
+	cursor: pointer;
+	border: none;
+	transition: 0.2s;
+}
+
+.btn-prev {
+	background: #f1f5f9;
+	color: #475569;
+}
+
+.btn-next {
+	background: #4f46e5;
+	color: #fff;
+}
+
+.btn-final-submit {
+	background: #1e293b;
+	color: #fff;
+}
+
+.page-info {
+	color: #64748b;
+	font-size: 1.1rem;
+}
+
+/* ==========================================================================
+   3. 중앙 평가 바디 및 문항 카드
+   ========================================================================== */
+.qual-eval-body {
+	padding: 20px;
+}
+
+.eval-card {
+	background-color: #ffffff;
+	border-radius: 24px;
+	padding: 40px;
+	margin-bottom: 30px;
+	border: 1px solid #e2e8f0;
+	border-left: 5px solid #4f46e5;
+}
+
+.eval-card:last-child {
+	margin-bottom: 0;
+}
+
+.eval-card-header {
+	display: flex;
+	align-items: flex-start;
+	margin-bottom: 30px;
+}
+
+.q-num {
+	color: #4f46e5;
+	margin-right: 8px;
+	font-weight: 800;
+	font-size: 1.35rem;
+}
+
+.q-text {
+	margin: 0;
+	font-size: 1.25rem;
+	font-weight: 700;
+	color: #0f172a;
+	line-height: 1.7;
+	word-break: keep-all;
+}
+
+/* ==========================================================================
+   4. 답변 옵션 (라디오 커스텀)
+   ========================================================================== */
+.eval-options {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.eval-radio-label {
+	cursor: pointer;
+	width: 100%;
+}
+
+.eval-radio-label input {
+	display: none;
+}
+
+.eval-option-box {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 20px 30px;
+	background-color: #ffffff;
+	border: 1px solid #f1f5f9;
+	border-radius: 16px;
+	height: 100%;
+	transition: background-color 0.2s, border-color 0.2s;
+	/* 흔들림 유발 transform 제거 */
+}
+
+.eval-option-box:hover {
+	background-color: #f8fafc;
+	border-color: #cbd5e1;
+}
+
+/* 선택된 상태 스타일 (JS 클래스 및 radio checked 통합) */
+.eval-radio-label.selected .eval-option-box, .eval-radio-label input:checked+.eval-option-box
+	{
+	background: #ebf5ff;
+	border-color: #3498db;
+}
+
+.desc {
+	flex: 1;
+	font-size: 1rem;
+	color: #64748b;
+	line-height: 1.6;
+	padding-right: 25px;
+	word-break: keep-all;
+}
+
+.eval-radio-label.selected .desc, .eval-radio-label input:checked+.eval-option-box .desc
+	{
+	color: #1e293b;
+	font-weight: 700;
+}
+
+.score-badge {
+	flex-shrink: 0;
+	min-width: 70px;
+	text-align: right;
+}
+
+.score-num {
+	font-size: 1.2rem;
+	font-weight: 800;
+	color: #3498db;
+}
+
+.score-unit {
+	font-size: 0.9rem;
+	font-weight: 600;
+	color: #3498db;
+	margin-left: 2px;
+}
+
+/* ==========================================================================
+   5. 초기 메시지 & 애니메이션
+   ========================================================================== */
+.initial-msg-wrapper {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 100%;
+	min-height: 600px;
+	padding: 40px;
+	background-color: #ffffff;
+}
+
+.completed-container {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+	min-height: 550px;
+	border-radius: 12px;
+}
+
+.initial-msg-wrapper h3 {
+	color: #1e293b;
+	font-size: 1.5rem;
+	font-weight: 700;
+	margin-bottom: 12px;
+}
+
+.initial-fade-in {
+	animation: initialFadeIn 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.completed-content {
+	text-align: center;
+	max-width: 600px;
+	width: 90%;
+	padding: 60px 40px;
+	background: #ffffff;
+	border-radius: 24px;
+}
+
+.completed-icon-circle {
+	width: 90px;
+	height: 90px;
+	background-color: #4f46e5;
+	color: #ffffff;
+	font-size: 2.6rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 50%;
+	margin: 0 auto 25px;
+}
+
+.completed-title {
+	font-size: 1.7rem;
+	font-weight: 800;
+	color: #1e293b; /* 최종 제출 버튼과 같은 남색 계열 */
+	margin-bottom: 15px;
+	letter-spacing: -0.02em;
+}
+
+.completed-text {
+	font-size: 1.15rem;
+	color: #475569;
+	line-height: 1.7;
+}
+
+/* 강조 텍스트 색상 */
+.completed-text strong {
+	color: #4f46e5;
+	font-weight: 700;
+}
+
+.completed-divider {
+	margin: 25px auto;
+}
+
+.completed-subtext {
+	font-size: 1rem;
+	color: #94a3b8;
+	line-height: 1.6;
+	word-break: keep-all;
+}
+
+.qual-eval-body::-webkit-scrollbar {
+	width: 8px;
+}
+
+.qual-eval-body::-webkit-scrollbar-thumb {
+	background-color: #64748b;
+	border-radius: 8px;
+}
+
+/* 체크 박스 컨테이너 */
+.check-box {
+	width: 28px;
+	height: 28px;
+	border: 2px solid #e2e8f0;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: relative;
+	transition: all 0.3s;
+	background: #fff;
+}
+
+.swal-check-icon {
+	width: 16px;
+	height: 16px;
+	stroke: #ffffff;
+	stroke-width: 4;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+	fill: none;
+	stroke-dasharray: 30;
+	stroke-dashoffset: 30;
+	transition: stroke-dashoffset 0.4s ease-out;
+}
+
+.eval-radio-label.selected .check-box {
+	background-color: #4f46e5;
+}
+
+.eval-radio-label.selected .swal-check-icon {
+	stroke-dashoffset: 0;
+}
+
+.eval-option-box:hover .check-box {
+	border-color: #4f46e5;
+}
+
+#targetDept {
+	background: #f1f5f9; /* 연한 회색 배경 */
+	color: #475569; /* 진한 회색 글자 */
+	padding: 6px 15px;
+	border-radius: 50px;
+	font-size: 0.9rem;
+	margin-left: 8px; /* 이름과의 간격 */
+	font-weight: 600;
+	border: 1px solid #e2e8f0;
+	display: none; /* 처음엔 숨김 */
+}
+
+/* 대상자가 선택되어 값이 들어왔을 때만 표시 */
+#targetDept.active {
+	display: inline-block;
+}
+
+#targetDisplay {
+	font-size: 1.4rem;
+	color: #4f46e5;
+	background: #f5f3ff;
+	padding: 4px 12px;
+	border-radius: 6px;
+	font-weight: 600;
+	border: 1px solid #e0e7ff;
+}
+
+.display-dept {
+	font-size: 1rem;
+	font-weight: 500;
+	margin-left: 8px;
+}
+
+.initial-msg-wrapper {
+	display: flex;
+	flex-direction: column; /* 자식 요소들을 세로로 정렬 */
+	align-items: center; /* 가로축 기준 중앙 */
+	justify-content: center; /* 세로축 기준 중앙 */
+	width: 100%; /* 가로 꽉 채우기 */
+	height: 100%; /* 부모 높이 꽉 채우기 (중요!) */
+	min-height: 600px; /* 최소 높이 보장 */
+	background-color: #ffffff;
+}
+
+/* 5. 초기 메시지 & 애니메이션 (수정 버전) */
+.initial-msg-wrapper {
+	display: flex;
+	flex-direction: column;
+	align-items: center; /* 가로 중앙 */
+	justify-content: center; /* 세로 중앙 (부모 높이가 잡혀있어야 함) */
+	width: 100%;
+	height: 100%; /* 부모인 .qual-main-content 또는 .qual-eval-body 높이 기준 */
+	min-height: 600px;
+	background-color: #ffffff;
+	text-align: center;
+}
+
+/* 내부 콘텐츠를 묶어서 부모 flex의 영향을 받게 함 */
+.initial-msg-content {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding-bottom: 50px;
+}
+
+.msg-icon-box {
+	width: 100px; /* 크기를 살짝 키워 가시성 확보 */
+	height: 100px;
+	color: #4f46e5;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 3rem;
+}
+
+.initial-msg-wrapper h3 {
+	color: #1e293b;
+	font-size: 1.8rem; /* 텍스트 크기 강화 */
+	font-weight: 800;
+	margin-bottom: 15px;
+	letter-spacing: -0.03em;
+}
+
+.initial-msg-wrapper p {
+	font-size: 1.2rem;
+	color: #64748b;
+	line-height: 1.8;
+	margin-bottom: 30px;
+}
+
+.msg-badge {
+	display: inline-block;
+	padding: 8px 20px;
+	color: #4f46e5;
+	border-radius: 50px;
+	font-weight: 700;
+	font-size: 0.95rem;
+}
+
+/* 에러 메시지 레이아웃 - 카드 요소 제거 버전 */
+.error-content-wrapper {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	width: 100%;
+	max-width: 600px;
+	margin: 0 auto;
+	box-sizing: border-box;
+}
+
+.error-title-text {
+	color: #1a202c;
+	font-size: 2.2rem; /* 조금 더 크게 */
+	font-weight: 800;
+	margin-bottom: 16px;
+	letter-spacing: -0.03em;
+	word-break: keep-all;
+}
+
+.error-main-desc {
+	font-size: 1.25rem;
+	color: #4a5568;
+	line-height: 1.6;
+	margin-bottom: 20px;
+	word-break: keep-all;
+}
+
+/* 정보 영역 - 박스 디자인 제거 및 텍스트 강조 */
+.error-info-card {
+	display: block;
+	padding: 10px 0; /* 테두리/배경 없이 여백만 유지 */
+	margin: 10px 0 25px 0;
+}
+
+.error-info-name {
+	font-weight: 800;
+	color: #dc2626; /* 텍스트 컬러로 포인트 */
+	margin: 0;
+	font-size: 1.6rem; /* 성명을 더 강조 */
+}
+
+.error-info-no {
+	font-size: 1.1rem;
+	color: #94a3b8;
+	margin-top: 4px;
+	font-weight: 500;
+}
+
+/* 안내 문구 및 버튼 */
+.error-sub-guide {
+	color: #64748b;
+	margin-top: 10px;
+	font-size: 1rem;
+	line-height: 1.8;
+	word-break: keep-all;
+}
+
+.btn-error-reload {
+	margin-top: 40px;
+	padding: 14px 50px;
+	background: #1e293b;
+	color: #ffffff;
+	border: none;
+	border-radius: 8px;
+	font-size: 1.1rem;
+	font-weight: 700;
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+.btn-error-reload:hover {
+	background: #000;
+	transform: scale(1.02); /* 버튼 크기가 살짝 커지는 효과 */
+}
+
+.qual-header {
+	padding: 1.5rem 2.5rem;
+	background-color: #ffffff;
+	border-bottom: 1px solid #e2e8f0;
+	z-index: 10;
+}
+
+.qual-title {
+	margin: 0;
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	gap: 1rem;
+	width: 100%;
+}
+
+/* 제목 텍스트 영역 */
+.title-label {
+	display: flex;
+	align-items: center;
+	flex-shrink: 0; /* 제목이 찌그러지지 않게 고정 */
+	font-size: 1.4rem;
+	font-weight: 800;
+	color: #0f172a;
+}
+
+.title-label i {
+	color: #4f46e5;
+	margin-right: 0.75rem;
+}
+
+.target-display-box {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.75rem; /* 뱃지 사이 간격 */
+	flex: 1; /* 남은 공간을 유연하게 채움 */
+}
+
+#targetName {
+	background: #4f46e5;
+	color: #fff;
+	padding: 0.4rem 1.2rem;
+	border-radius: 8px;
+	font-size: 1.05rem;
+	font-weight: 700;
+	white-space: nowrap; /* 이름이 길어도 줄바꿈 방지 */
+}
+
+#targetDept {
+	background: #f8fafc;
+	color: #4f46e5;
+	padding: 0.35rem 1rem;
+	border-radius: 8px;
+	font-size: 0.9rem;
+	font-weight: 700;
+	border: 1px solid #e0e7ff;
+	white-space: nowrap;
+}

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.flowenect.hr.IndividualEval.mapper.IndividualEvalMapper">
+
+<select id="selectIndividualEvalCbti" parameterType="string" resultType="map">
+    SELECT 
+        A.rspns_no,
+        A.rspns_dtm,
+        A.actn_type_rslt,
+        B.type_nm,
+        C.emp_nm,  
+        DBMS_LOB.SUBSTR(B.type_cn, 4000, 1) AS "typeCn" 
+    FROM RSPNS A
+    INNER JOIN BEHAVIOR_TYPE B ON A.actn_type_rslt = B.type_cd
+    INNER JOIN EMP C ON A.rspnr_emp_no = C.emp_no 
+    WHERE A.trgt_emp_no = #{empNo}
+      AND A.test_no = (
+          SELECT MAX(TEST_NO) 
+          FROM RSPNS 
+          WHERE TRGT_EMP_NO = #{empNo}
+      )
+    ORDER BY A.rspns_dtm DESC
+</select>
+    
+</mapper>

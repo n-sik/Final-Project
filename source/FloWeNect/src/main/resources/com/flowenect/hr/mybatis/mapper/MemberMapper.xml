@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.flowenect.hr.login.mapper.MemberMapper">
+	<!-- 사번 찾기: 이름 + 이메일 -->
+    <select id="findEmpNoByNameAndEmail" resultType="String">
+        SELECT EMP_NO
+          FROM EMP
+         WHERE EMP_NM    = #{name}
+           AND EMP_EMAIL = #{email}
+           AND EMP_STAT_CD != 'RESIGN'
+           AND ACNT_ACT_YN = 'Y'
+    </select>
+
+    <!-- 비밀번호 찾기 검증: 사번 + 이름 + 이메일 -->
+    <select id="countByEmpNoAndNameAndEmail" resultType="int">
+        SELECT COUNT(*)
+          FROM EMP
+         WHERE EMP_NO    = #{empNo}
+           AND EMP_NM    = #{name}
+           AND EMP_EMAIL = #{email}
+    </select>
+
+    <!-- 계정 활성 여부 -->
+    <select id="findAcntActYn" resultType="String">
+        SELECT NVL(ACNT_ACT_YN, 'N')
+          FROM EMP
+         WHERE EMP_NO = #{empNo}
+    </select>
+
+    <!-- 비밀번호 업데이트 -->
+    <update id="updatePassword">
+        UPDATE EMP
+           SET PWD     = #{pwd},
+               MOD_DTM = SYSDATE
+         WHERE EMP_NO  = #{empNo}
+    </update>
+
+</mapper>

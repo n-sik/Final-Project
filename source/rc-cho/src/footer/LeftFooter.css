@@ -1,0 +1,158 @@
+/* LeftFooter.css */
+
+/* 1. 상단 헤더 영역 스타일 복구 */
+.brand-header {
+  position: relative;
+  z-index: 1;
+  margin-bottom: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 25px;
+}
+
+.pulse-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #00d4ff;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #00d4ff;
+}
+
+.status-text {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 5px;
+  color: #00d4ff;
+  text-transform: uppercase;
+}
+
+.hero-main-title {
+  font-size: clamp(32px, 5vw, 60px);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -2px;
+  margin: 0;
+  color: #ffffff;
+}
+
+.connect-text {
+  font-family: 'Inter', sans-serif;
+  font-style: italic;
+  font-weight: 900;
+  color: #00d4ff;
+  margin-left: 10px;
+  text-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
+}
+
+.hero-main-title .highlight {
+  background: linear-gradient(to bottom, #ffffff 40%, #777 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* 2. 하단 마스터 카드 레이아웃 (유지) */
+.spec-master-card {
+  width: 100%;
+  max-width: 1100px;
+  background: rgba(15, 15, 15, 0.8);
+  border-radius: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  backdrop-filter: blur(20px);
+}
+
+.card-content-wrapper {
+  display: flex;
+  align-items: stretch;
+}
+
+/* [왼쪽] 연락처 섹션 */
+.content-left {
+  flex: 1;
+  padding: 20px;
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 25px;
+  /* 박스 간의 간격 */
+}
+
+.contact-unit {
+  position: relative;
+  padding: 20px 25px;
+  border-radius: 16px;
+}
+
+.contact-unit label {
+  font-size: 10px;
+  font-weight: 800;
+  color: rgba(0, 212, 255, 0.8);
+  letter-spacing: 2.5px;
+  display: block;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.contact-unit .val {
+  font-size: 18px;
+  font-weight: 600;
+  color: #ffffff;
+  letter-spacing: -0.2px;
+  line-height: 1.2;
+}
+
+.contact-unit .sub-val {
+  font-size: 13px;
+  margin-top: 6px;
+  font-weight: 400;
+}
+
+
+.content-right {
+  flex: 1.6;
+  padding: 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.main-slosun {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.4;
+  color: #ffffff;
+  margin-bottom: 30px;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 30px 40px;
+}
+
+.grid-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.item-no {
+  font-size: 12px;
+  font-weight: 900;
+  color: #00d4ff;
+}
+
+.item-txt {
+  font-size: 17px;
+  font-weight: 600;
+  color: #eee;
+}

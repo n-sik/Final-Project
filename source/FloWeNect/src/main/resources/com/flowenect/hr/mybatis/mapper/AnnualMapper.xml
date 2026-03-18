@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.flowenect.hr.annual.mapper.AnnualMapper">
+
+	<!-- 연차 목록 조회 (검색어, 직위 필터 포함) -->
+	<select id="selectAnnualList" resultType="AnnualDTO">
+		SELECT 
+            NVL(a.ANNUAL_NO, 0) AS annualNo,
+            e.EMP_NO AS empNo,
+            NVL(a.BASE_YR, #{baseYr}) AS baseYr,
+            NVL(a.TOT_ANNUAL_LV, 0) AS totAnnualLv,
+            NVL(a.USED_ANNUAL_LV, 0) AS usedAnnualLv,
+            NVL(a.REM_ANNUAL_LV, 0) AS remAnnualLv,
+            NVL(a.SICK_LV, 0) AS sickLv,
+            NVL(a.OFFICIAL_LV, 0) AS officialLv,
+            NVL(a.REWARD_LV, 0) AS rewardLv,
+            e.EMP_NM AS empNm,
+            p.POS_NM AS posNm,
+            d.DEPT_NM AS deptNm
+        FROM EMP e
+        JOIN POSITION_MST p ON e.POS_CD = p.POS_CD
+        JOIN DEPT d ON e.DEPT_CD = d.DEPT_CD
+   		LEFT OUTER JOIN EMP_ANNUAL_LV a 
+   				ON e.EMP_NO = a.EMP_NO 
+   				AND a.BASE_YR = #{baseYr}
+        <where>
+	        <if test="posNm != null and posNm != '전체' and posNm != ''">
+	            AND p.POS_NM = #{posNm}
+	        </if>
+	        <if test="search != null and search != ''">
+	            AND (
+	                e.EMP_NM LIKE '%' || #{search} || '%'
+	                OR e.EMP_NO LIKE '%' || #{search} || '%'
+	                OR p.POS_NM LIKE '%' || #{search} || '%'
+	                OR d.DEPT_NM LIKE '%' || #{search} || '%'
+	            )
+	        </if>
+    	</where>
+        ORDER BY e.EMP_NO
+	</select> 
+
+	<!-- 최초 수정 시 신규 생성 -->
+	<insert id="insertAnnual">
+		INSERT INTO EMP_ANNUAL_LV (
+            ANNUAL_NO, 
+            EMP_NO, 
+            BASE_YR,
+            TOT_ANNUAL_LV,
+            USED_ANNUAL_LV,
+            REM_ANNUAL_LV,
+            SICK_LV, 
+            OFFICIAL_LV, 
+            REWARD_LV
+        ) VALUES (
+            SEQ_ANNUAL_NO.NEXTVAL, 
+            #{empNo},
+            #{baseYr},
+            0,
+            #{usedAnnualLv},
+            (NVL(#{rewardLv},0) - (NVL(#{usedAnnualLv},0) + NVL(#{sickLv},0))),
+            #{sickLv}, 
+            #{officialLv}, 
+            #{rewardLv}
+        )
+	</insert>
+
+	<!-- 단일 연차 정보 수정 (병가, 공가, 포상휴가 등) -->
+	<update id="updateAnnual">
+		UPDATE EMP_ANNUAL_LV
+        SET 
+        	USED_ANNUAL_LV = #{usedAnnualLv},
+            SICK_LV = #{sickLv},
+            OFFICIAL_LV = #{officialLv},
+            REWARD_LV = #{rewardLv},
+            -- 실시간 잔여 연차 계산 반영 (총(기본) + 포상) - (사용 + 병가) = 남은 연차
+            REM_ANNUAL_LV = (TOT_ANNUAL_LV + #{rewardLv}) - (#{usedAnnualLv} + #{sickLv})
+        WHERE ANNUAL_NO = #{annualNo}
+	</update>
+
+	<!-- 특정 직위의 총 연차 일괄 등록 -->
+	<insert id="insertBulkAnnual">
+		INSERT INTO EMP_ANNUAL_LV (
+	        ANNUAL_NO, EMP_NO, BASE_YR, TOT_ANNUAL_LV, 
+	        USED_ANNUAL_LV, SICK_LV, OFFICIAL_LV, REWARD_LV, REM_ANNUAL_LV
+	    )
+	    SELECT 
+	        SEQ_ANNUAL_NO.NEXTVAL, 
+	        e.EMP_NO, 
+	        #{baseYr}, 
+	        #{totAnnualLv}, 
+	        0, 0, 0, 0,
+	        -- 신규 생성 시 잔여량은 총 연차와 동일
+	        #{totAnnualLv}	
+	    FROM EMP e
+	    JOIN POSITION_MST p ON e.POS_CD = p.POS_CD
+	    WHERE 1=1
+	    <if test="posNm != null and posNm != '전체' and posNm != ''">
+	        AND p.POS_NM = #{posNm}
+	    </if>
+	    -- 핵심: 이미 데이터가 있는 사원은 제외
+	    AND NOT EXISTS (
+	        SELECT 1 FROM EMP_ANNUAL_LV a 
+	        WHERE a.EMP_NO = e.EMP_NO 
+	        AND a.BASE_YR = #{baseYr}
+	    )
+	</insert>
+
+	<!-- 특정 직위의 총 연차 일괄 수정 -->
+	<update id="updateBulkAnnual">
+		UPDATE EMP_ANNUAL_LV a
+        SET 
+            a.TOT_ANNUAL_LV = #{totAnnualLv},
+            a.REM_ANNUAL_LV = (#{totAnnualLv} + a.REWARD_LV) - (a.USED_ANNUAL_LV + a.SICK_LV)
+        WHERE a.BASE_YR = #{baseYr}
+        AND a.EMP_NO IN (
+            SELECT e.EMP_NO 
+            FROM EMP e
+            JOIN POSITION_MST p ON e.POS_CD = p.POS_CD
+            WHERE 1=1
+            <if test="posNm != null and posNm != '전체' and posNm != ''">
+                AND p.POS_NM = #{posNm}
+            </if>
+        )
+	</update>
+
+	<!-- 단일 삭제 -->
+	<delete id="deleteAnnual">
+        DELETE FROM EMP_ANNUAL_LV
+        WHERE ANNUAL_NO = #{annualNo}
+    </delete>
+	
+	<!-- 다중 삭제 -->
+	<delete id="deleteSelectedAnnual">
+		DELETE FROM EMP_ANNUAL_LV
+        WHERE ANNUAL_NO IN
+        <foreach collection="idList" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+	</delete>
+	
+</mapper>

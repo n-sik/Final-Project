@@ -1,0 +1,534 @@
+/* ── 리셋 & 베이스 ── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ── 페이지 래퍼 ── */
+.page {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(180deg, #f6f8fc 0%, #f1f5f9 100%);
+  color: #0f172a;
+}
+
+/* ── 페이지 헤더 ── */
+.headerWrap {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 18px;
+  border: 1px solid #e8eef7;
+  border-radius: 14px;
+  background: #fff;
+  margin-bottom: 12px;
+}
+
+.headerWrap .pageHeader {
+  margin-bottom: 0;
+}
+
+.pageHeader {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: nowrap;
+}
+
+.pageTitle {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+  color: #101828;
+}
+
+.pageSubtitle {
+  font-size: 14px;
+  color: #667085;
+  margin-top: 3px;
+}
+
+/* ── 메인 카드 ── */
+.mainCard {
+  height: 88%;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid #e8eef7;
+  border-radius: 12px;
+  padding: 18px 20px;
+}
+
+/* ── 툴바 ── */
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.leftTools,
+.rightTools {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.searchBox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 8px 12px;
+  width: 240px;
+  color: #94a3b8;
+}
+
+.searchBox input {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 13px;
+  color: #0f172a;
+  width: 100%;
+}
+.searchBox input::placeholder {
+  color: #94a3b8;
+}
+
+.select {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 8px 10px;
+  font-size: 13px;
+  color: #0f172a;
+  cursor: pointer;
+  outline: none;
+}
+
+.selectedInfo {
+  font-size: 12px;
+  color: #64748b;
+}
+
+/* ── 버튼 공통 ── */
+.btn {
+  min-width: 110px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: transform 0.12s, background 0.15s, opacity 0.15s;
+  white-space: nowrap;
+}
+.btn:hover {
+  transform: translateY(-1px);
+}
+.btn:active {
+  transform: translateY(0px);
+}
+
+.btnPrimary {
+  background: #4f46e5;
+  color: #fff;
+}
+.btnPrimary:hover {
+  background: #4338ca;
+}
+
+.btnDanger {
+  background: #fee2e2;
+  color: #b91c1c;
+  min-width: 125px;
+}
+.btnDanger:hover {
+  background: #fecaca;
+}
+
+.btnDangerSolid {
+  background: #ef4444;
+  color: #fff;
+}
+.btnDangerSolid:hover {
+  background: #dc2626;
+}
+
+.btnOutline {
+  background: #fff;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+}
+.btnOutline:hover {
+  background: #f8fafc;
+}
+
+/* ── 그리드 래퍼 ── */
+.gridWrap {
+  height: 88%;
+  width: 100%;
+}
+
+/* ── 편집 힌트 ── */
+.editHint {
+  font-size: 11px;
+  color: #94a3b8;
+  margin-top: 10px;
+}
+
+/* ── 행 삭제 버튼 ── */
+.rowDeleteBtn {
+  background: #fee2e2;
+  color: #b91c1c;
+  border: none;
+  border-radius: 8px;
+  padding: 5px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.rowDeleteBtn:hover {
+  background: #fecaca;
+}
+
+/* ── 컬럼 상태 텍스트 ── */
+.cellStrong {
+  text-align: center;
+  font-weight: 800;
+  color: #4f46e5;
+}
+/* .cellMuted {
+  text-align: center;
+  color: #475569;
+} */
+.cellOk {
+  text-align: center;
+  font-weight: 800;
+  color: #059669;
+}
+.cellWarn {
+  text-align: center;
+  font-weight: 800;
+  color: #d97706;
+}
+.cellDanger {
+  text-align: center;
+  font-weight: 800;
+  color: #dc2626;
+}
+
+/* ── 텍스트 중앙정렬 ── */
+.cellCenter {
+  text-align: center;
+}
+.headerCenter :global(.ag-header-cell-label) {
+  justify-content: center;
+}
+
+/* =========================================================
+   ✅ 체크박스 컬럼 정렬
+   ========================================================= */
+:global(.ag-header-cell.ag-selection-column),
+:global(.ag-cell.ag-selection-column) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+:global(.ag-header-cell.ag-selection-column .ag-header-cell-label) {
+  width: 100%;
+  justify-content: center;
+}
+
+:global(.ag-cell.ag-selection-column .ag-cell-wrapper) {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+:global(.ag-selection-checkbox) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── 모달 ── */
+.modalBackdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 6, 23, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: #fff;
+  border-radius: 18px;
+  padding: 26px 28px;
+  width: 440px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 22px 70px rgba(2, 6, 23, 0.25);
+}
+
+.modal h3 {
+  font-size: 17px;
+  font-weight: 900;
+  color: #0f172a;
+  margin-bottom: 6px;
+}
+
+.modal p {
+  font-size: 13px;
+  color: #64748b;
+  line-height: 1.65;
+  margin-bottom: 18px;
+}
+
+.modal strong {
+  color: #0f172a;
+  font-weight: 900;
+}
+
+.field {
+  margin-bottom: 14px;
+}
+
+.field label {
+  display: block;
+  font-size: 12px;
+  font-weight: 800;
+  color: #64748b;
+  margin-bottom: 6px;
+}
+
+.field select,
+.field input {
+  width: 100%;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 14px;
+  color: #0f172a;
+  background: #f8fafc;
+  outline: none;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.field select:focus,
+.field input:focus {
+  border-color: #4f46e5;
+  background: #fff;
+}
+
+.fieldHint {
+  margin-top: 8px;
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+.modalActions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 18px;
+}
+
+/* =========================================================
+   ✅ Editable 셀 UX
+   ========================================================= */
+.cellEditable {
+  text-align: center;
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.15s ease, box-shadow 0.15s ease;
+  border-radius: 8px !important;
+}
+
+.cellEditable:hover {
+  box-shadow: inset 0 0 0 2px rgba(79, 70, 229, 0.4) !important;
+  background: #f8faff !important;
+}
+
+/* =========================================================
+   ✅ Quartz 편집/포커스 파란선 제거
+   ========================================================= */
+:global(.ag-theme-quartz .ag-cell.ag-cell-inline-editing) {
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+}
+
+:global(.ag-theme-quartz .ag-cell.ag-cell-inline-editing::after),
+:global(.ag-theme-quartz .ag-cell.ag-cell-focus::after),
+:global(.ag-theme-quartz .ag-cell.ag-cell-range-selected::after),
+:global(.ag-theme-quartz .ag-cell.ag-cell-range-selected-1::after),
+:global(.ag-theme-quartz .ag-cell.ag-cell-range-selected-2::after),
+:global(.ag-theme-quartz .ag-cell.ag-cell-range-selected-3::after),
+:global(.ag-theme-quartz .ag-cell.ag-cell-range-selected-4::after) {
+  display: none !important;
+  content: none !important;
+}
+
+:global(.ag-theme-quartz .ag-cell.ag-cell-inline-editing:focus),
+:global(.ag-theme-quartz .ag-cell.ag-cell-inline-editing:focus-within) {
+  outline: 0 !important;
+  box-shadow: none !important;
+  border: 0 !important;
+}
+
+:global(.ag-theme-quartz .ag-cell-inline-editing .ag-input-field),
+:global(.ag-theme-quartz .ag-cell-inline-editing .ag-input-field-input),
+:global(.ag-theme-quartz .ag-cell-inline-editing input),
+:global(.ag-theme-quartz .ag-cell-inline-editing input:focus),
+:global(.ag-theme-quartz .ag-cell-inline-editing input:focus-visible) {
+  outline: 0 !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+:global(.ag-theme-quartz) {
+  --ag-range-selection-border-color: transparent;
+  --ag-range-selection-border-style: none;
+  --ag-range-selection-background-color: transparent;
+}
+
+:global(.ag-theme-quartz .ag-cell-inline-editing .ag-cell-wrapper),
+:global(.ag-theme-quartz .ag-cell-inline-editing .ag-cell-value) {
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+}
+
+:global(.ag-theme-quartz input),
+:global(.ag-theme-quartz input:focus),
+:global(.ag-theme-quartz input:focus-visible),
+:global(.ag-theme-quartz input:active) {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  -webkit-focus-ring-color: transparent !important;
+}
+
+:global(.ag-cell-inline-editing) {
+  box-shadow: inset 0 0 0 2px rgba(79, 70, 229, 0.4) !important;
+  background: #f8faff !important;
+}
+
+/* =========================================================
+   ✅ Toast 알림
+   ========================================================= */
+.toast {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 260px;
+  max-width: 380px;
+  padding: 13px 18px;
+  border-radius: 12px;
+  /* border-left: 4px solid transparent; */
+  box-shadow: 0 8px 32px rgba(2, 6, 23, 0.13);
+  animation: toastSlideIn 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes toastSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* success */
+.toast_success {
+  background: #f0fdf4;
+  /* border-left-color: #059669; */
+}
+
+/* error */
+.toast_error {
+  background: #fef2f2;
+  /* border-left-color: #dc2626; */
+}
+
+.toastIcon {
+  font-size: 15px;
+  font-weight: 900;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.toast_success .toastIcon {
+  color: #059669;
+}
+
+.toast_error .toastIcon {
+  color: #dc2626;
+}
+
+.toastMessage {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 600;
+  color: #0f172a;
+  line-height: 1.4;
+}
+
+/* .toastClose {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  font-size: 17px;
+  line-height: 1;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 0 2px;
+  transition: color 0.15s;
+}
+.toastClose:hover {
+  color: #475569;
+} */
+
+/* ── 반응형 ── */
+@media (max-width: 768px) {
+  .pageHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .searchBox {
+    width: 100%;
+  }
+  .toast {
+    top: 12px;
+    right: 12px;
+    left: 12px;
+    max-width: unset;
+  }
+}

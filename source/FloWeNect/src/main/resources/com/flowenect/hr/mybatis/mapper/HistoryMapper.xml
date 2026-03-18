@@ -1,0 +1,870 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.flowenect.hr.history.mapper.HistoryMapper">
+
+  <!-- ===================================================== -->
+  <!-- 1. 급여관리이력 -->
+  <!-- ===================================================== -->
+  <select id="selectPayHistList" parameterType="com.flowenect.hr.dto.history.PayHistorySearchDTO" resultType="com.flowenect.hr.dto.history.PayHistDTO">
+    <choose>
+      <when test="tab == null or tab == '' or tab == 'EMP_BASE'">
+        SELECT
+          TO_CHAR(e.PAY_SEQ) AS histKey,
+          'EMP_BASE' AS tab,
+          CASE
+            WHEN TRUNC(SYSDATE) BETWEEN TRUNC(NVL(e.START_DTM, DATE '1900-01-01')) AND TRUNC(NVL(e.END_DTM, DATE '9999-12-31'))
+            THEN 'CURRENT' ELSE 'ENDED'
+          END AS status,
+          d.DEPT_NM AS deptNm,
+          p.POS_CD AS posCd,
+          p.POS_NM AS posNm,
+          em.EMP_NM AS empNm,
+          em.EMP_NO AS empNo,
+          NVL(
+            e.BASE_AMT,
+            NVL(
+              (
+                SELECT gb.STD_AMT
+                FROM (
+                  SELECT g.STD_AMT
+                  FROM GRADE_BASE_AMT g
+                  WHERE g.POS_CD = em.POS_CD
+                    AND TRUNC(NVL(g.END_DTM, DATE '9999-12-31')) &gt;= TRUNC(NVL(e.START_DTM, DATE '1900-01-01'))
+                    AND TRUNC(NVL(g.START_DT, DATE '1900-01-01')) &lt;= TRUNC(NVL(e.END_DTM, DATE '9999-12-31'))
+                  ORDER BY g.START_DT DESC, g.BASE_AMT_NO DESC
+                ) gb
+                WHERE ROWNUM = 1
+              ),
+              0
+            )
+          ) AS baseAmt,
+          e.BANK_NAME AS bankName,
+          e.ACCNT_NO AS accntNo,
+          e.DEDUCT_FAM_CNT AS deductFamCnt,
+          e.SALARY_GRADE AS salaryGrade,
+          e.ADJUST_RSN AS adjustRsn,
+          TO_CHAR(e.START_DTM, 'YYYY-MM-DD') AS startDtm,
+          TO_CHAR(e.END_DTM, 'YYYY-MM-DD') AS endDtm
+        FROM EMP_PAY_INFO e
+        JOIN EMP em ON em.EMP_NO = e.EMP_NO
+        LEFT JOIN DEPT d ON d.DEPT_CD = em.DEPT_CD
+        LEFT JOIN POSITION_MST p ON p.POS_CD = em.POS_CD
+        <where>
+          <if test="startDate != null and startDate != ''">
+            AND TRUNC(NVL(e.END_DTM, DATE '9999-12-31')) &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+          </if>
+          <if test="endDate != null and endDate != ''">
+            AND TRUNC(NVL(e.START_DTM, DATE '1900-01-01')) &lt;= TO_DATE(#{endDate}, 'YYYY-MM-DD')
+          </if>
+          <if test="deptNm != null and deptNm != '' and deptNm != 'ALL'">
+            AND d.DEPT_NM = #{deptNm}
+          </if>
+          <if test="posCd != null and posCd != '' and posCd != 'ALL'">
+            AND p.POS_CD = #{posCd}
+          </if>
+          <if test="empNm != null and empNm != ''">
+            AND em.EMP_NM LIKE '%' || #{empNm} || '%'
+          </if>
+          <if test="empNo != null and empNo != ''">
+            AND em.EMP_NO LIKE '%' || #{empNo} || '%'
+          </if>
+          <if test="bankName != null and bankName != ''">
+            AND e.BANK_NAME LIKE '%' || #{bankName} || '%'
+          </if>
+          <if test="status != null and status != '' and status != 'ALL'">
+            <choose>
+              <when test="status == 'CURRENT'">
+                AND TRUNC(SYSDATE) BETWEEN TRUNC(NVL(e.START_DTM, DATE '1900-01-01')) AND TRUNC(NVL(e.END_DTM, DATE '9999-12-31'))
+              </when>
+              <when test="status == 'ENDED'">
+                AND NOT (TRUNC(SYSDATE) BETWEEN TRUNC(NVL(e.START_DTM, DATE '1900-01-01')) AND TRUNC(NVL(e.END_DTM, DATE '9999-12-31')))
+              </when>
+            </choose>
+          </if>
+        </where>
+        ORDER BY e.START_DTM DESC, e.PAY_SEQ DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{size} ROWS ONLY
+      </when>
+
+      <when test="tab == 'EMP_ALLOW'">
+        SELECT
+          e.EMP_NO || '|' || e.SALARY_ITEM_CODE || '|' || TO_CHAR(e.START_DTM, 'YYYYMMDD') AS histKey,
+          'EMP_ALLOW' AS tab,
+          CASE
+            WHEN TRUNC(SYSDATE) BETWEEN TRUNC(NVL(e.START_DTM, DATE '1900-01-01')) AND TRUNC(NVL(e.END_DTM, DATE '9999-12-31'))
+            THEN 'CURRENT' ELSE 'ENDED'
+          END AS status,
+          d.DEPT_NM AS deptNm,
+          p.POS_CD AS posCd,
+          p.POS_NM AS posNm,
+          em.EMP_NM AS empNm,
+          em.EMP_NO AS empNo,
+          e.SALARY_ITEM_CODE AS salaryItemCode,
+          s.SALARY_ITEM_NAME AS salaryItemName,
+          s.ITEM_TYPE AS itemType,
+          s.TAX_TYPE AS taxType,
+          NVL(e.ITEM_AMOUNT, 0) AS itemAmount,
+          TO_CHAR(e.START_DTM, 'YYYY-MM-DD') AS startDtm,
+          TO_CHAR(e.END_DTM, 'YYYY-MM-DD') AS endDtm
+        FROM EMP_SALARY_ITEM e
+        JOIN EMP em ON em.EMP_NO = e.EMP_NO
+        LEFT JOIN DEPT d ON d.DEPT_CD = em.DEPT_CD
+        LEFT JOIN POSITION_MST p ON p.POS_CD = em.POS_CD
+        LEFT JOIN SALARY_ITEM s ON s.SALARY_ITEM_CODE = e.SALARY_ITEM_CODE
+        <where>
+          <if test="startDate != null and startDate != ''">
+            AND TRUNC(NVL(e.END_DTM, DATE '9999-12-31')) &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+          </if>
+          <if test="endDate != null and endDate != ''">
+            AND TRUNC(NVL(e.START_DTM, DATE '1900-01-01')) &lt;= TO_DATE(#{endDate}, 'YYYY-MM-DD')
+          </if>
+          <if test="deptNm != null and deptNm != '' and deptNm != 'ALL'">
+            AND d.DEPT_NM = #{deptNm}
+          </if>
+          <if test="posCd != null and posCd != '' and posCd != 'ALL'">
+            AND p.POS_CD = #{posCd}
+          </if>
+          <if test="empNm != null and empNm != ''">
+            AND em.EMP_NM LIKE '%' || #{empNm} || '%'
+          </if>
+          <if test="empNo != null and empNo != ''">
+            AND em.EMP_NO LIKE '%' || #{empNo} || '%'
+          </if>
+          <if test="salaryItemCode != null and salaryItemCode != '' and salaryItemCode != 'ALL'">
+            AND e.SALARY_ITEM_CODE = #{salaryItemCode}
+          </if>
+          <if test="taxType != null and taxType != '' and taxType != 'ALL'">
+            AND s.TAX_TYPE = #{taxType}
+          </if>
+          <if test="status != null and status != '' and status != 'ALL'">
+            <choose>
+              <when test="status == 'CURRENT'">
+                AND TRUNC(SYSDATE) BETWEEN TRUNC(NVL(e.START_DTM, DATE '1900-01-01')) AND TRUNC(NVL(e.END_DTM, DATE '9999-12-31'))
+              </when>
+              <when test="status == 'ENDED'">
+                AND NOT (TRUNC(SYSDATE) BETWEEN TRUNC(NVL(e.START_DTM, DATE '1900-01-01')) AND TRUNC(NVL(e.END_DTM, DATE '9999-12-31')))
+              </when>
+            </choose>
+          </if>
+        </where>
+        ORDER BY e.START_DTM DESC, em.EMP_NM ASC, e.SALARY_ITEM_CODE ASC
+        OFFSET #{offset} ROWS FETCH NEXT #{size} ROWS ONLY
+      </when>
+
+      <when test="tab == 'POS_BASE'">
+        SELECT
+          TO_CHAR(g.BASE_AMT_NO) AS histKey,
+          'POS_BASE' AS tab,
+          CASE
+            WHEN TRUNC(SYSDATE) BETWEEN TRUNC(NVL(g.START_DT, DATE '1900-01-01')) AND TRUNC(NVL(g.END_DTM, DATE '9999-12-31'))
+            THEN 'CURRENT' ELSE 'ENDED'
+          END AS status,
+          g.POS_CD AS posCd,
+          p.POS_NM AS posNm,
+          NVL(g.STD_AMT, 0) AS stdAmt,
+          g.BASE_AMT_NO AS baseAmtNo,
+          TO_CHAR(g.START_DT, 'YYYY-MM-DD') AS startDtm,
+          TO_CHAR(g.END_DTM, 'YYYY-MM-DD') AS endDtm
+        FROM GRADE_BASE_AMT g
+        LEFT JOIN POSITION_MST p ON p.POS_CD = g.POS_CD
+        <where>
+          <if test="startDate != null and startDate != ''">
+            AND TRUNC(NVL(g.END_DTM, DATE '9999-12-31')) &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+          </if>
+          <if test="endDate != null and endDate != ''">
+            AND TRUNC(NVL(g.START_DT, DATE '1900-01-01')) &lt;= TO_DATE(#{endDate}, 'YYYY-MM-DD')
+          </if>
+          <if test="posCd != null and posCd != '' and posCd != 'ALL'">
+            AND g.POS_CD = #{posCd}
+          </if>
+          <if test="status != null and status != '' and status != 'ALL'">
+            <choose>
+              <when test="status == 'CURRENT'">
+                AND TRUNC(SYSDATE) BETWEEN TRUNC(NVL(g.START_DT, DATE '1900-01-01')) AND TRUNC(NVL(g.END_DTM, DATE '9999-12-31'))
+              </when>
+              <when test="status == 'ENDED'">
+                AND NOT (TRUNC(SYSDATE) BETWEEN TRUNC(NVL(g.START_DT, DATE '1900-01-01')) AND TRUNC(NVL(g.END_DTM, DATE '9999-12-31')))
+              </when>
+            </choose>
+          </if>
+        </where>
+        ORDER BY g.START_DT DESC, g.BASE_AMT_NO DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{size} ROWS ONLY
+      </when>
+
+      <when test="tab == 'STEP_SET'">
+        SELECT
+          TO_CHAR(s.START_GRP, 'YYYY-MM-DD') AS histKey,
+          'STEP_SET' AS tab,
+          s.status AS status,
+          s.useYn AS useYn,
+          s.stepCount AS stepCount,
+          TO_CHAR(s.createdDtm, 'YYYY-MM-DD') AS createdDtm,
+          TO_CHAR(s.START_GRP, 'YYYY-MM-DD') AS startDtm,
+          TO_CHAR(s.END_GRP, 'YYYY-MM-DD') AS endDtm
+        FROM (
+          SELECT
+            TRUNC(START_DTM) AS START_GRP,
+            TRUNC(MAX(END_DTM)) AS END_GRP,
+            MIN(CREATED_DTM) AS createdDtm,
+            MAX(USE_YN) AS useYn,
+            COUNT(*) AS stepCount,
+            CASE
+              WHEN MAX(CASE
+                         WHEN TRUNC(SYSDATE) BETWEEN TRUNC(NVL(START_DTM, DATE '1900-01-01')) AND TRUNC(NVL(END_DTM, DATE '9999-12-31'))
+                              AND USE_YN = 'Y'
+                         THEN 1 ELSE 0 END) = 1
+              THEN 'CURRENT' ELSE 'ENDED'
+            END AS status
+          FROM STEP_RATE
+          <where>
+            <if test="startDate != null and startDate != ''">
+              AND TRUNC(NVL(END_DTM, DATE '9999-12-31')) &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+            </if>
+            <if test="endDate != null and endDate != ''">
+              AND TRUNC(NVL(START_DTM, DATE '1900-01-01')) &lt;= TO_DATE(#{endDate}, 'YYYY-MM-DD')
+            </if>
+          </where>
+          GROUP BY TRUNC(START_DTM)
+        ) s
+        <where>
+          <if test="status != null and status != '' and status != 'ALL'">
+            AND s.status = #{status}
+          </if>
+        </where>
+        ORDER BY s.START_GRP DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{size} ROWS ONLY
+      </when>
+
+      <when test="tab == 'INSURANCE'">
+        SELECT
+          TO_CHAR(i.RATE_NO) AS histKey,
+          'INSURANCE' AS tab,
+          CASE
+            WHEN TRUNC(SYSDATE) BETWEEN TRUNC(NVL(i.START_DTM, DATE '1900-01-01')) AND TRUNC(NVL(i.END_DTM, DATE '9999-12-31'))
+            THEN 'CURRENT' ELSE 'ENDED'
+          END AS status,
+          i.RATE_NO AS rateNo,
+          i.PENSION_RATE AS pensionRate,
+          i.HEALTH_RATE AS healthRate,
+          i.EMPLOY_RATE AS employRate,
+          i.CARE_RATE AS careRate,
+          i.INCOME_TAX_RATE AS incomeTaxRate,
+          i.LOCAL_TAX_RATE AS localTaxRate,
+          TO_CHAR(i.START_DTM, 'YYYY-MM-DD') AS startDtm,
+          TO_CHAR(i.END_DTM, 'YYYY-MM-DD') AS endDtm
+        FROM INSURANCE_RATE i
+        <where>
+          <if test="startDate != null and startDate != ''">
+            AND TRUNC(NVL(i.END_DTM, DATE '9999-12-31')) &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+          </if>
+          <if test="endDate != null and endDate != ''">
+            AND TRUNC(NVL(i.START_DTM, DATE '1900-01-01')) &lt;= TO_DATE(#{endDate}, 'YYYY-MM-DD')
+          </if>
+          <if test="status != null and status != '' and status != 'ALL'">
+            <choose>
+              <when test="status == 'CURRENT'">
+                AND TRUNC(SYSDATE) BETWEEN TRUNC(NVL(i.START_DTM, DATE '1900-01-01')) AND TRUNC(NVL(i.END_DTM, DATE '9999-12-31'))
+              </when>
+              <when test="status == 'ENDED'">
+                AND NOT (TRUNC(SYSDATE) BETWEEN TRUNC(NVL(i.START_DTM, DATE '1900-01-01')) AND TRUNC(NVL(i.END_DTM, DATE '9999-12-31')))
+              </when>
+            </choose>
+          </if>
+        </where>
+        ORDER BY i.START_DTM DESC, i.RATE_NO DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{size} ROWS ONLY
+      </when>
+
+      <otherwise>
+        SELECT
+          TO_CHAR(pr.PAYROLL_NO) AS histKey,
+          'PAYROLL' AS tab,
+          pr.PAYROLL_NO AS payrollNo,
+          pr.PAY_YYYYMM AS payYyyymm,
+          pr.CONFIRM_YN AS confirmYn,
+          d.DEPT_NM AS deptNm,
+          p.POS_CD AS posCd,
+          p.POS_NM AS posNm,
+          em.EMP_NM AS empNm,
+          em.EMP_NO AS empNo,
+          NVL(pr.TOTAL_PAY_AMT, 0) AS totalPayAmt,
+          NVL(pr.TOTAL_DEDUCT_AMT, 0) AS totalDeductAmt,
+          NVL(pr.NET_PAY_AMT, 0) AS netPayAmt,
+          TO_CHAR(pr.CREATED_DTM, 'YYYY-MM-DD') AS createdDtm
+        FROM PAYROLL pr
+        JOIN EMP em ON em.EMP_NO = pr.EMP_NO
+        LEFT JOIN DEPT d ON d.DEPT_CD = em.DEPT_CD
+        LEFT JOIN POSITION_MST p ON p.POS_CD = em.POS_CD
+        <where>
+          <if test="payMonthFrom != null and payMonthFrom != ''">
+            AND pr.PAY_YYYYMM &gt;= #{payMonthFrom}
+          </if>
+          <if test="payMonthTo != null and payMonthTo != ''">
+            AND pr.PAY_YYYYMM &lt;= #{payMonthTo}
+          </if>
+          <if test="deptNm != null and deptNm != '' and deptNm != 'ALL'">
+            AND d.DEPT_NM = #{deptNm}
+          </if>
+          <if test="posCd != null and posCd != '' and posCd != 'ALL'">
+            AND p.POS_CD = #{posCd}
+          </if>
+          <if test="empNm != null and empNm != ''">
+            AND em.EMP_NM LIKE '%' || #{empNm} || '%'
+          </if>
+          <if test="empNo != null and empNo != ''">
+            AND em.EMP_NO LIKE '%' || #{empNo} || '%'
+          </if>
+          <if test="confirmYn != null and confirmYn != '' and confirmYn != 'ALL'">
+            AND pr.CONFIRM_YN = #{confirmYn}
+          </if>
+        </where>
+        ORDER BY pr.PAY_YYYYMM DESC, pr.CREATED_DTM DESC, pr.PAYROLL_NO DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{size} ROWS ONLY
+      </otherwise>
+    </choose>
+  </select>
+
+  <select id="selectPayHistCount" parameterType="com.flowenect.hr.dto.history.PayHistorySearchDTO" resultType="int">
+    <choose>
+      <when test="tab == null or tab == '' or tab == 'EMP_BASE'">
+        SELECT COUNT(1)
+        FROM EMP_PAY_INFO e
+        JOIN EMP em ON em.EMP_NO = e.EMP_NO
+        LEFT JOIN DEPT d ON d.DEPT_CD = em.DEPT_CD
+        LEFT JOIN POSITION_MST p ON p.POS_CD = em.POS_CD
+        <where>
+          <if test="startDate != null and startDate != ''">
+            AND TRUNC(NVL(e.END_DTM, DATE '9999-12-31')) &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+          </if>
+          <if test="endDate != null and endDate != ''">
+            AND TRUNC(NVL(e.START_DTM, DATE '1900-01-01')) &lt;= TO_DATE(#{endDate}, 'YYYY-MM-DD')
+          </if>
+          <if test="deptNm != null and deptNm != '' and deptNm != 'ALL'">
+            AND d.DEPT_NM = #{deptNm}
+          </if>
+          <if test="posCd != null and posCd != '' and posCd != 'ALL'">
+            AND p.POS_CD = #{posCd}
+          </if>
+          <if test="empNm != null and empNm != ''">
+            AND em.EMP_NM LIKE '%' || #{empNm} || '%'
+          </if>
+          <if test="empNo != null and empNo != ''">
+            AND em.EMP_NO LIKE '%' || #{empNo} || '%'
+          </if>
+          <if test="bankName != null and bankName != ''">
+            AND e.BANK_NAME LIKE '%' || #{bankName} || '%'
+          </if>
+          <if test="status != null and status != '' and status != 'ALL'">
+            <choose>
+              <when test="status == 'CURRENT'">
+                AND TRUNC(SYSDATE) BETWEEN TRUNC(NVL(e.START_DTM, DATE '1900-01-01')) AND TRUNC(NVL(e.END_DTM, DATE '9999-12-31'))
+              </when>
+              <when test="status == 'ENDED'">
+                AND NOT (TRUNC(SYSDATE) BETWEEN TRUNC(NVL(e.START_DTM, DATE '1900-01-01')) AND TRUNC(NVL(e.END_DTM, DATE '9999-12-31')))
+              </when>
+            </choose>
+          </if>
+        </where>
+      </when>
+
+      <when test="tab == 'EMP_ALLOW'">
+        SELECT COUNT(1)
+        FROM EMP_SALARY_ITEM e
+        JOIN EMP em ON em.EMP_NO = e.EMP_NO
+        LEFT JOIN DEPT d ON d.DEPT_CD = em.DEPT_CD
+        LEFT JOIN POSITION_MST p ON p.POS_CD = em.POS_CD
+        LEFT JOIN SALARY_ITEM s ON s.SALARY_ITEM_CODE = e.SALARY_ITEM_CODE
+        <where>
+          <if test="startDate != null and startDate != ''">
+            AND TRUNC(NVL(e.END_DTM, DATE '9999-12-31')) &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+          </if>
+          <if test="endDate != null and endDate != ''">
+            AND TRUNC(NVL(e.START_DTM, DATE '1900-01-01')) &lt;= TO_DATE(#{endDate}, 'YYYY-MM-DD')
+          </if>
+          <if test="deptNm != null and deptNm != '' and deptNm != 'ALL'">
+            AND d.DEPT_NM = #{deptNm}
+          </if>
+          <if test="posCd != null and posCd != '' and posCd != 'ALL'">
+            AND p.POS_CD = #{posCd}
+          </if>
+          <if test="empNm != null and empNm != ''">
+            AND em.EMP_NM LIKE '%' || #{empNm} || '%'
+          </if>
+          <if test="empNo != null and empNo != ''">
+            AND em.EMP_NO LIKE '%' || #{empNo} || '%'
+          </if>
+          <if test="salaryItemCode != null and salaryItemCode != '' and salaryItemCode != 'ALL'">
+            AND e.SALARY_ITEM_CODE = #{salaryItemCode}
+          </if>
+          <if test="taxType != null and taxType != '' and taxType != 'ALL'">
+            AND s.TAX_TYPE = #{taxType}
+          </if>
+          <if test="status != null and status != '' and status != 'ALL'">
+            <choose>
+              <when test="status == 'CURRENT'">
+                AND TRUNC(SYSDATE) BETWEEN TRUNC(NVL(e.START_DTM, DATE '1900-01-01')) AND TRUNC(NVL(e.END_DTM, DATE '9999-12-31'))
+              </when>
+              <when test="status == 'ENDED'">
+                AND NOT (TRUNC(SYSDATE) BETWEEN TRUNC(NVL(e.START_DTM, DATE '1900-01-01')) AND TRUNC(NVL(e.END_DTM, DATE '9999-12-31')))
+              </when>
+            </choose>
+          </if>
+        </where>
+      </when>
+
+      <when test="tab == 'POS_BASE'">
+        SELECT COUNT(1)
+        FROM GRADE_BASE_AMT g
+        LEFT JOIN POSITION_MST p ON p.POS_CD = g.POS_CD
+        <where>
+          <if test="startDate != null and startDate != ''">
+            AND TRUNC(NVL(g.END_DTM, DATE '9999-12-31')) &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+          </if>
+          <if test="endDate != null and endDate != ''">
+            AND TRUNC(NVL(g.START_DT, DATE '1900-01-01')) &lt;= TO_DATE(#{endDate}, 'YYYY-MM-DD')
+          </if>
+          <if test="posCd != null and posCd != '' and posCd != 'ALL'">
+            AND g.POS_CD = #{posCd}
+          </if>
+          <if test="status != null and status != '' and status != 'ALL'">
+            <choose>
+              <when test="status == 'CURRENT'">
+                AND TRUNC(SYSDATE) BETWEEN TRUNC(NVL(g.START_DT, DATE '1900-01-01')) AND TRUNC(NVL(g.END_DTM, DATE '9999-12-31'))
+              </when>
+              <when test="status == 'ENDED'">
+                AND NOT (TRUNC(SYSDATE) BETWEEN TRUNC(NVL(g.START_DT, DATE '1900-01-01')) AND TRUNC(NVL(g.END_DTM, DATE '9999-12-31')))
+              </when>
+            </choose>
+          </if>
+        </where>
+      </when>
+
+      <when test="tab == 'STEP_SET'">
+        SELECT COUNT(1)
+        FROM (
+          SELECT 1
+          FROM STEP_RATE
+          <where>
+            <if test="startDate != null and startDate != ''">
+              AND TRUNC(NVL(END_DTM, DATE '9999-12-31')) &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+            </if>
+            <if test="endDate != null and endDate != ''">
+              AND TRUNC(NVL(START_DTM, DATE '1900-01-01')) &lt;= TO_DATE(#{endDate}, 'YYYY-MM-DD')
+            </if>
+          </where>
+          GROUP BY TRUNC(START_DTM)
+          <if test="status != null and status != '' and status != 'ALL'">
+            HAVING MAX(CASE
+                        WHEN TRUNC(SYSDATE) BETWEEN TRUNC(NVL(START_DTM, DATE '1900-01-01')) AND TRUNC(NVL(END_DTM, DATE '9999-12-31'))
+                             AND USE_YN = 'Y'
+                        THEN 1 ELSE 0 END) =
+              <choose>
+                <when test="status == 'CURRENT'">1</when>
+                <otherwise>0</otherwise>
+              </choose>
+          </if>
+        )
+      </when>
+
+      <when test="tab == 'INSURANCE'">
+        SELECT COUNT(1)
+        FROM INSURANCE_RATE i
+        <where>
+          <if test="startDate != null and startDate != ''">
+            AND TRUNC(NVL(i.END_DTM, DATE '9999-12-31')) &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+          </if>
+          <if test="endDate != null and endDate != ''">
+            AND TRUNC(NVL(i.START_DTM, DATE '1900-01-01')) &lt;= TO_DATE(#{endDate}, 'YYYY-MM-DD')
+          </if>
+          <if test="status != null and status != '' and status != 'ALL'">
+            <choose>
+              <when test="status == 'CURRENT'">
+                AND TRUNC(SYSDATE) BETWEEN TRUNC(NVL(i.START_DTM, DATE '1900-01-01')) AND TRUNC(NVL(i.END_DTM, DATE '9999-12-31'))
+              </when>
+              <when test="status == 'ENDED'">
+                AND NOT (TRUNC(SYSDATE) BETWEEN TRUNC(NVL(i.START_DTM, DATE '1900-01-01')) AND TRUNC(NVL(i.END_DTM, DATE '9999-12-31')))
+              </when>
+            </choose>
+          </if>
+        </where>
+      </when>
+
+      <otherwise>
+        SELECT COUNT(1)
+        FROM PAYROLL pr
+        JOIN EMP em ON em.EMP_NO = pr.EMP_NO
+        LEFT JOIN DEPT d ON d.DEPT_CD = em.DEPT_CD
+        LEFT JOIN POSITION_MST p ON p.POS_CD = em.POS_CD
+        <where>
+          <if test="payMonthFrom != null and payMonthFrom != ''">
+            AND pr.PAY_YYYYMM &gt;= #{payMonthFrom}
+          </if>
+          <if test="payMonthTo != null and payMonthTo != ''">
+            AND pr.PAY_YYYYMM &lt;= #{payMonthTo}
+          </if>
+          <if test="deptNm != null and deptNm != '' and deptNm != 'ALL'">
+            AND d.DEPT_NM = #{deptNm}
+          </if>
+          <if test="posCd != null and posCd != '' and posCd != 'ALL'">
+            AND p.POS_CD = #{posCd}
+          </if>
+          <if test="empNm != null and empNm != ''">
+            AND em.EMP_NM LIKE '%' || #{empNm} || '%'
+          </if>
+          <if test="empNo != null and empNo != ''">
+            AND em.EMP_NO LIKE '%' || #{empNo} || '%'
+          </if>
+          <if test="confirmYn != null and confirmYn != '' and confirmYn != 'ALL'">
+            AND pr.CONFIRM_YN = #{confirmYn}
+          </if>
+        </where>
+      </otherwise>
+    </choose>
+  </select>
+
+  <select id="selectPayStepSetDetail" resultType="com.flowenect.hr.dto.payroll.StepRateDTO">
+    SELECT
+      STEP_RATE_NO AS stepRateNo,
+      SALARY_STEP AS salaryStep,
+      INCREASE_RATE AS increaseRate,
+      TO_CHAR(CREATED_DTM, 'YYYY-MM-DD') AS createdDtm,
+      TO_CHAR(START_DTM, 'YYYY-MM-DD') AS startDtm,
+      TO_CHAR(END_DTM, 'YYYY-MM-DD') AS endDtm,
+      USE_YN AS useYn
+    FROM STEP_RATE
+    WHERE TRUNC(START_DTM) = TO_DATE(#{startDate}, 'YYYY-MM-DD')
+    ORDER BY SALARY_STEP
+  </select>
+
+  <!-- ===================================================== -->
+  <!-- 2. 인사발령이력 (HR_APNT_HIST) -->
+  <!-- ===================================================== -->
+  <select id="selectApntHistList" parameterType="com.flowenect.hr.dto.history.ApntHistSearchDTO" resultType="ApntHistDTO">
+    SELECT
+      TO_CHAR(h.APNT_DT, 'YYYY-MM-DD') AS apntDt,
+      e.EMP_NM AS empNm,
+      NVL(db.DEPT_NM, '-') AS bfDeptNm,
+      NVL(da.DEPT_NM, '-') AS afDeptNm,
+      NVL(h.APNT_RSN, '-') AS apntRsn,
+      p.EMP_NM AS procEmpNm
+    FROM HR_APNT_HIST h
+    JOIN EMP e ON e.EMP_NO = h.EMP_NO
+    JOIN EMP p ON p.EMP_NO = h.PROC_EMP_NO
+    LEFT JOIN DEPT db ON db.DEPT_CD = h.BF_DEPT_CD
+    LEFT JOIN DEPT da ON da.DEPT_CD = h.AF_DEPT_CD
+    <where>
+      <if test="startDate != null and startDate != ''">
+        AND h.APNT_DT &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+      </if>
+      <if test="endDate != null and endDate != ''">
+        AND h.APNT_DT &lt; TO_DATE(#{endDate}, 'YYYY-MM-DD') + 1
+      </if>
+      <if test="empNm != null and empNm != ''">
+        AND e.EMP_NM LIKE '%' || #{empNm} || '%'
+      </if>
+      <if test="procEmpNm != null and procEmpNm != ''">
+        AND p.EMP_NM LIKE '%' || #{procEmpNm} || '%'
+      </if>
+      <if test="bfDeptNm != null and bfDeptNm != ''">
+        AND NVL(db.DEPT_NM, '-') LIKE '%' || #{bfDeptNm} || '%'
+      </if>
+      <if test="afDeptNm != null and afDeptNm != ''">
+        AND NVL(da.DEPT_NM, '-') LIKE '%' || #{afDeptNm} || '%'
+      </if>
+      <if test="apntRsn != null and apntRsn != ''">
+        AND NVL(h.APNT_RSN, '-') LIKE '%' || #{apntRsn} || '%'
+      </if>
+    </where>
+    ORDER BY h.APNT_DT DESC, e.EMP_NM ASC, p.EMP_NM ASC
+    OFFSET #{offset} ROWS FETCH NEXT #{size} ROWS ONLY
+  </select>
+
+  <select id="selectApntHistCount" parameterType="com.flowenect.hr.dto.history.ApntHistSearchDTO" resultType="int">
+    SELECT COUNT(1)
+    FROM HR_APNT_HIST h
+    JOIN EMP e ON e.EMP_NO = h.EMP_NO
+    JOIN EMP p ON p.EMP_NO = h.PROC_EMP_NO
+    LEFT JOIN DEPT db ON db.DEPT_CD = h.BF_DEPT_CD
+    LEFT JOIN DEPT da ON da.DEPT_CD = h.AF_DEPT_CD
+    <where>
+      <if test="startDate != null and startDate != ''">
+        AND h.APNT_DT &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+      </if>
+      <if test="endDate != null and endDate != ''">
+        AND h.APNT_DT &lt; TO_DATE(#{endDate}, 'YYYY-MM-DD') + 1
+      </if>
+      <if test="empNm != null and empNm != ''">
+        AND e.EMP_NM LIKE '%' || #{empNm} || '%'
+      </if>
+      <if test="procEmpNm != null and procEmpNm != ''">
+        AND p.EMP_NM LIKE '%' || #{procEmpNm} || '%'
+      </if>
+      <if test="bfDeptNm != null and bfDeptNm != ''">
+        AND NVL(db.DEPT_NM, '-') LIKE '%' || #{bfDeptNm} || '%'
+      </if>
+      <if test="afDeptNm != null and afDeptNm != ''">
+        AND NVL(da.DEPT_NM, '-') LIKE '%' || #{afDeptNm} || '%'
+      </if>
+      <if test="apntRsn != null and apntRsn != ''">
+        AND NVL(h.APNT_RSN, '-') LIKE '%' || #{apntRsn} || '%'
+      </if>
+    </where>
+  </select>
+
+  <!-- ===================================================== -->
+  <!-- 3. 승진이력 (PROMOTION_HIST) -->
+  <!-- ===================================================== -->
+  <select id="selectPromotionHistList" parameterType="com.flowenect.hr.dto.history.PromotionHistSearchDTO" resultType="PromotionHistDTO">
+    SELECT
+      TO_CHAR(h.PROMO_DT, 'YYYY-MM-DD') AS promoDt,
+      e.EMP_NM AS empNm,
+      NVL(pb.POS_NM, '-') AS bfPosNm,
+      NVL(pa.POS_NM, '-') AS afPosNm,
+      NVL(h.PROMO_RSN, '-') AS promoRsn,
+      p.EMP_NM AS procEmpNm
+    FROM PROMOTION_HIST h
+    JOIN EMP e ON e.EMP_NO = h.EMP_NO
+    JOIN EMP p ON p.EMP_NO = h.PROC_EMP_NO
+    LEFT JOIN POSITION_MST pb ON pb.POS_CD = h.BF_POS_CD
+    LEFT JOIN POSITION_MST pa ON pa.POS_CD = h.AF_POS_CD
+    <where>
+      <if test="startDate != null and startDate != ''">
+        AND h.PROMO_DT &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+      </if>
+      <if test="endDate != null and endDate != ''">
+        AND h.PROMO_DT &lt; TO_DATE(#{endDate}, 'YYYY-MM-DD') + 1
+      </if>
+      <if test="empNm != null and empNm != ''">
+        AND e.EMP_NM LIKE '%' || #{empNm} || '%'
+      </if>
+      <if test="procEmpNm != null and procEmpNm != ''">
+        AND p.EMP_NM LIKE '%' || #{procEmpNm} || '%'
+      </if>
+      <if test="bfPosNm != null and bfPosNm != ''">
+        AND NVL(pb.POS_NM, '-') LIKE '%' || #{bfPosNm} || '%'
+      </if>
+      <if test="afPosNm != null and afPosNm != ''">
+        AND NVL(pa.POS_NM, '-') LIKE '%' || #{afPosNm} || '%'
+      </if>
+      <if test="promoRsn != null and promoRsn != ''">
+        AND NVL(h.PROMO_RSN, '-') LIKE '%' || #{promoRsn} || '%'
+      </if>
+    </where>
+    ORDER BY h.PROMO_DT DESC, e.EMP_NM ASC, p.EMP_NM ASC
+    OFFSET #{offset} ROWS FETCH NEXT #{size} ROWS ONLY
+  </select>
+
+  <select id="selectPromotionHistCount" parameterType="com.flowenect.hr.dto.history.PromotionHistSearchDTO" resultType="int">
+    SELECT COUNT(1)
+    FROM PROMOTION_HIST h
+    JOIN EMP e ON e.EMP_NO = h.EMP_NO
+    JOIN EMP p ON p.EMP_NO = h.PROC_EMP_NO
+    LEFT JOIN POSITION_MST pb ON pb.POS_CD = h.BF_POS_CD
+    LEFT JOIN POSITION_MST pa ON pa.POS_CD = h.AF_POS_CD
+    <where>
+      <if test="startDate != null and startDate != ''">
+        AND h.PROMO_DT &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+      </if>
+      <if test="endDate != null and endDate != ''">
+        AND h.PROMO_DT &lt; TO_DATE(#{endDate}, 'YYYY-MM-DD') + 1
+      </if>
+      <if test="empNm != null and empNm != ''">
+        AND e.EMP_NM LIKE '%' || #{empNm} || '%'
+      </if>
+      <if test="procEmpNm != null and procEmpNm != ''">
+        AND p.EMP_NM LIKE '%' || #{procEmpNm} || '%'
+      </if>
+      <if test="bfPosNm != null and bfPosNm != ''">
+        AND NVL(pb.POS_NM, '-') LIKE '%' || #{bfPosNm} || '%'
+      </if>
+      <if test="afPosNm != null and afPosNm != ''">
+        AND NVL(pa.POS_NM, '-') LIKE '%' || #{afPosNm} || '%'
+      </if>
+      <if test="promoRsn != null and promoRsn != ''">
+        AND NVL(h.PROMO_RSN, '-') LIKE '%' || #{promoRsn} || '%'
+      </if>
+    </where>
+  </select>
+
+  <!-- ===================================================== -->
+  <!-- 4. 전자결재이력 (APRV_DOC) -->
+  <!-- ===================================================== -->
+  <select id="selectAprvHistList" parameterType="com.flowenect.hr.dto.history.AprvHistSearchDTO" resultType="AprvHistDTO">
+    SELECT
+      d.APRV_NO AS aprvNo,
+      TO_CHAR(d.SUBMIT_DTM, 'YYYY-MM-DD') AS submitDtm,
+      NVL(ft.FORM_NM, '-') AS formNm,
+      NVL(d.DOC_WRTR_EMP_NM, em.EMP_NM) AS empNm,
+      d.APRV_TTL AS aprvTtl,
+      d.STAT_CD AS statCd,
+      NVL(sc.STAT_NM, d.STAT_CD) AS statNm,
+      CASE WHEN d.FINAL_DTM IS NOT NULL THEN TO_CHAR(d.FINAL_DTM, 'YYYY-MM-DD') END AS finalDtm
+    FROM APRV_DOC d
+    JOIN EMP em ON em.EMP_NO = d.EMP_NO
+    LEFT JOIN APRV_FORM_TYPE ft ON ft.FORM_CD = d.FORM_CD
+    LEFT JOIN APRV_STAT_CD sc ON sc.STAT_DIV = 'DOC' AND sc.STAT_CD = d.STAT_CD
+    <where>
+      <if test="formCd != null and formCd != ''">
+        AND d.FORM_CD = #{formCd}
+      </if>
+      <if test="empNm != null and empNm != ''">
+        AND NVL(d.DOC_WRTR_EMP_NM, em.EMP_NM) LIKE '%' || #{empNm} || '%'
+      </if>
+      <if test="aprvTtl != null and aprvTtl != ''">
+        AND d.APRV_TTL LIKE '%' || #{aprvTtl} || '%'
+      </if>
+      <if test="statCd != null and statCd != ''">
+        AND d.STAT_CD = #{statCd}
+      </if>
+      <if test="startDate != null and startDate != ''">
+        AND d.SUBMIT_DTM &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+      </if>
+      <if test="endDate != null and endDate != ''">
+        AND d.SUBMIT_DTM &lt; TO_DATE(#{endDate}, 'YYYY-MM-DD') + 1
+      </if>
+    </where>
+    ORDER BY d.SUBMIT_DTM DESC, d.APRV_NO DESC
+    OFFSET #{offset} ROWS FETCH NEXT #{size} ROWS ONLY
+  </select>
+
+  <select id="selectAprvHistCount" parameterType="com.flowenect.hr.dto.history.AprvHistSearchDTO" resultType="int">
+    SELECT COUNT(1)
+    FROM APRV_DOC d
+    JOIN EMP em ON em.EMP_NO = d.EMP_NO
+    LEFT JOIN APRV_FORM_TYPE ft ON ft.FORM_CD = d.FORM_CD
+    LEFT JOIN APRV_STAT_CD sc ON sc.STAT_DIV = 'DOC' AND sc.STAT_CD = d.STAT_CD
+    <where>
+      <if test="formCd != null and formCd != ''">
+        AND d.FORM_CD = #{formCd}
+      </if>
+      <if test="empNm != null and empNm != ''">
+        AND NVL(d.DOC_WRTR_EMP_NM, em.EMP_NM) LIKE '%' || #{empNm} || '%'
+      </if>
+      <if test="aprvTtl != null and aprvTtl != ''">
+        AND d.APRV_TTL LIKE '%' || #{aprvTtl} || '%'
+      </if>
+      <if test="statCd != null and statCd != ''">
+        AND d.STAT_CD = #{statCd}
+      </if>
+      <if test="startDate != null and startDate != ''">
+        AND d.SUBMIT_DTM &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+      </if>
+      <if test="endDate != null and endDate != ''">
+        AND d.SUBMIT_DTM &lt; TO_DATE(#{endDate}, 'YYYY-MM-DD') + 1
+      </if>
+    </where>
+  </select>
+
+  <select id="selectAprvHistDetail" resultType="com.flowenect.hr.dto.history.AprvHistDetailDTO">
+    SELECT
+      d.APRV_NO AS aprvNo,
+      TO_CHAR(d.SUBMIT_DTM, 'YYYY-MM-DD') AS submitDtm,
+      CASE WHEN d.FINAL_DTM IS NOT NULL THEN TO_CHAR(d.FINAL_DTM, 'YYYY-MM-DD') END AS finalDtm,
+      d.FORM_CD AS formCd,
+      NVL(ft.FORM_NM, '-') AS formNm,
+      d.EMP_NO AS empNo,
+      NVL(d.DOC_WRTR_EMP_NM, em.EMP_NM) AS empNm,
+      d.DOC_WRTR_DEPT_CD AS docWrtrDeptCd,
+      NVL(dd.DEPT_NM, '-') AS docWrtrDeptNm,
+      d.DOC_WRTR_POS_CD AS docWrtrPosCd,
+      NVL(dp.POS_NM, '-') AS docWrtrPosNm,
+      d.STAT_CD AS statCd,
+      NVL(sc.STAT_NM, d.STAT_CD) AS statNm,
+      d.HR_APPLY_YN AS hrApplyYn,
+      CASE
+        WHEN d.HR_APPLY_YN = 'Y' THEN '반영'
+        WHEN d.HR_APPLY_YN = 'N' THEN '미반영'
+        ELSE '-'
+      END AS hrApplyNm,
+      d.APRV_TTL AS aprvTtl,
+      d.APRV_CN AS aprvCn,
+      NVL(d.DOC_STAT_CMT, '-') AS docStatCmt
+    FROM APRV_DOC d
+    JOIN EMP em ON em.EMP_NO = d.EMP_NO
+    LEFT JOIN DEPT dd ON dd.DEPT_CD = d.DOC_WRTR_DEPT_CD
+    LEFT JOIN POSITION_MST dp ON dp.POS_CD = d.DOC_WRTR_POS_CD
+    LEFT JOIN APRV_FORM_TYPE ft ON ft.FORM_CD = d.FORM_CD
+    LEFT JOIN APRV_STAT_CD sc ON sc.STAT_DIV = 'DOC' AND sc.STAT_CD = d.STAT_CD
+    WHERE d.APRV_NO = #{aprvNo}
+  </select>
+
+  <select id="selectAprvHistExcelList" parameterType="com.flowenect.hr.dto.history.AprvHistSearchDTO" resultType="com.flowenect.hr.dto.history.AprvHistDetailDTO">
+    SELECT
+      d.APRV_NO AS aprvNo,
+      TO_CHAR(d.SUBMIT_DTM, 'YYYY-MM-DD') AS submitDtm,
+      CASE WHEN d.FINAL_DTM IS NOT NULL THEN TO_CHAR(d.FINAL_DTM, 'YYYY-MM-DD') END AS finalDtm,
+      d.FORM_CD AS formCd,
+      NVL(ft.FORM_NM, '-') AS formNm,
+      d.EMP_NO AS empNo,
+      NVL(d.DOC_WRTR_EMP_NM, em.EMP_NM) AS empNm,
+      d.DOC_WRTR_DEPT_CD AS docWrtrDeptCd,
+      NVL(dd.DEPT_NM, '-') AS docWrtrDeptNm,
+      d.DOC_WRTR_POS_CD AS docWrtrPosCd,
+      NVL(dp.POS_NM, '-') AS docWrtrPosNm,
+      d.STAT_CD AS statCd,
+      NVL(sc.STAT_NM, d.STAT_CD) AS statNm,
+      d.HR_APPLY_YN AS hrApplyYn,
+      CASE
+        WHEN d.HR_APPLY_YN = 'Y' THEN '반영'
+        WHEN d.HR_APPLY_YN = 'N' THEN '미반영'
+        ELSE '-'
+      END AS hrApplyNm,
+      d.APRV_TTL AS aprvTtl,
+      d.APRV_CN AS aprvCn,
+      NVL(d.DOC_STAT_CMT, '-') AS docStatCmt
+    FROM APRV_DOC d
+    JOIN EMP em ON em.EMP_NO = d.EMP_NO
+    LEFT JOIN DEPT dd ON dd.DEPT_CD = d.DOC_WRTR_DEPT_CD
+    LEFT JOIN POSITION_MST dp ON dp.POS_CD = d.DOC_WRTR_POS_CD
+    LEFT JOIN APRV_FORM_TYPE ft ON ft.FORM_CD = d.FORM_CD
+    LEFT JOIN APRV_STAT_CD sc ON sc.STAT_DIV = 'DOC' AND sc.STAT_CD = d.STAT_CD
+    <where>
+      <if test="formCd != null and formCd != ''">
+        AND d.FORM_CD = #{formCd}
+      </if>
+      <if test="empNm != null and empNm != ''">
+        AND NVL(d.DOC_WRTR_EMP_NM, em.EMP_NM) LIKE '%' || #{empNm} || '%'
+      </if>
+      <if test="aprvTtl != null and aprvTtl != ''">
+        AND d.APRV_TTL LIKE '%' || #{aprvTtl} || '%'
+      </if>
+      <if test="statCd != null and statCd != ''">
+        AND d.STAT_CD = #{statCd}
+      </if>
+      <if test="startDate != null and startDate != ''">
+        AND d.SUBMIT_DTM &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+      </if>
+      <if test="endDate != null and endDate != ''">
+        AND d.SUBMIT_DTM &lt; TO_DATE(#{endDate}, 'YYYY-MM-DD') + 1
+      </if>
+    </where>
+    ORDER BY d.SUBMIT_DTM DESC, d.APRV_NO DESC
+    OFFSET #{offset} ROWS FETCH NEXT #{size} ROWS ONLY
+  </select>
+
+  <select id="selectAprvFormTypes" resultType="CodeNameDTO">
+    SELECT
+      FORM_CD AS code,
+      FORM_NM AS name
+    FROM APRV_FORM_TYPE
+    ORDER BY FORM_CD
+  </select>
+
+  <select id="selectAprvStatTypes" resultType="CodeNameDTO">
+    SELECT
+      STAT_CD AS code,
+      STAT_NM AS name
+    FROM APRV_STAT_CD
+    WHERE STAT_DIV = 'DOC'
+    ORDER BY CASE STAT_CD
+      WHEN 'SUBMITTED' THEN 1
+      WHEN 'IN_PROGRESS' THEN 2
+      WHEN 'APPROVED' THEN 3
+      WHEN 'REJECTED' THEN 4
+      WHEN 'CANCELED' THEN 5
+      ELSE 99
+    END, STAT_CD
+  </select>
+
+</mapper>

@@ -1,0 +1,252 @@
+{
+  "employees": [
+    {
+      "id": "HR001",
+      "name": "김민수",
+      "department": "인사 (HR01)",
+      "position": "부장",
+      "joinDate": "20260210",
+      "status": "재직"
+    },
+    {
+      "id": "HR002",
+      "name": "이지은",
+      "department": "인사 (HR01)",
+      "position": "과장",
+      "joinDate": "20260201",
+      "status": "재직"
+    },
+    {
+      "id": "HR003",
+      "name": "박서준",
+      "department": "인사 (HR01)",
+      "position": "대리",
+      "joinDate": "20260101",
+      "status": "퇴사"
+    },
+    {
+      "id": "PD001",
+      "name": "최영희",
+      "department": "생산제조 (PD01)",
+      "position": "차장",
+      "joinDate": "20260210",
+      "status": "재직"
+    },
+    {
+      "id": "PD002",
+      "name": "정수민",
+      "department": "생산제조 (PD01)",
+      "position": "과장",
+      "joinDate": "20260201",
+      "status": "재직"
+    },
+    {
+      "id": "PD003",
+      "name": "강태양",
+      "department": "생산제조 (PD01)",
+      "position": "사원",
+      "joinDate": "20260111",
+      "status": "휴직"
+    },
+    {
+      "id": "DV001",
+      "name": "윤하늘",
+      "department": "개발 (DV01)",
+      "position": "부장",
+      "joinDate": "20260205",
+      "status": "재직"
+    },
+    {
+      "id": "DV002",
+      "name": "송지훈",
+      "department": "개발 (DV01)",
+      "position": "차장",
+      "joinDate": "20260119",
+      "status": "재직"
+    },
+    {
+      "id": "DV003",
+      "name": "홍길동",
+      "department": "개발 (DV01)",
+      "position": "대리",
+      "joinDate": "20260123",
+      "status": "재직"
+    },
+    {
+      "id": "PM001",
+      "name": "임수정",
+      "department": "서비스기획 (PM01)",
+      "position": "과장",
+      "joinDate": "20260125",
+      "status": "휴직"
+    },
+    {
+      "id": "PM002",
+      "name": "오성민",
+      "department": "서비스기획 (PM01)",
+      "position": "주임",
+      "joinDate": "20260208",
+      "status": "재직"
+    },
+    {
+      "id": "CS001",
+      "name": "서유진",
+      "department": "고객지원 (CS01)",
+      "position": "대리",
+      "joinDate": "20260210",
+      "status": "재직"
+    },
+    {
+      "id": "CS002",
+      "name": "한미래",
+      "department": "고객지원 (CS01)",
+      "position": "사원",
+      "joinDate": "20260128",
+      "status": "재직"
+    },
+    {
+      "id": "MK001",
+      "name": "장동건",
+      "department": "마케팅 (MK01)",
+      "position": "차장",
+      "joinDate": "20260115",
+      "status": "퇴사"
+    },
+    {
+      "id": "MK002",
+      "name": "문채원",
+      "department": "마케팅 (MK01)",
+      "position": "대리",
+      "joinDate": "20260210",
+      "status": "재직"
+    },
+    {
+      "id": "SL001",
+      "name": "권상우",
+      "department": "영업 (SL01)",
+      "position": "부장",
+      "joinDate": "20260111",
+      "status": "재직"
+    },
+    {
+      "id": "SL002",
+      "name": "유아인",
+      "department": "영업 (SL01)",
+      "position": "과장",
+      "joinDate": "20260201",
+      "status": "재직"
+    },
+    {
+      "id": "EMP-2024-001",
+      "name": "김철수",
+      "department": "개발1팀",
+      "position": "과장",
+      "joinDate": "2020-03-15",
+      "status": "재직",
+      "email": "kimcs@company.com",
+      "phone": "010-1234-5678",
+      "idNumber": "850315-1234567",
+      "zipCode": "06234",
+      "address": "서울특별시 강남구 테헤란로 123",
+      "addressDetail": "ABC빌딩 5층"
+    },
+    {
+      "id": "EMP-2024-002",
+      "name": "이영희",
+      "department": "인사팀",
+      "position": "대리",
+      "joinDate": "2021-06-01",
+      "status": "재직",
+      "email": "leeyh@company.com",
+      "phone": "010-2345-6789",
+      "idNumber": "900601-2345678",
+      "zipCode": "03181",
+      "address": "서울특별시 종로구 세종대로 209",
+      "addressDetail": "정부서울청사 별관"
+    },
+    {
+      "id": "EMP-2024-003",
+      "name": "박민수",
+      "department": "마케팅팀",
+      "position": "부장",
+      "joinDate": "2018-01-10",
+      "status": "재직",
+      "email": "parkms@company.com",
+      "phone": "010-3456-7890",
+      "idNumber": "780110-1111222",
+      "zipCode": "04524",
+      "address": "서울특별시 중구 세종대로 110",
+      "addressDetail": "마케팅센터 3층"
+    },
+    {
+      "id": "EMP-2024-004",
+      "name": "정수진",
+      "department": "개발2팀",
+      "position": "사원",
+      "joinDate": "2023-04-01",
+      "status": "재직",
+      "email": "jungsj@company.com",
+      "phone": "010-4567-8901",
+      "idNumber": "950401-2222333",
+      "zipCode": "06132",
+      "address": "서울특별시 강남구 테헤란로 501",
+      "addressDetail": "DEF타워 12층"
+    },
+    {
+      "id": "EMP-2024-005",
+      "name": "최동욱",
+      "department": "영업팀",
+      "position": "차장",
+      "joinDate": "2019-09-15",
+      "status": "퇴사",
+      "email": "choidw@company.com",
+      "phone": "010-5678-9012",
+      "idNumber": "820915-1333444",
+      "zipCode": "07299",
+      "address": "서울특별시 영등포구 여의대로 108",
+      "addressDetail": "영업센터 2층"
+    },
+    {
+      "id": "EMP-2024-006",
+      "name": "한지민",
+      "department": "디자인팀",
+      "position": "대리",
+      "joinDate": "2022-02-20",
+      "status": "재직",
+      "email": "hanjm@company.com",
+      "phone": "010-6789-0123",
+      "idNumber": "920220-2444555",
+      "zipCode": "04043",
+      "address": "서울특별시 마포구 월드컵북로 400",
+      "addressDetail": "디자인스튜디오 4층"
+    },
+    {
+      "id": "EMP-2024-007",
+      "name": "윤성호",
+      "department": "개발1팀",
+      "position": "차장",
+      "joinDate": "2019-07-12",
+      "status": "재직",
+      "email": "yoonsh@company.com",
+      "phone": "010-7890-1234",
+      "idNumber": "830712-1555666",
+      "zipCode": "06234",
+      "address": "서울특별시 강남구 테헤란로 123",
+      "addressDetail": "ABC빌딩 5층"
+    },
+    {
+      "id": "EMP-2024-008",
+      "name": "강민지",
+      "department": "인사팀",
+      "position": "과장",
+      "joinDate": "2020-11-03",
+      "status": "재직",
+      "email": "kangmj@company.com",
+      "phone": "010-8901-2345",
+      "idNumber": "881103-2666777",
+      "zipCode": "03181",
+      "address": "서울특별시 종로구 세종대로 209",
+      "addressDetail": "정부서울청사 별관"
+    }
+  ]
+}

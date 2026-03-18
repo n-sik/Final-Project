@@ -1,0 +1,298 @@
+.rightPanel {
+    border: 1px solid #e8eef7;
+    border-radius: 14px;
+    background: #fff;
+    overflow: hidden;
+
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+}
+
+.rightScroll {
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.sectionCard {
+    border: 1px solid #eef2f7;
+    border-radius: 14px;
+    padding: 12px;
+    background: #fff;
+
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.sectionCard :global(.ag-root-wrapper) {
+    border: none;
+}
+
+.sectionHeader {
+    font-weight: 900;
+    color: #1f2a44;
+    margin-bottom: 10px;
+    flex: 0 0 auto;
+}
+
+.sectionHeaderRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    flex: 0 0 auto;
+}
+
+.gridSmall {
+    width: 100%;
+    flex: 1;
+    min-height: 320px;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+}
+
+.gridPlusBtn {
+    width: 44px;
+    height: 44px;
+    border-radius: 999px;
+    border: 1px solid #dbe7ff;
+    background: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+
+    position: absolute;
+    left: 50%;
+    bottom: 14px;
+    transform: translateX(-50%);
+    z-index: 5;
+}
+
+.gridPlusBtn:hover {
+    background: #f3f7ff;
+}
+
+.gridPlusBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.formBox {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.pairRow {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.formRow {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    align-items: center;
+    gap: 10px;
+}
+
+.formRow label {
+    font-size: 12px;
+    font-weight: 800;
+    color: #475569;
+}
+
+.formRow input {
+    width: 100%;
+    height: 36px;
+    border: 1px solid #e8eef7;
+    border-radius: 10px;
+    padding: 0 10px;
+    background: #fff;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    box-sizing: border-box;
+}
+
+.formRow input:focus {
+    outline: none;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.15);
+}
+
+.formRow input:disabled {
+    background: #f8fafc;
+    color: #64748b;
+}
+
+.formRow2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.formRow2 label {
+    font-size: 12px;
+    font-weight: 800;
+    color: #475569;
+    display: block;
+    margin-bottom: 6px;
+}
+
+.formRow2 input {
+    height: 36px;
+    border: 1px solid #e8eef7;
+    border-radius: 10px;
+    padding: 0 10px;
+    width: 100%;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    box-sizing: border-box;
+}
+
+.formRow2 input:focus {
+    outline: none;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.15);
+}
+
+.formRow2 input:disabled {
+    background: #f8fafc;
+    color: #64748b;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 12px;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btnGhost {
+    background: #f6f8fc;
+    border-color: #e8eef7;
+    color: #334155;
+}
+
+.btnGhost:hover:not(:disabled) {
+    background: #eef2ff;
+    border-color: #c7d2fe;
+    color: #4338ca;
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.sectionHeaderActions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.btnSmall {
+    height: 32px;
+    padding: 0 10px;
+    border-radius: 10px;
+    border: 1px solid #dbe7ff;
+    background: #fff;
+    font-weight: 800;
+    font-size: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+}
+
+.btnSmall:hover {
+    background: #f3f7ff;
+}
+
+.btnDanger {
+    border-color: #f3b4b4;
+    background: #fff;
+    color: #b42318;
+}
+
+.btnDanger:hover {
+    background: #fff5f5;
+}
+
+.formRowWide {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    align-items: center;
+    gap: 10px;
+}
+
+.formRowWide > label {
+    font-size: 12px;
+    font-weight: 800;
+    color: #475569;
+}
+
+/* 기준금액 행 */
+.baseAmtBox {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    min-width: 0;
+}
+
+.baseAmtBox > input {
+    width: 100%;
+    height: 36px;
+    border: 1px solid #e8eef7;
+    border-radius: 10px;
+    padding: 0 10px;
+    background: #fff;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    box-sizing: border-box;
+    min-width: 0;
+}
+
+.baseAmtBox > input:focus {
+    outline: none;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.15);
+}
+
+.baseAmtBox > input:disabled {
+    background: #f8fafc;
+    color: #64748b;
+}
+
+.checkLabel {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 800;
+    color: #334155;
+    white-space: nowrap;
+    margin: 0;
+    flex-shrink: 0;
+}
+
+.checkLabel input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    flex-shrink: 0;
+}

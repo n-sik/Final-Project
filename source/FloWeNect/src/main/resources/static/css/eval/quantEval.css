@@ -1,0 +1,1103 @@
+/* 2. 메인 레이아웃 (Flex 사용) */
+.quant-eval-layout {
+    display: flex;
+    flex-direction: column;
+    height: 100%; 
+    box-sizing: border-box;
+    gap: 12px;
+}
+
+.quant-body-container {
+    display: flex;
+    flex: 1;
+    gap: 1rem;       
+}
+
+/* 5. 왼쪽 사이드바 (3 비율) */
+.quant-sidebar {
+    flex: 1;         
+    background: #fff;
+    border-radius: 8px;
+    display: flex;
+    overflow: hidden;
+}
+
+/* 6. 오른쪽 메인 대시보드 (7 비율) */
+.quant-main-content {
+    flex: 3;        
+    background: #fff;
+    border-radius: 8px;
+    overflow-y: auto; 
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #e2e8f0;
+}
+
+
+/*****************************************************************************************************************************************/
+
+/* 1. 대시보드 메인 컨테이너 */
+.quant-dashboard {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 2. [INIT] 초기 화면 꾸미기 */
+.init-state-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.init-header {
+    text-align: center; /* 텍스트를 정중앙으로 딲! */
+    margin-bottom: 20px;
+}
+
+.init-icon {
+    font-size: 5rem;
+    color: #4a90e2;
+    margin-bottom: 20px;
+}
+
+.init-header h2 { font-size: 2rem; font-weight: 700; margin-bottom: 8px; }
+.init-header p { color: #7f8c8d; font-size: 1.1rem; }
+
+.init-stats-container {
+    display: flex;
+    gap: 25px;
+    margin: 45px 0;
+    
+}
+
+.stat-card {
+    background: #fff;
+    padding: 30px 40px;
+    border-radius: 20px;
+    border: 1px solid #edf2f7;
+    text-align: center;
+}
+
+.stat-card .label { display: block; font-size: 0.95rem; color: #64748b; margin-bottom: 12px; font-weight: 500; }
+.stat-card .value { font-size: 2.2rem; font-weight: 800; color: #1e293b; }
+.stat-card .value.done { color: #10b981; }    /* 완료 인원 초록색 */
+.stat-card .value.percent { color: #f59e0b; } /* 진행률 주황색 */
+
+.init-guide { margin-top: 30px; color: #94a3b8; font-size: 1rem; }
+.init-guide i { margin-right: 8px; animation: fingerMove 1.5s infinite; }
+
+@keyframes fingerMove {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(10px); }
+}
+
+/* 5. [RESULT] 리포트 헤더 꾸미기 */
+.eval-result-content { padding: 10px; }
+.result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+}
+
+.user-name { font-size: 1.8rem; font-weight: 800; color: #1e293b; }
+.user-pos { font-size: 1.1rem; color: #64748b; margin-left: 10px; background: #f1f5f9; padding: 4px 12px; border-radius: 8px; }
+
+/* 6. AI 분석 버튼 (그라데이션) */
+.btn-run-ai {
+    background-color: #4f46e5; 
+    color: white;
+    border: none;
+    padding: 12px 24px;      
+    border-radius: 8px;      
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* 분석 전 대기 상태 컨테이너 (8비율 영역 중앙 배치) */
+.empty-report-state {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 450px;
+    background: radial-gradient(circle at center, #ffffff 0%, #f8fafc 100%);
+    border: 2px dashed #cbd5e1;
+    border-radius: 24px;
+    margin: 20px;
+    padding: 40px;
+    text-align: center;
+}
+
+/* 로봇 아이콘 박스 - 뇌 대신 스마트 봇 느낌 */
+.empty-icon-box {
+    width: 120px;
+    height: 120px;
+    background: #eff6ff;
+    border-radius: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 30px;
+    position: relative;
+    box-shadow: 0 15px 30px -5px rgba(59, 130, 246, 0.15);
+}
+
+.empty-icon-box::before {
+    content: '\f544'; 
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    font-size: 4rem;
+    color: #3b82f6;
+    animation: robotFloat 3s ease-in-out infinite;
+}
+
+@keyframes robotFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+}
+
+/* 안내 문구 스타일 */
+.empty-report-state p {
+    font-size: 1.3rem;
+    color: #475569;
+    font-weight: 600;
+    margin-top: 10px;
+    letter-spacing: -0.02em;
+}
+
+.empty-icon-box::after {
+    content: '';
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    width: 40px;
+    height: 4px;
+    background: rgba(59, 130, 246, 0.4);
+    filter: blur(4px);
+    animation: eyePulse 2s infinite;
+}
+
+@keyframes eyePulse {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
+}
+
+/* 1. 상단 점수 요약 테이블 (Score Card) */
+.score-card-wrapper {
+    margin-bottom: 25px;
+}
+
+.score-summary-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.score-summary-table th {
+    background: #f8fafc;
+    padding: 12px 15px;
+    color: #475569;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.score-summary-table td {
+    padding: 15px;
+    text-align: center;
+    font-size: 1.1rem;
+    color: #1e293b;
+}
+
+.score-label {
+    background: #f8fafc;
+    width: 20%;
+    font-weight: 700;
+    color: #3b82f6 !important;
+    font-size: 0.95rem !important;
+    border-right: 1px solid #e2e8f0;
+}
+
+.score-val td strong {
+    font-size: 1.4rem;
+    color: #2563eb;
+}
+
+/* 2. 하단 분석 레이아웃 (2단 구성) */
+.analysis-layout {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+/* 좌측 AI 리포트 */
+.ai-report-wrapper {
+    flex: 1.2;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 25px;
+    min-height: 500px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+}
+
+.ai-report-content {
+    line-height: 1.8;
+    color: #334155;
+    font-size: 1rem;
+    white-space: pre-wrap;
+}
+
+/* 우측 차트 & 코멘트 컬럼 */
+.chart-and-comment-column {
+    flex: 0.8;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* 차트/섹션 공통 타이틀 */
+.section-title, .card-header {
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: #1e293b;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.section-title i { color: #3b82f6; }
+
+/* 차트 영역 */
+.chart-container-wrapper {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 20px;
+}
+
+.chart-box {
+    width: 100%;
+    height: 300px;
+    position: relative;
+}
+
+/* 3. 리더 코멘트 카드 */
+.leader-comment-card {
+    background: #f8faff;
+    border: 1px solid #dbeafe;
+    border-radius: 16px;
+    padding: 20px;
+}
+
+.comment-textarea {
+    width: 100%;
+    height: 100px;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    padding: 12px;
+    font-size: 0.95rem;
+    resize: none;
+    background: #fff;
+    transition: border-color 0.2s;
+}
+
+.comment-textarea:focus {
+    border-color: #3b82f6;
+    outline: none;
+}
+
+.btn-save-comment-full {
+    width: 100%;
+    margin-top: 12px;
+    background: #1e293b;
+    color: #fff;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-save-comment-full:hover { background: #0f172a; }
+
+/* 4. [EMPTY] 분석 대기 상태 (뇌 이미지 제거) */
+.empty-report-state {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 500px;
+    background: #f8fafc;
+    border: 2px dashed #e2e8f0;
+    border-radius: 20px;
+}
+
+.empty-icon-box {
+    width: 100px;
+    height: 100px;
+    background: #fff;
+    border-radius: 30px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 로봇 아이콘 강제 주입 */
+.empty-icon-box::before {
+    content: '\f544';
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    font-size: 3.5rem;
+    color: #3b82f6;
+    animation: robotFloat 3s ease-in-out infinite;
+}
+
+@keyframes robotFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.empty-report-state p {
+    color: #64748b;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+/* 데이터 없음/분석 거부 화면 */
+.no-data-wrapper {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    background-color: #f8fafc;
+}
+
+.no-data-content {
+    text-align: center;
+    max-width: 400px;
+}
+
+/* 꺼진 로봇 아이콘 */
+.robot-off-icon {
+    position: relative;
+    font-size: 5rem;
+    color: #cbd5e1; /* 비활성화된 회색 */
+    margin-bottom: 25px;
+}
+
+.offline-badge {
+    position: absolute;
+    top: 0;
+    right: -10px;
+    background: #64748b;
+    color: #fff;
+    font-size: 0.8rem;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 800;
+}
+
+.no-data-content h3 {
+    font-size: 1.5rem;
+    color: #1e293b;
+    margin-bottom: 15px;
+}
+
+.no-data-content p {
+    color: #64748b;
+    line-height: 1.6;
+    margin-bottom: 30px;
+}
+
+/* 체크리스트 스타일 */
+.data-check-list {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.data-check-list span {
+    font-size: 0.9rem;
+    color: #ef4444; /* 거절의 빨간색 */
+    background: #fee2e2;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+}
+
+/* 분석 전 브리핑 레이아웃 */
+.analysis-pre-briefing {
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.briefing-header {
+    font-weight: bold;
+    color: #495057;
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+}
+
+.briefing-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.brief-card {
+    background: #fff;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.card-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #339af0;
+    margin-bottom: 12px;
+}
+
+.brief-list {
+    list-style: none;
+    padding: 0;
+}
+
+.brief-list li {
+    font-size: 0.85rem;
+    padding: 6px 0;
+    border-bottom: 1px solid #f1f3f5;
+    display: flex;
+    justify-content: space-between;
+}
+
+.kpi-item { margin-bottom: 12px; }
+.kpi-info { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 4px; }
+.kpi-bar-bg { background: #e9ecef; height: 6px; border-radius: 3px; }
+.kpi-bar-fill { background: #339af0; height: 100%; border-radius: 3px; transition: width 0.5s; }
+
+.analysis-guide-box {
+    text-align: center;
+    margin-top: 20px;
+    color: #868e96;
+    font-size: 0.85rem;
+}
+
+/* 업무 아코디언 컨테이너 */
+.task-accordion-container {
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+.task-detail-item {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.task-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 1rem;
+    cursor: pointer;
+    list-style: none; /* 기본 화살표 제거 */
+}
+
+.task-summary::-webkit-details-marker { display: none; } /* 사파리 화살표 제거 */
+
+.task-summary-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.task-title-text {
+    font-size: 0.9rem;
+    color: #334155;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 280px;
+}
+
+/* 확장 영역 */
+.task-content-expanded {
+    padding: 15px;
+    background: #f8fafc;
+    border-top: 1px solid #e2e8f0;
+    border-radius: 0 0 8px 8px;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    margin-bottom: 6px;
+    color: #64748b;
+}
+
+.detail-row strong { color: #1e293b; font-family: monospace; }
+
+/* 열렸을 때 화살표 회전 */
+.task-detail-item[open] .arrow-icon { transform: rotate(180deg); }
+
+.tag {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ⚪ 대기 (Grey/Slate) */
+.tag.status-대기 {
+    background-color: #f1f5f9;
+    color: #475569;
+    border: 1px solid #cbd5e1;
+}
+
+/* 🔵 진행중 (Blue) */
+.tag.status-진행중 {
+    background-color: #eff6ff;
+    color: #1d4ed8;
+    border: 1px solid #bfdbfe;
+    box-shadow: 0 0 5px rgba(59, 130, 246, 0.1);
+}
+
+/* 🟢 완료 (Green) */
+.tag.status-완료 {
+    background-color: #f0fdf4;
+    color: #15803d;
+    border: 1px solid #bbf7d0;
+}
+
+/* (참고) 아코디언이 열렸을 때 색 강조 */
+.task-detail-item[open] {
+    border-color: #3b82f6;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* KPI 리스트 컨테이너 */
+.kpi-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-height: 450px;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+.kpi-item {
+    background: #fff;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.kpi-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+}
+
+.kpi-name {
+    font-weight: 600;
+    color: #334155;
+    flex: 1;
+    margin-right: 10px;
+}
+
+.kpi-percent {
+    font-weight: 700;
+    color: #3b82f6;
+}
+
+/* 프로그레스 바 배경 */
+.kpi-bar-bg {
+    width: 100%;
+    height: 10px;
+    background: #e2e8f0;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+/* 프로그레스 바 채우기 (그라데이션) */
+.kpi-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #60a5fa, #3b82f6);
+    border-radius: 5px;
+    transition: width 1s ease-in-out;
+}
+
+/* KPI 데이터 없을 때 */
+.kpi-empty-state {
+    text-align: center;
+    padding: 50px 20px;
+    color: #94a3b8;
+}
+
+/* 🚩 그리드 제거 후 플렉스 설정 */
+.briefing-flex-container {
+    display: flex;
+    flex-wrap: wrap; /* 창이 좁아지면 아래로 떨어지게 */
+    gap: 24px;
+    align-items: flex-start; /* 상단 높이 맞춤 */
+}
+
+/* 각 섹션의 너비 비율 설정 */
+.brief-flex-item {
+    flex: 1;
+    min-width: 400px; 
+    background: #fff;
+    border-radius: 12px;
+}
+
+/* 업무 영역을 조금 더 넓게 주고 싶을 때 */
+.task-section {
+    flex: 1.2; 
+}
+
+/* KPI 영역 */
+.kpi-section {
+    flex: 0.8;
+}
+
+/* 내부 아코디언 공통 스타일 */
+.task-accordion-container, .kpi-accordion-container {
+    max-height: 500px;
+    overflow-y: auto;
+    padding-right: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* KPI 아코디언 컨테이너 */
+.kpi-accordion-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: 500px;
+    overflow-y: auto;
+    padding-right: 8px;
+}
+
+/* KPI 개별 아이템 (Details) */
+.kpi-detail-item {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
+
+.kpi-detail-item:hover {
+    border-color: #cbd5e1;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+/* 요약 줄 (Summary) */
+.kpi-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    cursor: pointer;
+    list-style: none;
+}
+
+.kpi-summary::-webkit-details-marker { display: none; }
+
+/* 요약 왼쪽: 지표명 >> 프로젝트 */
+.kpi-summary-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    min-width: 0; /* 텍스트 생략을 위한 설정 */
+}
+
+.kpi-name-text {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #1e293b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.kpi-arrow-icon {
+    color: #cbd5e1;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.kpi-project-badge {
+    font-size: 11px;
+    color: #64748b;
+    background: #f1f5f9;
+    padding: 2px 8px;
+    border-radius: 6px;
+    white-space: nowrap;
+}
+
+/* 요약 오른쪽: 퍼센트 및 화살표 */
+.kpi-summary-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-left: 15px;
+}
+
+.kpi-percent-bold {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #2563eb; /* 신뢰감 있는 블루 */
+}
+
+.task-percent-bold {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #2563eb; /* 신뢰감 있는 블루 */
+}
+
+/* 확장 영역 (Content) */
+.kpi-content-expanded {
+    padding: 20px;
+    background: #f8fafc;
+    border-radius: 0 0 10px 10px;
+}
+
+/* 프로그레스 바 커스텀 */
+.kpi-progress-wrapper {
+    margin-bottom: 20px;
+}
+
+.kpi-bar-bg {
+    background: #e2e8f0;
+    height: 12px;
+    border-radius: 6px;
+    position: relative;
+    overflow: hidden;
+}
+
+.kpi-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #3b82f6, #06b6d4); /* 블루-민트 그라데이션 */
+    border-radius: 6px;
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 상세 정보 행 */
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 0.85rem;
+    color: #475569;
+}
+
+.detail-row span {
+    color: #94a3b8;
+}
+
+.detail-row strong {
+    color: #334155;
+    font-weight: 600;
+}
+
+/* 열렸을 때 스타일 */
+.kpi-detail-item[open] {
+    border-color: #3b82f6;
+    background: #fff;
+}
+
+.kpi-detail-item[open] .arrow-icon {
+    transform: rotate(180deg);
+    color: #3b82f6;
+}
+
+/* 1. KPI 내부 담당업무 컨테이너 (여백 최소화) */
+.assigned-tasks-wrapper {
+    padding: 8px 12px;
+    background-color: #ffffff;
+    border-top: 1px solid #f1f5f9;
+}
+
+/* 2. 개별 업무 항목 (한 줄 밀착 스타일) */
+.mini-work-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 10px;
+    margin-bottom: 4px;
+    background-color: #f8fafc;
+    border-radius: 6px;
+    border-left: 3px solid #cbd5e1; /* 기본 회색 */
+    transition: all 0.2s ease;
+}
+
+/* 3. 상태별 포인트 (진행중: 인디고 / 완료: 초록) */
+.mini-work-item.ing {
+    border-left-color: #4f46e5; 
+    background-color: #f5f7ff;
+}
+
+.mini-work-item.done {
+    border-left-color: #10b981; 
+    background-color: #f0fdf4;
+}
+
+/* 4. 왼쪽 영역 (아이콘 + 제목) */
+.mini-work-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    overflow: hidden;
+}
+
+.mini-work-left i {
+    font-size: 0.8rem;
+    color: #94a3b8;
+}
+
+/* 진행중일 때 아이콘 색상 */
+.mini-work-item.ing i {
+    color: #4f46e5;
+}
+
+/* 완료일 때 아이콘 색상 */
+.mini-work-item.done i {
+    color: #10b981;
+}
+
+.mini-work-title {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #334155;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 220px; /* 제목 길면 알아서 잘림 */
+}
+
+/* 5. 오른쪽 영역 (상태 텍스트 + 진행률) */
+.mini-work-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.mini-work-status {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #64748b;
+}
+
+.mini-work-item.done .mini-work-status {
+    color: #059669;
+}
+
+.mini-work-rate {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: #1e293b;
+    min-width: 35px;
+    text-align: right;
+}
+.mini-work-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start; /* 제목 길어지면 위쪽 정렬 */
+    padding: 8px 12px;
+    margin-bottom: 5px;
+    background-color: #f8fafc;
+    border-radius: 6px;
+    border-left: 3px solid #cbd5e1;
+    transition: all 0.2s ease;
+}
+
+/* 왼쪽 영역 (아이콘 + 제목) */
+.mini-work-left {
+    display: flex;
+    align-items: flex-start; /* 아이콘을 첫 줄 제목 옆에 고정 */
+    gap: 8px;
+    flex: 1; /* 제목이 공간을 다 차지하게 함 */
+    padding-right: 10px;
+}
+
+.mini-work-left i {
+    margin-top: 3px; /* 아이콘 위치 미세 조정 */
+    font-size: 0.8rem;
+}
+
+/* 🚩 핵심: 제목 줄바꿈 처리 */
+.mini-work-title {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #334155;
+    line-height: 1.4;
+    
+    /* 줄바꿈 설정 */
+    white-space: normal;      /* 줄바꿈 허용 */
+    word-break: keep-all;     /* 단어 단위로 줄바꿈 (가독성) */
+    word-wrap: break-word;    /* 긴 단어 강제 줄바꿈 */
+    display: block;           /* 블록 요소로 변경 */
+}
+
+/* 오른쪽 영역 (상태 + 진행률) - 위치 고정 */
+.mini-work-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;           /* 제목이 길어져도 밀리지 않게 */
+    margin-top: 2px;
+}
+
+.c-page-header__right {
+    display: flex;
+    align-items: center;
+}
+
+.btn-ai-action {
+    background-color: #4f46e5; 
+    color: #ffffff;
+    border: none;
+    
+    padding: 12px 28px;
+    border-radius: 8px;
+    
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    
+    cursor: pointer;
+    white-space: nowrap;
+    
+    
+    box-shadow: 0 2px 4px rgba(79, 70, 229, 0.1);
+}
+
+/* 1. 리포트 전체 레이아웃 (좌우 꽉 차게) */
+.final-report-wrapper {
+    width: 100%;       /* 고정폭 해제 */
+    max-width: 100%;    /* 최대폭 해제 */
+    padding: 20px 30px; /* 좌우 여백만 살짝 */
+    box-sizing: border-box;
+}
+
+/* 2. 상세 리포트 카드 (화면 가득) */
+.report-detail-card {
+    width: 100%;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 40px;      /* 내부 여백은 유지 */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* 3. 차트 섹션 (가로로 넓게 쓰기 위해 중앙 정렬 해제) */
+.report-chart-section {
+    margin-bottom: 50px;
+    width: 100%;
+}
+
+.chart-canvas-wrapper {
+    width: 100%;       /* 가로 100% */
+    max-width: 1200px; /* 너무 퍼지는 것만 방지 (취향껏 조절) */
+    height: 450px;     /* 높이도 조금 더 시원하게 */
+    margin: 0 auto;
+}
+
+/* 4. AI 진단 영역 (가득 채움) */
+.report-insight-section {
+    width: 100%;
+    background: #f8faff;
+    padding: 40px;     /* 여유 있는 패딩 */
+    border-radius: 16px;
+    border: 1px solid #eef2ff;
+    box-sizing: border-box;
+}
+
+.ai-summary-content {
+    line-height: 2.0;
+    font-size: 1.1rem; /* 텍스트도 살짝 키워서 시원하게 */
+    color: #334155;
+    word-break: keep-all;
+    text-align: left;  /* 정렬도 좌측으로 */
+}
+
+/* 5. 점수 테이블도 시원하게 확장 */
+.score-summary-table {
+    width: 100%;
+    table-layout: fixed; /* 컬럼 너비 균등 배분 */
+}
+
+.report-section-header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 18px 0; /* 위아래 여백을 줘서 가독성 확보 */
+    margin-bottom: 20px;
+    border-bottom: 2px solid #e2e8f0; /* 부드러운 하단 구분선 */
+    
+    font-size: 1.35rem; /* 제목 크기 시원하게 */
+    font-weight: 700;
+    color: #0f172a; /* 신뢰감 있는 딥 네이비 */
+    letter-spacing: -0.03em;
+}
+
+/* 아이콘 포인트 컬러 (AI 느낌의 블루/퍼플) */
+.report-section-header i {
+    margin-right: 12px;
+    color: #4f46e5; /* 세련된 인디고 블루 */
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: #eef2ff; /* 아이콘 배경에 은은한 원형 포인트 */
+    border-radius: 8px;
+}
+
+.report-main-title {
+    width: 100%;
+    font-size: 1.5rem; /* 시원하고 큼직하게 */
+    font-weight: 800; /* 아주 굵게 강조 */
+    color: #0f172a; /* 신뢰감 있는 딥 네이비 */
+    display: flex;
+    align-items: center;
+    position: relative;
+    letter-spacing: -0.04em; /* 자간을 좁혀서 쫀쫀하고 전문적인 느낌 */
+    line-height: 1.2;
+}
+

@@ -1,0 +1,59 @@
+.paginationContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px 0;
+    width: 100%;
+}
+
+.paginationList {
+    display: flex;
+    list-style: none;
+    gap: 6px;
+    padding: 0;
+    margin: 0;
+}
+
+.pageButton,
+.navButton {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 32px;
+    height: 32px;
+    padding: 0 6px;
+    border: 1px solid #e2e8f0;
+    background-color: #fff;
+    color: #64748b;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.pageButton:hover:not(.active),
+.navButton:hover:not(:disabled) {
+    background-color: #f8fafc;
+    border-color: #cbd5e1;
+    color: #1e293b;
+}
+
+.pageButton.active {
+    background-color: #3b82f6;
+    border-color: #3b82f6;
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.navButton:disabled {
+    cursor: not-allowed;
+    opacity: 0.4;
+    background-color: #f1f5f9;
+}
+
+/* 화살표 아이콘 강조 */
+.navButton {
+    font-weight: bold;
+    color: #94a3b8;
+}

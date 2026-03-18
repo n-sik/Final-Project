@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.flowenect.hr.data.mapper.ProjectDataMapper">
+
+  <sql id="performanceFilters">
+    <where>
+      AND D.DEL_YN = 'N'
+      <if test="params.deptCd != null and params.deptCd != ''"> 
+        AND P.DEPT_CD = #{params.deptCd} 
+      </if>
+      <if test="params.projectStatCd != null and params.projectStatCd != ''"> 
+        AND P.PROJECT_STAT_CD = #{params.projectStatCd} 
+      </if>
+      <if test="params.useYn != null and params.useYn != '' and params.useYn != 'ALL'"> 
+        AND P.USE_YN = #{params.useYn} 
+      </if>
+      <if test="params.keyword != null and params.keyword != ''">
+        AND (P.PROJECT_NM LIKE '%' || #{params.keyword} || '%' OR P.PROJECT_DESC LIKE '%' || #{params.keyword} || '%')
+      </if>
+      <if test="params.startDate != null and params.startDate != ''"> 
+	    AND P.START_DTM &gt;= TO_DATE(#{params.startDate}, 'YYYY-MM-DD') 
+	</if>
+	<if test="params.endDate != null and params.endDate != ''"> 
+	    AND P.END_DTM &lt; TO_DATE(#{params.endDate}, 'YYYY-MM-DD') + 1 
+	</if>
+    </where>
+  </sql>
+
+  <select id="selectCountProjectPerformance" parameterType="SearchRequest" resultType="int">
+    SELECT COUNT(*)
+    FROM PROJECT P
+      JOIN DEPT D ON D.DEPT_CD = P.DEPT_CD
+    <include refid="performanceFilters" />
+  </select>
+
+  <select id="selectProjectPerformanceList" parameterType="SearchRequest" resultType="ProjectDTO">
+    SELECT * FROM (
+      SELECT
+        P.PROJECT_NO, P.REG_EMP_NO, P.DEPT_CD, P.PROJECT_NM, P.PROJECT_DESC,
+        P.PROJECT_STAT_CD, P.START_DTM, P.END_DTM, P.USE_YN, P.MAIN_IMG_PATH,
+        D.DEPT_NM, E.EMP_NM AS REG_EMP_NM,
+        ROW_NUMBER() OVER(ORDER BY P.PROJECT_NO DESC) AS RN
+      FROM PROJECT P
+        JOIN DEPT D ON D.DEPT_CD = P.DEPT_CD
+        LEFT JOIN EMP E ON E.EMP_NO = P.REG_EMP_NO
+      <include refid="performanceFilters" />
+    )
+    WHERE RN BETWEEN #{paging.startRow} AND #{paging.endRow}
+  </select>
+
+</mapper>

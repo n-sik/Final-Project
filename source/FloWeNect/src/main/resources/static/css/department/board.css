@@ -1,0 +1,492 @@
+/* =========================================================
+   공유폴더 - board.css  (KPI 헤더 스타일 통일)
+   ========================================================= */
+
+body {
+    font-family: "Noto Sans KR", sans-serif;  /* ✅ KPI와 동일 */
+    color: #333;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ══════════════════════════════
+   페이지 헤더 (KPI 스타일 완전 통일)
+══════════════════════════════ */
+.board-page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    height: 64px;
+    flex-shrink: 0;
+    background: #fff;
+    border-bottom: 1px solid #e2e8f0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-radius: 8px;
+    /* ✅ margin-bottom 제거 → 아래 콘텐츠 래퍼에서 margin-top으로 처리 */
+}
+
+.board-page-header-left {
+    display: flex;
+    flex-direction: column;
+}
+
+.board-page-title {
+    font-size: 15px;          /* ✅ KPI 동일 */
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 2px;
+}
+
+.board-page-sub {
+    font-size: 11px;           /* ✅ KPI 동일 */
+    color: #94a3b8;
+}
+
+.board-page-header-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* ✅ 버튼도 KPI kpi-header-btn-add 와 동일 스타일 */
+.board-header-btn-upload {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: 100px;
+    height: 32px;
+    padding: 0;
+    background: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.2s;
+    box-sizing: border-box;
+}
+.board-header-btn-upload:hover { background: #0062cc; }
+
+/* ══════════════════════════════
+   콘텐츠 래퍼
+══════════════════════════════ */
+.cloud-wrapper {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    box-sizing: border-box;
+    background: #fff;
+    border-radius: 8px;
+    flex: 1;
+    overflow: hidden;
+    border: 1px solid #f0f0f0;
+    border-top: none;
+    height: 91%;
+    margin-top: 12px; /* ✅ 헤더 margin-bottom 대신 여기서 간격 */
+}
+
+/* 스크롤 가능한 콘텐츠 */
+.cloud-content {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 4px;
+    height: 100%;
+}
+
+.cloud-content::-webkit-scrollbar { width: 6px; }
+.cloud-content::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 3px; }
+.cloud-content::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
+.cloud-content::-webkit-scrollbar-thumb:hover { background: #aaa; }
+
+/* 액션 바 */
+.action-bar {
+    margin: 0 0 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.view-toggle { display: flex; gap: 8px; }
+
+.view-btn {
+    background: #fff;
+    border: 1px solid #ddd;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s;
+}
+.view-btn:hover { background: #f8f9fa; border-color: #007bff; }
+.view-btn.active { background: #007bff; color: white; border-color: #007bff; }
+
+.action-buttons { display: flex; gap: 10px; }
+
+.btn-secondary {
+    background: #6c757d; color: white; border: none;
+    padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px;
+    transition: background 0.2s;
+}
+.btn-secondary:hover { background: #5a6268; }
+
+.btn-danger-outline {
+    background: transparent; border: 1px solid #dc3545; color: #dc3545;
+    padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px;
+    transition: all 0.2s;
+}
+.btn-danger-outline:hover { background: #dc3545; color: white; }
+
+/* =========================================================
+   카드형
+   ========================================================= */
+.file-grid-view {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.file-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+.file-card:hover { transform: translateY(-4px); box-shadow: 0 8px 16px rgba(0,0,0,0.1); border-color: #007bff; }
+.file-card.selected { border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59,130,246,0.2); }
+
+.file-card-header { padding: 8px; position: absolute; top: 0; left: 0; z-index: 10; }
+.file-checkbox { width: 18px; height: 18px; cursor: pointer; accent-color: #007bff; }
+
+.file-card-body {
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 160px;
+}
+
+.file-icon-wrapper {
+    width: 100%; height: 110px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 10px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+}
+
+.file-thumbnail {
+    width: 100%; height: 100%; object-fit: cover;
+    display: block; opacity: 0; transition: opacity 0.3s ease;
+}
+.file-thumbnail[src] { opacity: 1; }
+
+.file-icon { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; }
+.file-icon svg { display: block; }
+.pdf-icon svg   { stroke: #F44336; }
+.doc-icon svg   { stroke: #2196F3; }
+.excel-icon svg { stroke: #4CAF50; }
+.ppt-icon svg   { stroke: #FF9800; }
+.default-icon svg, .image-icon svg { stroke: #9E9E9E; }
+
+.file-name {
+    font-size: 13px; font-weight: 500; color: #222;
+    text-align: center;
+    overflow: hidden; text-overflow: ellipsis;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    line-height: 1.4; min-height: 2.6em; word-break: break-all;
+}
+.file-card:hover .file-name { color: #007bff; }
+
+.file-card-footer {
+    padding: 10px 12px;
+    border-top: 1px solid #f1f3f5;
+    display: flex; justify-content: space-between; align-items: center;
+    background: #fafbfc;
+    position: relative;
+}
+
+.file-info { display: flex; flex-direction: column; gap: 3px; flex: 1; }
+.file-size  { font-size: 11px; color: #6c757d; font-weight: 500; }
+.file-date  { font-size: 10px; color: #adb5bd; }
+
+.btn-more {
+    background: transparent; border: none; font-size: 18px;
+    color: #6c757d; cursor: pointer; padding: 4px 8px; border-radius: 4px; position: relative;
+}
+.btn-more:hover { background: #e9ecef; }
+
+.file-menu {
+    display: none; position: absolute; right: 0; bottom: 100%;
+    background: white; border: 1px solid #ddd; border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 100; min-width: 120px;
+}
+.file-menu.show { display: block; }
+.file-menu button { display: block; width: 100%; padding: 10px 16px; border: none; background: white; text-align: left; cursor: pointer; font-size: 14px; color: #333; }
+.file-menu button:hover { background: #f8f9fa; }
+.file-menu button:first-child { border-radius: 6px 6px 0 0; }
+.file-menu button:last-child  { color: #dc3545; border-radius: 0 0 6px 6px; }
+
+.empty-state { grid-column: 1/-1; text-align: center; padding: 60px 20px; }
+.empty-icon  { font-size: 56px; margin-bottom: 12px; opacity: 0.5; }
+.empty-msg   { font-size: 15px; color: #999; }
+
+/* =========================================================
+   목록형
+   ========================================================= */
+.file-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-top: 2px solid #333;
+    table-layout: fixed;
+    margin-bottom: 80px;
+}
+.file-table th {
+    background: #f8f9fa; padding: 12px; border-bottom: 2px solid #dee2e6;
+    font-weight: 600; color: #495057; text-align: center; font-size: 14px;
+    vertical-align: middle; white-space: nowrap;
+}
+.file-table td { padding: 12px; border-bottom: 1px solid #dee2e6; vertical-align: middle; font-size: 14px; }
+.file-table tbody tr { transition: background-color 0.2s; }
+.file-table tbody tr:hover { background: #f8f9fa; }
+
+.col-check  { width: 50px;  text-align: center; }
+.col-name   { width: auto;  min-width: 200px; }
+.col-type   { width: 80px; }
+.col-size   { width: 100px; }
+.col-date   { width: 180px; }
+.col-author { width: 100px; }
+.col-action { width: 150px; }
+
+.text-center { text-align: center !important; }
+
+.file-name-cell {
+    text-align: left !important;
+    max-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.file-icon-inline {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 8px;
+}
+
+.file-icon-inline svg {
+    display: block;
+    width: 18px;
+    height: 18px;
+}
+
+.file-name-text { display: inline; }
+
+.btn-sm-delete {
+    background: #fff; border: 1px solid #ddd; color: #dc3545;
+    padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; transition: all 0.2s;
+}
+.btn-sm-delete:hover { background: #dc3545; color: #fff; border-color: #dc3545; }
+
+.btn-sm-download {
+    background: #fff; border: 1px solid #007bff; color: #007bff;
+    padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; transition: all 0.2s; margin-right: 4px;
+}
+.btn-sm-download:hover { background: #007bff; color: #fff; }
+
+/* =========================================================
+   플로팅 업로드 버튼 (FAB)
+   ========================================================= */
+.fab-upload {
+    position: fixed;
+    bottom: 32px;
+    right: 32px;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 16px rgba(0, 123, 255, 0.4);
+    z-index: 1000;
+    transition: all 0.25s ease;
+}
+.fab-upload:hover {
+    background: #0062cc;
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(0, 123, 255, 0.5);
+}
+.fab-upload.open {
+    transform: rotate(45deg) scale(1.05);
+    background: #dc3545;
+    box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4);
+}
+
+/* =========================================================
+   업로드 모달 오버레이
+   ========================================================= */
+.upload-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+    z-index: 1001;
+    animation: fadeOverlay 0.2s ease;
+}
+.upload-modal-overlay.show { display: block; }
+
+@keyframes fadeOverlay {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* =========================================================
+   업로드 모달 본체
+   ========================================================= */
+.upload-modal {
+    display: none;
+    position: fixed;
+    bottom: 96px;
+    right: 32px;
+    width: 360px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+    z-index: 1002;
+    overflow: hidden;
+    transform: translateY(16px);
+    opacity: 0;
+    transition: transform 0.25s ease, opacity 0.25s ease;
+}
+.upload-modal.show {
+    display: block;
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.upload-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 18px;
+    border-bottom: 1px solid #f0f0f0;
+}
+.upload-modal-title { font-size: 15px; font-weight: 600; color: #222; }
+.upload-modal-close {
+    background: none; border: none; font-size: 16px;
+    color: #999; cursor: pointer; padding: 2px 6px; border-radius: 4px;
+}
+.upload-modal-close:hover { background: #f0f0f0; color: #333; }
+
+.upload-drop-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 2px dashed #cbd5e0;
+    border-radius: 10px;
+    background: #f8fafc;
+    margin: 16px;
+    padding: 32px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-height: 160px;
+}
+.upload-drop-area:hover,
+.upload-drop-area.drag-over {
+    border-color: #007bff;
+    background: #eff6ff;
+}
+
+.upload-icon  { font-size: 36px; display: block; margin-bottom: 10px; opacity: 0.7; }
+.drop-content p { font-size: 14px; color: #475569; margin: 4px 0; font-weight: 500; }
+.upload-sub-text { font-size: 12px; color: #94a3b8; display: block; margin-top: 6px; }
+
+/* =========================================================
+   선택 정보 영역
+   ========================================================= */
+.selection-info {
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+input[type="checkbox"]:indeterminate {
+    background: #007bff;
+    border-color: #007bff;
+}
+
+.action-bar .selection-info {
+    flex: 1 1 100%;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+    .file-grid-view { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+    .action-bar { flex-direction: column; gap: 10px; align-items: flex-start; }
+    .view-toggle, .action-buttons { width: 100%; }
+    .upload-modal { width: calc(100vw - 32px); right: 16px; }
+    .fab-upload { bottom: 20px; right: 20px; }
+}
+
+/* ===== SweetAlert2 폴더 생성 커스텀 ===== */
+.swal-folder-popup  { border-radius: 16px !important; padding: 28px 28px 20px !important; }
+.swal-folder-title  { font-size: 17px !important; font-weight: 700 !important; color: #1e293b !important; }
+.swal-folder-actions{ gap: 10px !important; }
+.swal2-validation-message { border-radius: 8px !important; font-size: 12px !important; }
+
+/* ===== 폴더 카드 차별화 ===== */
+.file-card.is-folder {
+    background: #fff; 
+    border-color: #fcd47a;
+}
+.file-card.is-folder:hover {
+    border-color: #f59e0b;
+    box-shadow: 0 8px 20px rgba(245, 158, 11, 0.2);
+    transform: translateY(-4px);
+}
+.file-card.is-folder .file-icon-wrapper {
+    background: linear-gradient(135deg, #fff8e1, #fef3c7);
+}
+.file-card.is-folder .file-name {
+    font-weight: 700;
+    color: #92400e;
+}
+.file-card.is-folder:hover .file-name {
+    color: #b45309;
+}
+/* 폴더 푸터: 용량 숨기고 날짜만 */
+.file-card.is-folder .file-size { display: none; }

@@ -1,0 +1,485 @@
+/* 1. 전체 레이아웃 */
+.attendLogWrapper {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+    gap: 12px;
+}
+
+.attendLogContainer {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    gap: 12px;
+    align-items: stretch;
+}
+
+/* 2. 우측 메인 컨텐츠 영역 */
+.attendLogContent {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    position: relative;
+}
+
+/* 3. 로딩 */
+.loadingText {
+    font-size: 13px;
+    color: #7c83fd;
+    font-weight: 600;
+    margin-left: 10px;
+}
+
+.loadingOverlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.7);
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+    font-weight: bold;
+}
+
+/* 4. 사원 미선택 시 */
+.noSelection {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #ffffff;
+    border: 1px solid #e0e6ed;
+    border-radius: 8px;
+}
+
+.emptyContent {
+    text-align: center;
+    max-width: 500px;
+}
+
+.emptyHeader h1 {
+    font-size: 32px;
+    color: #4b49ac;
+    margin-bottom: 12px;
+}
+
+.emptyHeader p {
+    color: #8892a0;
+    line-height: 1.6;
+}
+
+/* 5. 사이드바 */
+.sidebar {
+        width: 330px;
+    min-width: 280px;
+    max-width: 280px;
+    flex-shrink: 0;
+    background-color: #ffffff;
+    border-radius: 8px;
+    border: 1px solid #f0f2f7;
+    padding: 20px 0;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.sidebar h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #333;
+    margin: 0 20px 15px 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #f8f9fd;
+}
+
+.sidebar::-webkit-scrollbar {
+    width: 5px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background: #e0e6ed;
+    border-radius: 10px;
+}
+
+/* 6. 부서 & 사원 */
+.deptItem {
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #555;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+
+.deptItem:hover {
+    background-color: #f8faff;
+    color: #7c83fd;
+}
+
+.deptItem::before {
+    content: '•';
+    margin-right: 8px;
+    color: #d1d5db;
+}
+
+.empList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    background-color: #fcfdfe;
+}
+
+.empList li {
+    padding: 10px 20px 10px 35px;
+    font-size: 13px;
+    color: #666;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background 0.2s;
+}
+
+.empList li:hover {
+    background-color: #f0f2ff;
+}
+
+.activeEmp {
+    background-color: #f0f2ff !important;
+    border-right: 3px solid #7c83fd;
+}
+
+.activeEmp .empName {
+    color: #4b49ac;
+    font-weight: 700;
+}
+
+.activeEmp .empNoBadge {
+    background-color: #7c83fd;
+    color: white;
+}
+
+.empName {
+    flex: 1;
+}
+
+.empNoBadge {
+    font-size: 11px;
+    background-color: #eee;
+    color: #888;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-left: 8px;
+    transition: all 0.2s;
+}
+
+/* 7. 검색바 (컴팩트) */
+.searchBar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #ffffff;
+    border: 1px solid #f0f2f7;
+    border-radius: 12px;
+    padding: 10px 16px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    flex-wrap: nowrap;
+}
+
+.userChip {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #f5f3ff;
+    border-radius: 20px;
+    padding: 4px 12px;
+    flex-shrink: 0;
+}
+
+.userDot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #7c83fd;
+    flex-shrink: 0;
+}
+
+.userName {
+    font-size: 13px;
+    font-weight: 700;
+    color: #4b49ac;
+}
+
+.userNo {
+    font-size: 11px;
+    color: #9ca3af;
+    background: #ede9fe;
+    padding: 1px 7px;
+    border-radius: 10px;
+}
+
+.divider {
+    width: 1px;
+    height: 20px;
+    background: #e8ecf4;
+    flex-shrink: 0;
+}
+
+.fieldGroup {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.fieldLabel {
+    font-size: 12px;
+    font-weight: 600;
+    color: #94a3b8;
+    white-space: nowrap;
+}
+
+.sep {
+    color: #cbd5e1;
+    font-size: 13px;
+}
+
+.dateInput {
+    border: 1px solid #e8ecf4;
+    border-radius: 7px;
+    padding: 5px 6px;
+    font-size: 13px;
+    color: #334155;
+    outline: none;
+    background: #fafbfc;
+    width: 130px;
+    transition: border-color 0.2s;
+}
+
+.dateInput:focus {
+    border-color: #7c83fd;
+    background: #fff;
+}
+
+.select {
+    border: 1px solid #e8ecf4;
+    border-radius: 7px;
+    padding: 5px 28px 5px 10px;
+    font-size: 13px;
+    color: #334155;
+    background: #fafbfc;
+    outline: none;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 7px center;
+    background-size: 14px;
+    transition: border-color 0.2s;
+}
+
+.select:focus {
+    border-color: #7c83fd;
+}
+
+.toggleGroup {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.toggle {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 13px;
+    color: #64748b;
+    cursor: pointer;
+    user-select: none;
+}
+
+.toggle input[type="checkbox"] {
+    width: 14px;
+    height: 14px;
+    accent-color: #7c83fd;
+    cursor: pointer;
+}
+
+.actions {
+    display: flex;
+    gap: 8px;
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
+.resetBtn {
+    padding: 6px 14px;
+    border-radius: 7px;
+    border: 1px solid #e8ecf4;
+    background: #f8f9fc;
+    color: #64748b;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.resetBtn:hover {
+    background: #f1f3f9;
+    border-color: #d1d5db;
+}
+
+.excelBtn {
+    padding: 6px 14px;
+    border-radius: 7px;
+    border: none;
+    background: #22c55e;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.excelBtn:hover {
+    background: #16a34a;
+}
+
+/* 8. 테이블 */
+.container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.tableCard {
+    flex: 1;
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #f0f2f7;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+    overflow-y: auto;
+    min-height: 0;
+}
+
+.tableCard::-webkit-scrollbar {
+    width: 6px;
+}
+
+.tableCard::-webkit-scrollbar-thumb {
+    background-color: #e2e8f0;
+    border-radius: 10px;
+}
+
+.tableCard::-webkit-scrollbar-track {
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.mainTable {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+}
+
+.mainTable thead {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background-color: #fcfdfe;
+}
+
+.mainTable th {
+    padding: 18px 10px;
+    font-size: 14px;
+    color: #8892a0;
+    font-weight: 600;
+    border-bottom: 1px solid #f0f2f7;
+}
+
+.mainTable td {
+    padding: 16px 10px;
+    font-size: 14px;
+    color: #444;
+    border-bottom: 1px solid #f0f2f7;
+}
+
+.mainTable tr:last-child td {
+    border-bottom: none;
+}
+
+.mainTable tbody tr:hover {
+    background-color: #fbfbff;
+}
+
+.dateText {
+    color: #222;
+    font-weight: 700;
+}
+
+.remark {
+    color: #777;
+    font-size: 13px;
+}
+
+.noData {
+    padding: 100px 0 !important;
+    color: #b5bcc6;
+    font-size: 15px;
+}
+
+/* 9. 상태 배지 */
+.statusBadge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.4;
+    min-width: 54px;
+    color: #ffffff;
+}
+
+.normal {
+    background-color: #10b981;
+    box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+}
+
+.late {
+    background-color: #f59e0b;
+    box-shadow: 0 2px 4px rgba(245, 158, 11, 0.2);
+}
+
+.vacation {
+    background-color: #3b82f6;
+    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+}
+
+.absent {
+    background-color: #ef4444;
+    box-shadow: 0 2px 4px rgba(239, 68, 68, 0.2);
+}
+
+.absentRow {
+    background-color: #fff1f2;
+}
+
+.vacationRow {
+    background-color: #eff6ff;
+}
+
+/* 10. 페이지네이션 */
+.paginationWrapper {
+    flex-shrink: 0;
+    padding: 20px 0;
+    display: flex;
+    justify-content: center;
+}

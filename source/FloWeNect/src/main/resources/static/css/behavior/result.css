@@ -1,0 +1,482 @@
+/*
+  Behavior Result
+  - behavior/test.css 컨셉(다우오피스 스타일) 최대 유지
+  - "타인평가 결과 목록"은 AG Grid(Quartz)로 렌더링
+*/
+@import url("./test.css");
+
+/* result page tweaks */
+.bt-rail__subhead {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(59, 108, 255, .06), rgba(255, 255, 255, 0));
+}
+
+.bt-select {
+  width: 100%;
+  height: var(--ctlH);
+  border: 1px solid var(--line2);
+  border-radius: var(--r-control);
+  padding: 0 var(--ctlPadX);
+  font-size: var(--ctlFS);
+  background: #fff;
+  outline: none;
+}
+
+.bt-filterRow {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 15px;
+  align-items: center;
+}
+
+.bt-input {
+  height: var(--ctlH);
+  border: 1px solid var(--line2);
+  border-radius: var(--r-control);
+  padding: 0 var(--ctlPadX);
+  font-size: var(--ctlFS);
+  background: #fff;
+  outline: none;
+}
+
+.bt-table__muted {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.bt-scrollArea {
+  height: 100%;
+  overflow: auto;
+}
+
+.bt-modal__card--wide {
+  width: min(980px, 96vw);
+}
+
+.bt-kv {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 6px 12px;
+  padding: 10px 0 0;
+}
+
+.bt-kv__k {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.bt-kv__v {
+  color: var(--text);
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+
+.bt-ansQ {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: var(--sh2);
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+
+.bt-ansQ__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 12px;
+  background: linear-gradient(180deg, rgba(59, 108, 255, .06), rgba(255, 255, 255, 0));
+  border-bottom: 1px solid var(--line);
+}
+
+.bt-ansQ__title {
+  font-weight: 800;
+  font-size: 0.92rem;
+}
+
+.bt-ansQ__body {
+  padding: 10px 12px;
+}
+
+.bt-ansRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px dashed rgba(216, 221, 235, .8);
+}
+
+.bt-ansRow:last-child {
+  border-bottom: none;
+}
+
+.bt-ansRow__txt {
+  color: var(--text);
+  font-size: 0.84rem;
+}
+
+.bt-ansRow__score {
+  font-weight: 800;
+}
+
+/* accordion (result detail) */
+.br-acc {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: var(--sh2);
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+
+.br-acc__sum {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 12px;
+  background: linear-gradient(180deg, rgba(59, 108, 255, .06), rgba(255, 255, 255, 0));
+  border-bottom: 1px solid var(--line);
+}
+
+.br-acc__sum::-webkit-details-marker {
+  display: none;
+}
+
+.br-acc__ttl {
+  font-weight: 800;
+  font-size: 0.92rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.br-acc__sub {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.br-acc__body {
+  padding: 10px 12px;
+}
+
+.br-report {
+  white-space: normal;
+  color: var(--text);
+  font-size: 0.86rem;
+  line-height: 1.55;
+  max-height: 260px;
+  overflow: auto;
+  padding-right: 6px;
+}
+
+/* =====================================
+   ✅ Self-test result modal: report fills + 내부 스크롤 (DOM 구조: .bt-modal__body > #detailBody > details.br-acc)
+   - only applies to detail modal opened from self-test (bt-modal--self)
+   ===================================== */
+
+/* 카드가 column flex(기존 test.css에도 있지만 self에서 확정) */
+#detailModal.bt-modal--self .bt-modal__card,
+#selfDetailModal.bt-modal--self .bt-modal__card{
+  display:flex;
+  flex-direction:column;
+  max-height:calc(100vh - 80px);
+  overflow:hidden;
+}
+
+/* footer는 흐름에 포함(닫기 영역 확보) */
+#detailModal.bt-modal--self .bt-modal__foot,
+#selfDetailModal.bt-modal--self .bt-modal__foot{
+  position:static !important;
+  flex:0 0 auto;
+}
+
+/* ✅ body가 남은 공간을 차지하고, 내부는 우리가 스크롤 제어 */
+#detailModal.bt-modal--self .bt-modal__body,
+#selfDetailModal.bt-modal--self .bt-modal__body{
+  display:flex;
+  flex-direction:column;
+  flex:1 1 auto;
+  min-height:0;
+  overflow:hidden;
+}
+
+/* ✅ 실제 콘텐츠 래퍼(#detailBody)가 높이를 받아 flex 레이아웃을 형성해야 함 */
+#detailModal.bt-modal--self .bt-modal__body > #detailBody,
+#selfDetailModal.bt-modal--self .bt-modal__body > #selfDetailBody{
+  display:flex;
+  flex-direction:column;
+  flex:1 1 auto;
+  min-height:0;
+}
+
+/* bt-kv(요약)와 spacer는 자연 높이, report(details)는 남은 높이 차지 */
+#detailModal.bt-modal--self .bt-modal__body > #detailBody > .br-acc,
+#selfDetailModal.bt-modal--self .bt-modal__body > #selfDetailBody > .br-acc{
+  flex:1 1 auto;
+  min-height:0;
+  margin-bottom:0;
+  display:flex;
+  flex-direction:column; /* summary fixed, body scrolls */
+}
+
+/* ✅ 스크롤은 여기서 */
+#detailModal.bt-modal--self .bt-modal__body > #detailBody > .br-acc > .br-acc__body,
+#selfDetailModal.bt-modal--self .bt-modal__body > #selfDetailBody > .br-acc > .br-acc__body{
+  flex:1 1 auto;
+  min-height:0;
+  overflow:auto;
+}
+
+/* self mode에서는 br-report max-height 제거(스크롤은 __body) */
+#detailModal.bt-modal--self .bt-modal__body > #detailBody > .br-acc .br-report,
+#selfDetailModal.bt-modal--self .bt-modal__body > #selfDetailBody > .br-acc .br-report{
+  max-height:none;
+  overflow:visible;
+  padding-right:0;
+}
+
+/* =====================================
+   ✅ Self-test result modal: report fills + "하단 빈공간 채움" + 내부 스크롤 (SELF 모드 전용)
+   - applies only when #detailModal has .bt-modal--self
+   - DOM (self): .bt-modal__body > #detailBody > .br-detail--self > details.br-acc > .br-acc__body
+   ===================================== */
+
+/* 1) 카드가 column flex + 높이 제한(=남는 공간 계산 기준) */
+#detailModal.bt-modal--self .bt-modal__card,
+#selfDetailModal.bt-modal--self .bt-modal__card{
+  display:flex;
+  flex-direction:column;
+  height: min(86vh, 820px); /* ✅ max-height가 아니라 height로 기준 확정 */
+  overflow:hidden;
+}
+
+/* 2) head/foot는 고정, body는 남은 공간 */
+#detailModal.bt-modal--self .bt-modal__head,
+#detailModal.bt-modal--self .bt-modal__foot,
+#selfDetailModal.bt-modal--self .bt-modal__head,
+#selfDetailModal.bt-modal--self .bt-modal__foot{
+  flex:0 0 auto;
+}
+
+/* 3) body가 남은 공간을 먹고, 내부 overflow는 숨김(스크롤은 아래에서) */
+#detailModal.bt-modal--self .bt-modal__body,
+#selfDetailModal.bt-modal--self .bt-modal__body{
+  display:flex;
+  flex-direction:column;
+  flex:1 1 auto;
+  min-height:0;
+  overflow:hidden;
+}
+
+/* 4) #detailBody가 body 높이를 그대로 받도록 */
+#detailModal.bt-modal--self .bt-modal__body > #detailBody,
+#selfDetailModal.bt-modal--self .bt-modal__body > #selfDetailBody{
+  display:flex;
+  flex-direction:column;
+  flex:1 1 auto;
+  min-height:0;
+  overflow:hidden;
+}
+
+/* 5) self wrapper도 남은 공간을 채움 */
+#detailModal.bt-modal--self .bt-modal__body > #detailBody > .br-detail--self,
+#selfDetailModal.bt-modal--self .bt-modal__body > #selfDetailBody > .br-detail--self{
+  display:flex;
+  flex-direction:column;
+  flex:1 1 auto;
+  min-height:0;
+}
+
+/* 6) details(=br-acc)가 아래 빈공간까지 채우도록 flex:1 */
+#detailModal.bt-modal--self .bt-modal__body > #detailBody > .br-detail--self > .br-acc,
+#selfDetailModal.bt-modal--self .bt-modal__body > #selfDetailBody > .br-detail--self > .br-acc{
+  display:flex;
+  flex-direction:column;
+  flex:1 1 auto;
+  min-height:0;
+  margin-bottom:0;
+}
+
+/* 7) ✅ 스크롤은 br-acc__body가 담당 */
+#detailModal.bt-modal--self .bt-modal__body > #detailBody > .br-detail--self > .br-acc > .br-acc__body,
+#selfDetailModal.bt-modal--self .bt-modal__body > #selfDetailBody > .br-detail--self > .br-acc > .br-acc__body{
+  flex:1 1 auto;
+  min-height:0;
+  overflow:auto;
+}
+
+/* 8) self 모드에서는 br-report 높이 제한 해제(스크롤은 __body) */
+#detailModal.bt-modal--self .bt-modal__body > #detailBody > .br-detail--self .br-report,
+#selfDetailModal.bt-modal--self .bt-modal__body > #selfDetailBody > .br-detail--self .br-report{
+  max-height:none;
+  overflow:visible;
+  padding-right:0;
+}
+
+/* moved from inline styles */
+.br-chip--pos { margin-left: 8px; }
+.br-headrow { gap: 12px; }
+.br-pill--emp { flex: 1; }
+.br-filterRow { flex: 4; }
+.br-filterRow--right { justify-content: flex-end; }
+.br-testSelect { min-width: 140px; width: 25%; }
+.br-innerBody { height: calc(100vh - 64px - 56px - 36px - 80px); }
+
+/* =========================
+   ✅ AG Grid (Quartz) skin
+   ========================= */
+.br-agGrid {
+  width: 100%;
+  height: 100%;
+  min-height: 240px;
+  border: none !important;
+  box-shadow: none !important;
+  overflow: hidden;
+  background: #fff;
+}
+
+/* Quartz 테마 변수 오버라이드 */
+.br-agGrid.ag-theme-quartz {
+  --ag-font-size: 13px;
+  --ag-font-family: inherit;
+
+  /* ✅ border 제거 */
+  --ag-borders: none;
+  --ag-border-color: transparent;
+
+  --ag-header-background-color: #f7f9ff;
+  --ag-odd-row-background-color: #ffffff;
+  --ag-background-color: #ffffff;
+  --ag-foreground-color: #111827;
+
+  --ag-header-foreground-color: #111827;
+  --ag-header-column-separator-color: var(--line);
+
+  --ag-selected-row-background-color: rgba(59, 108, 255, .10);
+  --ag-range-selection-border-color: rgba(59, 108, 255, .35);
+
+  --ag-input-border-color: var(--line2);
+  --ag-control-panel-background-color: #ffffff;
+}
+
+/* 헤더 */
+.br-agGrid .ag-header {
+  background: linear-gradient(180deg, #fff, #f7f9ff);
+  border-bottom: 1px solid var(--line);
+}
+
+/* 헤더 타이포 */
+.br-agGrid .ag-header-cell,
+.br-agGrid .ag-header-group-cell {
+  font-weight: 700;
+  color: #111827;
+}
+
+/* 셀 */
+.br-agGrid .ag-cell {
+  display: flex;
+  align-items: center;
+  color: var(--text);
+}
+
+/* 설문 셀 */
+.br-cell__test {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  line-height: 1.2;
+}
+.br-cell__testTitle { font-weight: 800; }
+.br-cell__testMeta { color: var(--muted); font-size: 0.8rem; }
+
+/* ✅ 응답일시(날짜/시간 2줄) */
+.br-cell__dt{
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+  line-height:1.2;
+}
+.br-cell__dtDate{
+  font-weight:700;
+  font-size:0.86rem;
+  color:var(--text);
+}
+.br-cell__dtTime{
+  font-size:0.8rem;
+  color:var(--muted);
+}
+
+/* 응답자 셀 */
+.br-cell__rspnr {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* chip */
+.br-agGrid .bt-chip {
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+  line-height: 24px;
+}
+
+/* 작업 버튼 */
+.br-cell__actions {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+/* overlay 톤 */
+.br-agGrid .ag-overlay-wrapper {
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+/* ✅ 내부 wrapper border 제거 (핵심) */
+.br-agGrid.ag-theme-quartz .ag-root-wrapper {
+  border: none !important;
+  box-shadow: none !important;
+}
+.br-agGrid.ag-theme-quartz .ag-root-wrapper-body {
+  border: none !important;
+}
+
+/* ✅ 포커스 outline 제거 */
+.br-agGrid .ag-cell:focus,
+.br-agGrid .ag-row:focus,
+.br-agGrid .ag-root-wrapper:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* 헤더 텍스트만 가운데 정렬 */
+.br-agGrid .ag-header-cell.br-hc--center .ag-header-cell-label{
+  width: 100%;
+  justify-content: center;
+}
+
+.br-agGrid .ag-header-cell.br-hc--center .ag-header-cell-text{
+  text-align: center;
+}
+
+/* 셀 */
+.br-agGrid .ag-cell.br-col--center{
+  justify-content: center;
+  text-align: center;
+}
+
+/* ✅ bt-inner__body 패딩 제거 */
+.bt-inner__body {
+  padding: 0px;
+}

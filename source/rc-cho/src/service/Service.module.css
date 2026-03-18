@@ -1,0 +1,409 @@
+@reference "tailwindcss";
+
+.service {
+    @apply w-full min-h-screen flex justify-center mb-80;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Nebula (네가 비워둔 상태 유지: 배경 없음 + blur/opacity만 유지) */
+.service::before {
+    content: "";
+    position: absolute;
+    inset: -20%;
+    filter: blur(2px);
+    opacity: 0.95;
+    pointer-events: none;
+}
+
+/* Stars / particles + subtle grain (파티클 떠다니는 애니메이션만 추가) */
+.service::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+
+    /* ✅ 파티클(별먼지) 패턴 – 3배 밀도 */
+    background:
+        /* layer 1 : 작은 파티클 */
+        radial-gradient(1px 1px at 12% 18%, rgba(255,255,255,0.55), transparent 60%),
+        radial-gradient(1px 1px at 22% 62%, rgba(255,255,255,0.40), transparent 60%),
+        radial-gradient(1px 1px at 35% 28%, rgba(255,255,255,0.45), transparent 60%),
+        radial-gradient(1px 1px at 48% 44%, rgba(255,255,255,0.50), transparent 60%),
+        radial-gradient(1px 1px at 58% 16%, rgba(255,255,255,0.42), transparent 60%),
+        radial-gradient(1px 1px at 66% 74%, rgba(255,255,255,0.35), transparent 60%),
+        radial-gradient(1px 1px at 78% 32%, rgba(255,255,255,0.55), transparent 60%),
+        radial-gradient(1px 1px at 86% 58%, rgba(255,255,255,0.40), transparent 60%),
+        radial-gradient(1px 1px at 92% 22%, rgba(255,255,255,0.45), transparent 60%),
+        radial-gradient(1px 1px at 18% 84%, rgba(255,255,255,0.42), transparent 60%),
+
+        /* layer 2 : 중간 파티클 */
+        radial-gradient(2px 2px at 14% 26%, rgba(255,255,255,0.60), transparent 60%),
+        radial-gradient(2px 2px at 28% 48%, rgba(255,255,255,0.55), transparent 60%),
+        radial-gradient(2px 2px at 42% 18%, rgba(255,255,255,0.58), transparent 60%),
+        radial-gradient(2px 2px at 54% 66%, rgba(255,255,255,0.50), transparent 60%),
+        radial-gradient(2px 2px at 64% 36%, rgba(255,255,255,0.60), transparent 60%),
+        radial-gradient(2px 2px at 76% 54%, rgba(255,255,255,0.52), transparent 60%),
+        radial-gradient(2px 2px at 88% 72%, rgba(255,255,255,0.48), transparent 60%),
+
+        /* layer 3 : 아주 은은한 배경 파티클 */
+        radial-gradient(1px 1px at 20% 40%, rgba(255,255,255,0.28), transparent 60%),
+        radial-gradient(1px 1px at 32% 72%, rgba(255,255,255,0.26), transparent 60%),
+        radial-gradient(1px 1px at 46% 56%, rgba(255,255,255,0.30), transparent 60%),
+        radial-gradient(1px 1px at 60% 24%, rgba(255,255,255,0.28), transparent 60%),
+        radial-gradient(1px 1px at 72% 84%, rgba(255,255,255,0.26), transparent 60%),
+        radial-gradient(1px 1px at 84% 44%, rgba(255,255,255,0.30), transparent 60%);
+
+    opacity: 0.65;
+    mix-blend-mode: normal;
+    pointer-events: none;
+
+    /* 깜빡임 없이 "떠다니기"만 */
+    animation: particleDrift 18s linear infinite;
+    will-change: transform;
+}
+
+@keyframes particleDrift {
+    0% { transform: translate3d(0, 0, 0); }
+    50% { transform: translate3d(14px, -10px, 0); }
+    100% { transform: translate3d(0, 0, 0); }
+}
+
+.serviceContainer {
+    width: min(1100px, 92vw);
+    height: 100vh;
+    padding: clamp(10px, 1.6vh, 16px);
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    gap: clamp(6px, 1.2vh, 12px);
+    position: relative;
+    z-index: 1;
+}
+
+.textArea {
+    @apply w-full flex items-center;
+}
+
+.textAreaCenter {
+    @apply w-full flex flex-col items-center;
+    text-align: center;
+}
+
+.textAreaCenter span {
+    display: inline-block;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    /* font-size: clamp(20px, 2.8vh, 30px); */
+    text-shadow:
+        0 0 12px rgba(120, 160, 255, 0.18),
+        0 0 18px rgba(190, 120, 255, 0.08);
+}
+
+.textSub {
+    margin-top: 4px;
+    font-size: clamp(12px, 1.35vh, 13px);
+    line-height: 1.3;
+    color: rgba(255, 255, 255, 0.70);
+    max-width: 62ch;
+}
+
+/* 카드 영역: "궤도" 레이아웃 */
+.cardArea {
+    height: 100%;
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    grid-template-rows: repeat(10, minmax(0, 1fr));
+    gap: clamp(10px, 1.4vh, 16px);
+    align-items: stretch;
+}
+
+/* 궤도 데코 레이어 (카드 뒤) */
+.orbitArea {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.orbitCore {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: clamp(120px, 16vh, 180px);
+    height: clamp(120px, 16vh, 180px);
+    transform: translate(-50%, -50%);
+    border-radius: 999px;
+    background:
+        radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.20), transparent 45%),
+        radial-gradient(circle at 55% 60%, rgba(120, 160, 255, 0.20), transparent 55%),
+        radial-gradient(circle at 50% 50%, rgba(190, 120, 255, 0.10), transparent 65%);
+    box-shadow:
+        0 0 70px rgba(120, 160, 255, 0.10),
+        0 0 90px rgba(190, 120, 255, 0.08);
+    opacity: 0.85;
+}
+
+/* ✅ 바깥으로 퍼지는 헤일로(가장 중요) */
+.orbitCore::before {
+    content: "";
+    position: absolute;
+    inset: -40%;
+    border-radius: 999px;
+
+    background: radial-gradient(circle at 50% 50%,
+        rgba(120, 160, 255, 0.22) 0%,
+        rgba(190, 120, 255, 0.16) 28%,
+        rgba(120, 160, 255, 0.08) 52%,
+        transparent 78%
+    );
+
+    filter: blur(18px);
+    opacity: 0.85;
+    pointer-events: none;
+}
+
+/* ✅ 아주 은은한 외곽 베일(선명한 경계 제거용) */
+.orbitCore::after {
+    content: "";
+    position: absolute;
+    inset: -18%;
+    border-radius: 999px;
+
+    background: radial-gradient(circle at 50% 50%,
+        rgba(255, 255, 255, 0.06) 0%,
+        transparent 72%
+    );
+
+    filter: blur(10px);
+    opacity: 0.55;
+    pointer-events: none;
+}
+
+.orbitRing {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) translateZ(0);
+    border-radius: 999px;
+
+    /* ❌ 기존 border 방식 제거 */
+    border: none;
+    box-shadow: none;
+
+    /* ✅ 선을 background로 만들기 (매끈함) */
+    background: radial-gradient(
+        closest-side,
+        transparent calc(100% - 1.25px),
+        rgba(255, 255, 255, 0.13) calc(100% - 1.0px),
+        transparent 100%
+    );
+
+    opacity: 0.85;
+    pointer-events: none;
+
+    /* 렌더링 안정화 */
+    will-change: transform;
+    backface-visibility: hidden;
+}
+
+/* ✅ 살짝 글로우(선명한 경계 없이) */
+.orbitRing::after {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: 999px;
+
+    background: radial-gradient(
+        closest-side,
+        transparent calc(100% - 1.5px),
+        rgba(120, 160, 255, 0.08) calc(100% - 1.0px),
+        transparent 100%
+    );
+
+    filter: blur(2px);
+    opacity: 0.9;
+    pointer-events: none;
+}
+
+.orbitRing:nth-child(2) {
+    width: clamp(320px, 46vh, 520px);
+    height: clamp(220px, 32vh, 380px);
+    transform: translate(-50%, -50%) rotate(-8deg) translateZ(0); /* -12 → -8 */
+}
+
+.orbitRing:nth-child(3) {
+    width: clamp(420px, 60vh, 700px);
+    height: clamp(280px, 40vh, 460px);
+    transform: translate(-50%, -50%) rotate(12deg) translateZ(0); /* 18 → 12 */
+    opacity: 0.55;
+}
+
+.orbitRing:nth-child(4) {
+    width: clamp(520px, 72vh, 860px);
+    height: clamp(340px, 50vh, 560px);
+    transform: translate(-50%, -50%) rotate(-16deg) translateZ(0); /* -24 → -16 */
+    opacity: 0.35;
+}
+
+.shooting {
+    position: absolute;
+    left: 8%;
+    top: 30%;
+    width: 220px;
+    height: 2px;
+    background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0),
+        rgba(255, 255, 255, 0.55),
+        rgba(255, 255, 255, 0)
+    );
+    transform: rotate(18deg);
+    opacity: 0.55;
+    animation: shootingStar 5.4s ease-in-out infinite;
+}
+
+@keyframes shootingStar {
+    0%, 100% { transform: translate3d(0, 0, 0) rotate(18deg); opacity: 0; }
+    20% { opacity: 0.55; }
+    45% { transform: translate3d(260px, 120px, 0) rotate(18deg); opacity: 0; }
+}
+
+/* 카드 슬롯(궤도 위치) */
+.cardSlot {
+    position: relative;
+    z-index: 1;
+}
+
+/* 5개를 "오각 궤도" 느낌으로 배치 */
+.slot1 {
+    grid-column: 2 / span 4;
+    grid-row: 2 / span 3;
+}
+
+.slot2 {
+    grid-column: 8 / span 4;
+    grid-row: 2 / span 3;
+}
+
+.slot3 {
+    grid-column: 10 / span 3;
+    grid-row: 6 / span 3;
+}
+
+.slot4 {
+    grid-column: 5 / span 4;
+    grid-row: 7 / span 3;
+}
+
+.slot5 {
+    grid-column: 1 / span 3;
+    grid-row: 6 / span 3;
+}
+
+@media (max-width: 980px) {
+    .serviceContainer {
+        width: min(980px, 94vw);
+        height: auto;
+        min-height: 100vh;
+    }
+
+    .cardArea {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-rows: auto;
+        gap: 14px;
+    }
+
+    .orbitArea {
+        display: none;
+    }
+
+    .cardSlot {
+        grid-column: auto;
+        grid-row: auto;
+    }
+}
+
+@media (max-width: 520px) {
+    .cardArea {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* 카드(투명 0.1 단색 패널) */
+.card {
+    height: 100%;
+    border-radius: 18px;
+    padding: clamp(12px, 1.6vh, 16px);
+
+    background: rgba(255, 255, 255, 0.10);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(10px);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    position: relative;
+    overflow: hidden;
+
+    transition: none;
+    box-shadow: 6px 8px 18px rgba(0, 0, 0, 0.35);
+}
+
+/* 카드 내부 데코 제거 */
+.card::before {
+    content: none;
+}
+
+/* 카드 헤더: [아이콘] 제목 */
+.cardHead {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 2px;
+}
+
+.cardIcon {
+    width: 22px;
+    height: 22px;
+    color: rgba(255, 255, 255, 0.88);
+    filter: drop-shadow(2px 3px 8px rgba(0, 0, 0, 0.25));
+    flex: 0 0 auto;
+}
+
+.cardTitle {
+    width: auto;
+    text-align: left;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    font-size: clamp(15px, 1.9vh, 18px);
+    color: rgba(255, 255, 255, 0.95);
+    text-shadow: 0 0 10px rgba(120, 160, 255, 0.12);
+    position: relative;
+    z-index: 1;
+}
+
+/* 콘텐츠(일반 내용) */
+.cardContent {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+}
+
+.cardContent span {
+    font-size: clamp(12px, 1.55vh, 14px);
+    line-height: 1.35;
+    color: rgba(255, 255, 255, 0.74);
+
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}

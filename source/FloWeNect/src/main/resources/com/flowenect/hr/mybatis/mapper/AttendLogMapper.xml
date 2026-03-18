@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.flowenect.hr.data.mapper.AttendLogMapper">
+
+	<select id="selectActiveDeptList" resultType="DeptDTO">
+		SELECT
+		dept_cd,
+		dept_nm,
+		up_dept_cd
+		FROM DEPT
+		WHERE del_yn = 'N' AND dept_nm != 'CEO'
+		ORDER BY dept_nm ASC
+	</select>
+
+	<select id="selectEmpListByDept" resultType="EmpDTO">
+		SELECT
+		e.emp_no,
+		e.emp_nm,
+		e.pos_cd,
+		(SELECT pos_nm FROM POSITION_MST WHERE pos_cd = e.pos_cd) as posNm
+		FROM EMP e
+		WHERE e.dept_cd = #{deptCd}
+		AND e.acnt_act_yn = 'Y'
+		ORDER BY e.emp_nm ASC
+	</select>
+
+	<sql id="searchCondition">
+	    <where>
+	        <if test="params.empNo != null and params.empNo != ''">
+	            AND a.emp_no = #{params.empNo}
+	        </if>
+	        
+	        <if test="params.startDate != null and params.startDate != ''">
+	            AND a.work_dt &gt;= #{params.startDate}
+	        </if>
+	        <if test="params.endDate != null and params.endDate != ''">
+	            AND a.work_dt &lt;= #{params.endDate}
+	        </if>
+	        
+	        <if test="params.status != null and params.status != ''">
+	            AND a.attd_stat_cd = #{params.status}
+	        </if>
+	
+	        <if test='params.lateOnly == "Y" or params.autoOutOnly == "Y"'>
+	            AND (
+	                <trim prefixOverrides="OR">
+	                    <if test='params.lateOnly == "Y"'>
+	                        a.late_yn = 'Y'
+	                    </if>
+	                    <if test='params.autoOutOnly == "Y"'>
+	                        OR a.out_dtm IS NULL
+	                    </if>
+	                </trim>
+	            )
+	        </if>
+	    </where>
+	</sql>
+
+	<select id="selectAttendLogList" resultType="ResponseAttendanceDTO">
+	    SELECT
+	        a.attd_no
+	        , a.emp_no
+	        , e.emp_nm
+	        , p.pos_nm
+	        , d.dept_nm
+	        , a.work_dt
+	        , a.in_dtm
+	        , a.out_dtm
+	        , a.late_yn
+	        , a.attd_stat_cd
+	        , a.remark
+	    FROM attendance a
+		    LEFT JOIN EMP e ON a.emp_no = e.emp_no
+		    LEFT JOIN POSITION_MST p ON e.pos_cd = p.pos_cd  
+		    LEFT JOIN DEPT d ON e.dept_cd = d.dept_cd        
+		    <include refid="searchCondition" />
+		    ORDER BY a.work_dt DESC, a.in_dtm DESC
+	    OFFSET (#{paging.page} - 1) * #{paging.recordSize} ROWS
+	    FETCH NEXT #{paging.recordSize} ROWS ONLY
+	</select>
+
+	<select id="selectAttendLogCount" resultType="int">
+        SELECT COUNT(*)
+        FROM attendance a  <include refid="searchCondition" />
+    </select>
+
+	<select id="selectTodayAttend" resultType="AttendanceDTO">
+		SELECT
+		attd_no
+		, in_dtm
+		, out_dtm
+		, attd_stat_cd
+		FROM attendance
+		WHERE emp_no = #{empNo}
+		AND work_dt = CURRENT_DATE
+	</select>
+
+</mapper>

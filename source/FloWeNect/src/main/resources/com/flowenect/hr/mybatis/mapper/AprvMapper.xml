@@ -1,0 +1,1176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.flowenect.hr.aprv.mapper.AprvMapper">
+
+  <!-- =========================================================
+       ResultMaps
+  ========================================================== -->
+
+  <resultMap id="aprvFormTypeMap" type="com.flowenect.hr.dto.aprv.AprvFormTypeDTO">
+    <result property="formCd" column="FORM_CD"/>
+    <result property="formNm" column="FORM_NM"/>
+  </resultMap>
+
+  <resultMap id="empOptionMap" type="com.flowenect.hr.dto.aprv.AprvEmpOptionDTO">
+    <result property="empNo" column="EMP_NO"/>
+    <result property="empNm" column="EMP_NM"/>
+    <result property="deptCd" column="DEPT_CD"/>
+    <result property="deptNm" column="DEPT_NM"/>
+    <result property="posCd" column="POS_CD"/>
+    <result property="posNm" column="POS_NM"/>
+  </resultMap>
+
+  <resultMap id="codeMap" type="com.flowenect.hr.dto.aprv.AprvCodeDTO">
+    <result property="code" column="CODE"/>
+    <result property="name" column="NAME"/>
+  </resultMap>
+
+  <resultMap id="empSnapMap" type="com.flowenect.hr.dto.aprv.AprvEmpSnapDTO">
+        <result property="empNo" column="EMP_NO"/>
+    <result property="deptCd" column="DEPT_CD"/>
+    <result property="deptNm" column="DEPT_NM"/>
+    <result property="posCd" column="POS_CD"/>
+    <result property="posNm" column="POS_NM"/>
+    <result property="empNm" column="EMP_NM"/>
+  </resultMap>
+
+  <resultMap id="docMap" type="com.flowenect.hr.dto.aprv.AprvDocDTO">
+    <id     property="aprvNo"         column="APRV_NO"/>
+    <result property="formCd"         column="FORM_CD"/>
+    <result property="empNo"          column="EMP_NO"/>
+    <result property="aprvTtl"        column="APRV_TTL"/>
+    <result property="aprvCn"         column="APRV_CN"/>
+
+    <result property="submitDtm"      column="SUBMIT_DTM"/>
+    <result property="finalDtm"       column="FINAL_DTM"/>
+
+    <result property="docWrtrDeptCd"  column="DOC_WRTR_DEPT_CD"/>
+    <result property="docWrtrPosCd"   column="DOC_WRTR_POS_CD"/>
+    <result property="docWrtrEmpNm"   column="DOC_WRTR_EMP_NM"/>
+
+    <result property="statDiv"        column="STAT_DIV"/>
+    <result property="statCd"         column="STAT_CD"/>
+
+    <result property="docPdfPath"     column="DOC_PDF_PATH"/>
+    <result property="hrApplyYn"      column="HR_APPLY_YN"/>
+    <result property="docStatCmt"     column="DOC_STAT_CMT"/>
+
+    <!-- join display -->
+    <result property="empNm"          column="EMP_NM_JOIN"/>
+    <result property="deptNm"         column="DEPT_NM_JOIN"/>
+    <result property="posNm"          column="POS_NM_JOIN"/>
+    <result property="statNm"         column="STAT_NM_JOIN"/>
+  </resultMap>
+
+  <resultMap id="lineMap" type="com.flowenect.hr.dto.aprv.AprvLineDTO">
+    <id     property="lineNo"         column="LINE_NO"/>
+    <result property="aprvNo"         column="APRV_NO"/>
+    <result property="empNo"          column="EMP_NO"/>
+    <result property="aprvSeq"        column="APRV_SEQ"/>
+    <result property="aprvDtm"        column="APRV_DTM"/>
+    <result property="rjctRsn"        column="RJCT_RSN"/>
+
+    <result property="aprverDeptCd"   column="APRVER_DEPT_CD"/>
+    <result property="aprverPosCd"    column="APRVER_POS_CD"/>
+    <result property="aprverEmpNm"    column="APRVER_EMP_NM"/>
+
+    <result property="aprverDeptNm"   column="APRVER_DEPT_NM"/>
+    <result property="aprverPosNm"    column="APRVER_POS_NM"/>
+
+    <result property="statDiv"        column="STAT_DIV"/>
+    <result property="statCd"         column="STAT_CD"/>
+  </resultMap>
+
+  <resultMap id="refMap" type="com.flowenect.hr.dto.aprv.AprvRefDTO">
+    <result property="aprvNo"     column="APRV_NO"/>
+    <result property="empNo"      column="EMP_NO"/>
+    <result property="refTypeCd"  column="REF_TYPE_CD"/>
+    <result property="refStatCd"  column="REF_STAT_CD"/>
+    <result property="refDtm"     column="REF_DTM"/>
+
+    <result property="empNm"      column="EMP_NM"/>
+    <result property="deptNm"     column="DEPT_NM"/>
+    <result property="posNm"      column="POS_NM"/>
+  </resultMap>
+
+  <resultMap id="fileMap" type="com.flowenect.hr.dto.aprv.ApprFileDTO">
+    <id     property="apprFileNo" column="APPR_FILE_NO"/>
+    <result property="aprvNo"     column="APRV_NO"/>
+    <result property="fileNm"     column="FILE_NM"/>
+    <result property="saveFileNm" column="SAVE_FILE_NM"/>
+    <result property="filePath"   column="FILE_PATH"/>
+    <result property="fileSize"   column="FILE_SIZE"/>
+    <result property="fileExt"    column="FILE_EXT"/>
+    <result property="regDtm"     column="REG_DTM"/>
+    <result property="delYn"      column="DEL_YN"/>
+    <result property="delDtm"     column="DEL_DTM"/>
+    <!-- FILE_DIV는 DTO에 없어서 매핑 생략 -->
+  </resultMap>
+
+  <resultMap id="docListRowMap" type="com.flowenect.hr.dto.aprv.AprvDocListRowDTO">
+    <id     property="aprvNo"     column="APRV_NO"/>
+    <result property="formNm"     column="FORM_NM"/>
+    <result property="aprvTtl"    column="APRV_TTL"/>
+    <result property="docStatCd"  column="DOC_STAT_CD"/>
+    <result property="docStatNm"  column="DOC_STAT_NM"/>
+    <result property="stepText"   column="STEP_TEXT"/>
+    <result property="regDt"      column="REG_DT"/>
+    <result property="lastProcDt" column="LAST_PROC_DT"/>
+  </resultMap>
+
+  <resultMap id="signAssetMap" type="com.flowenect.hr.dto.aprv.AprvSignAssetDTO">
+    <result property="assetNo"     column="ASSET_NO"/>
+    <result property="empNo"       column="EMP_NO"/>
+    <result property="assetTypeCd" column="ASSET_TYPE_CD"/>
+    <result property="assetNm"     column="ASSET_NM"/>
+    <result property="filePath"    column="FILE_PATH"/>
+    <result property="useYn"       column="USE_YN"/>
+    <result property="regDtm"      column="REG_DTM"/>
+    <result property="modDtm"      column="MOD_DTM"/>
+  </resultMap>
+
+  <resultMap id="assetHistMap" type="com.flowenect.hr.dto.aprv.AprvAssetHistDTO">
+    <result property="assetTypeCd"  column="ASSET_TYPE_CD"/>
+    <result property="lineNo"       column="LINE_NO"/>
+    <result property="assetNo"      column="ASSET_NO"/>
+    <result property="assetNmSnap"  column="ASSET_NM_SNAP"/>
+    <result property="filePathSnap" column="FILE_PATH_SNAP"/>
+    <result property="appliedDtm"   column="APPLIED_DTM"/>
+  </resultMap>
+
+  <!-- =========================================================
+       작성 화면 옵션/코드
+  ========================================================== -->
+
+  <select id="selectAprvFormTypeList" resultMap="aprvFormTypeMap">
+    SELECT
+      FORM_CD,
+      FORM_NM
+    FROM APRV_FORM_TYPE
+    ORDER BY FORM_CD
+  </select>
+
+  <select id="selectAprvEmpOptionList" resultMap="empOptionMap">
+    SELECT
+      e.EMP_NO,
+      e.EMP_NM,
+      e.DEPT_CD,
+      d.DEPT_NM,
+      e.POS_CD,
+      p.POS_NM
+    FROM EMP e
+    LEFT JOIN DEPT d ON d.DEPT_CD = e.DEPT_CD
+    LEFT JOIN POSITION_MST p ON p.POS_CD = e.POS_CD
+    WHERE e.ACNT_ACT_YN = 'Y'
+    ORDER BY e.EMP_NO
+  </select>
+
+  <select id="selectDeptHeadEmpOptionList" resultMap="empOptionMap">
+    SELECT
+      e.EMP_NO,
+      e.EMP_NM,
+      e.DEPT_CD,
+      d.DEPT_NM,
+      e.POS_CD,
+      p.POS_NM
+    FROM DEPT d
+    JOIN EMP e ON e.EMP_NO = d.DEPT_HEAD_EMP_NO
+    LEFT JOIN POSITION_MST p ON p.POS_CD = e.POS_CD
+    WHERE d.DEL_YN = 'N'
+      AND d.DEPT_HEAD_EMP_NO IS NOT NULL
+      AND e.ACNT_ACT_YN = 'Y'
+    ORDER BY d.DEPT_CD
+  </select>
+
+  <!-- HR 자동 참조 대상: DEPT_TYPE_CD='HR01' 부서의 재직(ACNT_ACT_YN='Y') 사원 전체 -->
+  <select id="selectHrActiveEmpNoList" resultType="string">
+    SELECT
+      e.EMP_NO
+    FROM EMP e
+    JOIN DEPT d ON d.DEPT_CD = e.DEPT_CD
+    WHERE d.DEPT_TYPE_CD = 'HR01'
+      AND d.DEL_YN = 'N'
+      AND e.ACNT_ACT_YN = 'Y'
+    ORDER BY e.EMP_NO
+  </select>
+
+  <select id="selectAprvStatCdList" resultMap="codeMap">
+    SELECT
+      STAT_CD AS CODE,
+      STAT_NM AS NAME
+    FROM APRV_STAT_CD
+    WHERE STAT_DIV = #{statDiv}
+      AND USE_YN = 'Y'
+    ORDER BY SORT_ORD
+  </select>
+
+  <select id="selectDeptCodeList" resultMap="codeMap">
+    SELECT
+      DEPT_CD AS CODE,
+      DEPT_NM AS NAME
+    FROM DEPT
+    WHERE DEL_YN = 'N'
+    ORDER BY DEPT_NM
+  </select>
+
+  <select id="selectPosCodeList" resultMap="codeMap">
+    SELECT
+      POS_CD AS CODE,
+      POS_NM AS NAME
+    FROM POSITION_MST
+    WHERE USE_YN = 'Y'
+    ORDER BY POS_LVL
+  </select>
+
+  <select id="selectEmpSnapByEmpNo" resultMap="empSnapMap">
+    SELECT
+	    e.EMP_NO,
+      e.DEPT_CD,
+      d.DEPT_NM,
+      e.POS_CD,
+      p.POS_NM,
+      e.EMP_NM
+    FROM EMP e
+    LEFT JOIN DEPT d ON d.DEPT_CD = e.DEPT_CD
+    LEFT JOIN POSITION_MST p ON p.POS_CD = e.POS_CD
+    WHERE e.EMP_NO = #{empNo}
+  </select>
+
+  <select id="selectDeptHeadEmpNoByDeptCd" resultType="string">
+    SELECT DEPT_HEAD_EMP_NO
+    FROM DEPT
+    WHERE DEPT_CD = #{deptCd}
+  </select>
+
+  <select id="selectLatestAprvSign" resultMap="signAssetMap">
+    SELECT *
+    FROM (
+      SELECT
+        s.ASSET_NO,
+        s.EMP_NO,
+        s.ASSET_TYPE_CD,
+        s.ASSET_NM,
+        s.FILE_PATH,
+        s.USE_YN,
+        s.REG_DTM,
+        s.MOD_DTM
+      FROM APRV_SIGN s
+      WHERE s.EMP_NO = #{empNo}
+        AND s.ASSET_TYPE_CD = #{assetTypeCd}
+        AND s.USE_YN = 'Y'
+      ORDER BY s.REG_DTM DESC, s.ASSET_NO DESC
+    )
+    WHERE ROWNUM = 1
+  </select>
+
+  <insert id="insertAprvSignAsset">
+    INSERT INTO APRV_SIGN (
+      ASSET_NO,
+      EMP_NO,
+      ASSET_TYPE_CD,
+      ASSET_NM,
+      FILE_PATH,
+      USE_YN,
+      REG_DTM,
+      MOD_DTM
+    ) VALUES (
+      SEQ_ASSET_NO.NEXTVAL,
+      #{empNo},
+      #{assetTypeCd},
+      #{assetNm},
+      #{filePath},
+      'Y',
+      SYSDATE,
+      NULL
+    )
+  </insert>
+
+  <select id="selectAprvSignAssetList" resultMap="signAssetMap">
+    SELECT
+      s.ASSET_NO,
+      s.EMP_NO,
+      s.ASSET_TYPE_CD,
+      s.ASSET_NM,
+      s.FILE_PATH,
+      s.USE_YN,
+      s.REG_DTM,
+      s.MOD_DTM
+    FROM APRV_SIGN s
+    WHERE s.EMP_NO = #{empNo}
+      AND s.ASSET_TYPE_CD = #{assetTypeCd}
+      AND s.USE_YN = 'Y'
+    ORDER BY s.REG_DTM DESC, s.ASSET_NO DESC
+  </select>
+
+  <select id="selectAprvSignAssetByAssetNo" resultMap="signAssetMap">
+    SELECT
+      s.ASSET_NO,
+      s.EMP_NO,
+      s.ASSET_TYPE_CD,
+      s.ASSET_NM,
+      s.FILE_PATH,
+      s.USE_YN,
+      s.REG_DTM,
+      s.MOD_DTM
+    FROM APRV_SIGN s
+    WHERE s.ASSET_NO = #{assetNo}
+      AND s.EMP_NO = #{empNo}
+  </select>
+
+  <!-- =========================================================
+       목록(페이징)
+  ========================================================== -->
+
+  <select id="selectAprvDocReadListCount" resultType="int">
+    SELECT COUNT(1)
+    FROM APRV_DOC d
+    WHERE 1=1
+      <choose>
+        <when test="cond != null and cond.box == 'mine'">
+          AND d.EMP_NO = #{empNo}
+        </when>
+        <when test="cond != null and cond.box == 'pending'">
+          AND EXISTS (
+            SELECT 1
+            FROM APRV_LINE l
+            WHERE l.APRV_NO = d.APRV_NO
+              AND l.EMP_NO = #{empNo}
+              AND l.STAT_CD = 'WAIT'
+          )
+        </when>
+        <when test="cond != null and cond.box == 'processed'">
+          AND EXISTS (
+            SELECT 1
+            FROM APRV_LINE l
+            WHERE l.APRV_NO = d.APRV_NO
+              AND l.EMP_NO = #{empNo}
+              AND l.STAT_CD IN ('APPROVED','REJECTED')
+          )
+        </when>
+        <when test="cond != null and cond.box == 'ref'">
+          AND EXISTS (
+            SELECT 1
+            FROM APRV_REF r
+            WHERE r.APRV_NO = d.APRV_NO
+              AND r.EMP_NO = #{empNo}
+          )
+        </when>
+        <otherwise>
+          AND d.EMP_NO = #{empNo}
+        </otherwise>
+      </choose>
+
+      <!-- 기간: SUBMIT_DTM 없으면 SYSDATE로 대체해서 DRAFT도 기본기간에 뜨게 -->
+      <if test="cond != null and cond.fromDt != null and cond.fromDt != ''">
+        AND TRUNC(NVL(d.SUBMIT_DTM, SYSDATE)) &gt;= TO_DATE(#{cond.fromDt}, 'YYYY-MM-DD')
+      </if>
+      <if test="cond != null and cond.toDt != null and cond.toDt != ''">
+        AND TRUNC(NVL(d.SUBMIT_DTM, SYSDATE)) &lt;= TO_DATE(#{cond.toDt}, 'YYYY-MM-DD')
+      </if>
+
+      <if test="cond != null and cond.docStatCd != null and cond.docStatCd != ''">
+        AND d.STAT_CD = #{cond.docStatCd}
+      </if>
+      <if test="cond != null and cond.formCd != null and cond.formCd != ''">
+        AND d.FORM_CD = #{cond.formCd}
+      </if>
+      <if test="cond != null and cond.aprvNoNum != null">
+        AND d.APRV_NO = #{cond.aprvNoNum}
+      </if>
+      <if test="cond != null and cond.aprvTtlPrefix != null and cond.aprvTtlPrefix != ''">
+        AND d.APRV_TTL LIKE #{cond.aprvTtlPrefix} || '%'
+      </if>
+  </select>
+
+  <select id="selectAprvDocReadList" resultMap="docListRowMap">
+    SELECT *
+    FROM (
+      SELECT
+        ROW_NUMBER() OVER (ORDER BY d.APRV_NO DESC) AS RN,
+
+        d.APRV_NO,
+        ft.FORM_NM,
+        d.APRV_TTL,
+
+        d.STAT_CD AS DOC_STAT_CD,
+        sc.STAT_NM AS DOC_STAT_NM,
+
+        /* stepText: current/total (RETIRE 자동승인은 0/0 가능) */
+        (CASE
+          WHEN NVL(ls.total_cnt, 0) = 0 THEN '0/0'
+          WHEN d.STAT_CD = 'APPROVED' THEN TO_CHAR(ls.total_cnt) || '/' || TO_CHAR(ls.total_cnt)
+          WHEN d.STAT_CD IN ('SUBMITTED','IN_PROGRESS') THEN TO_CHAR(LEAST(NVL(ls.approved_cnt,0) + 1, ls.total_cnt)) || '/' || TO_CHAR(ls.total_cnt)
+          WHEN d.STAT_CD IN ('REJECTED') THEN TO_CHAR(LEAST(NVL(ls.approved_cnt,0) + 1, ls.total_cnt)) || '/' || TO_CHAR(ls.total_cnt)
+          ELSE '0/' || TO_CHAR(ls.total_cnt)
+        END) AS STEP_TEXT,
+
+        /* 작성일: SUBMIT_DTM 없으면 '-' */
+        (CASE
+          WHEN d.SUBMIT_DTM IS NOT NULL THEN TO_CHAR(d.SUBMIT_DTM, 'YYYY-MM-DD')
+          ELSE '-'
+        END) AS REG_DT,
+
+        /* 최종처리: FINAL_DTM > 마지막 라인처리일 > SUBMIT_DTM > '-' */
+        (CASE
+          WHEN d.FINAL_DTM IS NOT NULL THEN TO_CHAR(d.FINAL_DTM, 'YYYY-MM-DD')
+          WHEN ls.last_line_dtm IS NOT NULL THEN TO_CHAR(ls.last_line_dtm, 'YYYY-MM-DD')
+          WHEN d.SUBMIT_DTM IS NOT NULL THEN TO_CHAR(d.SUBMIT_DTM, 'YYYY-MM-DD')
+          ELSE '-'
+        END) AS LAST_PROC_DT
+
+      FROM APRV_DOC d
+      LEFT JOIN APRV_FORM_TYPE ft
+        ON ft.FORM_CD = d.FORM_CD
+      LEFT JOIN APRV_STAT_CD sc
+        ON sc.STAT_DIV = 'DOC'
+       AND sc.STAT_CD  = d.STAT_CD
+
+      /* 라인 집계 */
+      LEFT JOIN (
+        SELECT
+          l.APRV_NO,
+          COUNT(*) AS total_cnt,
+          SUM(CASE WHEN l.STAT_CD = 'APPROVED' THEN 1 ELSE 0 END) AS approved_cnt,
+          MAX(l.APRV_DTM) AS last_line_dtm
+        FROM APRV_LINE l
+        GROUP BY l.APRV_NO
+      ) ls ON ls.APRV_NO = d.APRV_NO
+
+      WHERE 1=1
+        <choose>
+          <when test="cond != null and cond.box == 'mine'">
+            AND d.EMP_NO = #{empNo}
+          </when>
+          <when test="cond != null and cond.box == 'pending'">
+            AND EXISTS (
+              SELECT 1
+              FROM APRV_LINE l
+              WHERE l.APRV_NO = d.APRV_NO
+                AND l.EMP_NO = #{empNo}
+                AND l.STAT_CD = 'WAIT'
+            )
+          </when>
+          <when test="cond != null and cond.box == 'processed'">
+            AND EXISTS (
+              SELECT 1
+              FROM APRV_LINE l
+              WHERE l.APRV_NO = d.APRV_NO
+                AND l.EMP_NO = #{empNo}
+                AND l.STAT_CD IN ('APPROVED','REJECTED')
+            )
+          </when>
+          <when test="cond != null and cond.box == 'ref'">
+            AND EXISTS (
+              SELECT 1
+              FROM APRV_REF r
+              WHERE r.APRV_NO = d.APRV_NO
+                AND r.EMP_NO = #{empNo}
+            )
+          </when>
+          <otherwise>
+            AND d.EMP_NO = #{empNo}
+          </otherwise>
+        </choose>
+
+        <if test="cond != null and cond.fromDt != null and cond.fromDt != ''">
+          AND TRUNC(NVL(d.SUBMIT_DTM, SYSDATE)) &gt;= TO_DATE(#{cond.fromDt}, 'YYYY-MM-DD')
+        </if>
+        <if test="cond != null and cond.toDt != null and cond.toDt != ''">
+          AND TRUNC(NVL(d.SUBMIT_DTM, SYSDATE)) &lt;= TO_DATE(#{cond.toDt}, 'YYYY-MM-DD')
+        </if>
+
+        <if test="cond != null and cond.docStatCd != null and cond.docStatCd != ''">
+          AND d.STAT_CD = #{cond.docStatCd}
+        </if>
+        <if test="cond != null and cond.formCd != null and cond.formCd != ''">
+          AND d.FORM_CD = #{cond.formCd}
+        </if>
+        <if test="cond != null and cond.aprvNoNum != null">
+          AND d.APRV_NO = #{cond.aprvNoNum}
+        </if>
+        <if test="cond != null and cond.aprvTtlPrefix != null and cond.aprvTtlPrefix != ''">
+          AND d.APRV_TTL LIKE #{cond.aprvTtlPrefix} || '%'
+        </if>
+    )
+    WHERE RN BETWEEN #{startRow} AND #{endRow}
+    ORDER BY RN
+  </select>
+
+  <!-- =========================================================
+       시퀀스
+  ========================================================== -->
+
+  <select id="selectNextAprvNo" resultType="long">
+    SELECT SEQ_APRV_NO.NEXTVAL FROM DUAL
+  </select>
+
+  <select id="selectNextLineNo" resultType="long">
+    SELECT SEQ_LINE_NO.NEXTVAL FROM DUAL
+  </select>
+
+  <select id="selectNextRetrNo" resultType="long">
+    SELECT SEQ_RETR_NO.NEXTVAL FROM DUAL
+  </select>
+
+  <!-- =========================================================
+       문서(APRV_DOC)
+  ========================================================== -->
+
+  <insert id="insertAprvDoc" parameterType="com.flowenect.hr.dto.aprv.AprvDocDTO">
+    INSERT INTO APRV_DOC (
+      APRV_NO,
+      FORM_CD,
+      EMP_NO,
+      APRV_TTL,
+      APRV_CN,
+      SUBMIT_DTM,
+      FINAL_DTM,
+      DOC_WRTR_DEPT_CD,
+      DOC_WRTR_POS_CD,
+      DOC_WRTR_EMP_NM,
+      STAT_DIV,
+      STAT_CD,
+      HR_APPLY_YN,
+      DOC_PDF_PATH,
+      DOC_STAT_CMT
+    ) VALUES (
+      #{aprvNo},
+      #{formCd},
+      #{empNo},
+      #{aprvTtl},
+      #{aprvCn},
+      #{submitDtm,jdbcType=TIMESTAMP},
+      #{finalDtm,jdbcType=TIMESTAMP},
+      #{docWrtrDeptCd},
+      #{docWrtrPosCd},
+      #{docWrtrEmpNm},
+      #{statDiv},
+      #{statCd},
+      #{hrApplyYn},
+      #{docPdfPath},
+      #{docStatCmt}
+    )
+  </insert>
+
+  <select id="selectAprvDocByAprvNo" resultMap="docMap">
+    SELECT
+      d.APRV_NO,
+      d.FORM_CD,
+      d.EMP_NO,
+      d.APRV_TTL,
+      d.APRV_CN,
+      d.SUBMIT_DTM,
+      d.FINAL_DTM,
+      d.DOC_WRTR_DEPT_CD,
+      d.DOC_WRTR_POS_CD,
+      d.DOC_WRTR_EMP_NM,
+      d.STAT_DIV,
+      d.STAT_CD,
+      d.HR_APPLY_YN,
+      d.DOC_PDF_PATH,
+      d.DOC_STAT_CMT,
+
+      e.EMP_NM AS EMP_NM_JOIN,
+      dp.DEPT_NM AS DEPT_NM_JOIN,
+      pm.POS_NM AS POS_NM_JOIN,
+      sc.STAT_NM AS STAT_NM_JOIN
+    FROM APRV_DOC d
+    LEFT JOIN EMP e ON e.EMP_NO = d.EMP_NO
+    LEFT JOIN DEPT dp ON dp.DEPT_CD = e.DEPT_CD
+    LEFT JOIN POSITION_MST pm ON pm.POS_CD = e.POS_CD
+    LEFT JOIN APRV_STAT_CD sc ON sc.STAT_DIV = 'DOC' AND sc.STAT_CD = d.STAT_CD
+    WHERE d.APRV_NO = #{aprvNo}
+  </select>
+
+  <update id="updateAprvDocOnOverwrite">
+    UPDATE APRV_DOC
+    SET
+      FORM_CD = #{formCd},
+      APRV_TTL = #{aprvTtl},
+      APRV_CN  = #{aprvCn},
+      DOC_WRTR_DEPT_CD = #{deptCd},
+      DOC_WRTR_POS_CD  = #{posCd},
+      DOC_WRTR_EMP_NM  = #{empNm},
+      STAT_CD = #{statCd},
+      SUBMIT_DTM = #{submitDtm,jdbcType=TIMESTAMP}
+    WHERE APRV_NO = #{aprvNo}
+  </update>
+
+  <update id="updateDocInProgressFromSubmitted">
+    UPDATE APRV_DOC
+    SET STAT_CD = 'IN_PROGRESS'
+    WHERE APRV_NO = #{aprvNo}
+      AND STAT_CD = 'SUBMITTED'
+  </update>
+
+  <update id="updateDocApproved">
+    UPDATE APRV_DOC
+    SET STAT_CD = 'APPROVED',
+        FINAL_DTM = SYSDATE
+    WHERE APRV_NO = #{aprvNo}
+  </update>
+
+  <update id="updateDocApprovedFromSubmitted">
+    UPDATE APRV_DOC
+    SET STAT_CD = 'APPROVED',
+        FINAL_DTM = SYSDATE
+    WHERE APRV_NO = #{aprvNo}
+      AND STAT_CD = 'SUBMITTED'
+  </update>
+
+  <update id="updateDocRejected">
+    UPDATE APRV_DOC
+    SET STAT_CD = 'REJECTED',
+        FINAL_DTM = SYSDATE
+    WHERE APRV_NO = #{aprvNo}
+  </update>
+
+  <update id="updateDocCanceled">
+    UPDATE APRV_DOC
+    SET STAT_CD = 'CANCELED',
+        FINAL_DTM = SYSDATE
+    WHERE APRV_NO = #{aprvNo}
+  </update>
+
+  <select id="countDocByWriter" resultType="int">
+    SELECT COUNT(1)
+    FROM APRV_DOC
+    WHERE APRV_NO = #{aprvNo}
+      AND EMP_NO = #{empNo}
+  </select>
+
+  <!-- =========================================================
+       결재선(APRV_LINE)
+  ========================================================== -->
+
+  <insert id="insertAprvLine" parameterType="com.flowenect.hr.dto.aprv.AprvLineDTO">
+    INSERT INTO APRV_LINE (
+      LINE_NO,
+      APRV_NO,
+      EMP_NO,
+      APRV_SEQ,
+      APRV_DTM,
+      RJCT_RSN,
+      APRVER_DEPT_CD,
+      APRVER_POS_CD,
+      APRVER_EMP_NM,
+      STAT_DIV,
+      STAT_CD
+    ) VALUES (
+      #{lineNo},
+      #{aprvNo},
+      #{empNo},
+      #{aprvSeq},
+      #{aprvDtm,jdbcType=TIMESTAMP},
+      #{rjctRsn},
+      #{aprverDeptCd},
+      #{aprverPosCd},
+      #{aprverEmpNm},
+      #{statDiv},
+      #{statCd}
+    )
+  </insert>
+
+  <delete id="deleteAprvLineByAprvNo">
+    DELETE FROM APRV_LINE
+    WHERE APRV_NO = #{aprvNo}
+  </delete>
+
+  <select id="selectAprvLineListByAprvNo" resultMap="lineMap">
+    SELECT
+      l.LINE_NO,
+      l.APRV_NO,
+      l.EMP_NO,
+      l.APRV_SEQ,
+      l.APRV_DTM,
+      l.RJCT_RSN,
+      l.APRVER_DEPT_CD,
+      l.APRVER_POS_CD,
+      l.APRVER_EMP_NM,
+      l.STAT_DIV,
+      l.STAT_CD,
+
+      d.DEPT_NM AS APRVER_DEPT_NM,
+      p.POS_NM  AS APRVER_POS_NM
+    FROM APRV_LINE l
+    LEFT JOIN DEPT d ON d.DEPT_CD = l.APRVER_DEPT_CD
+    LEFT JOIN POSITION_MST p ON p.POS_CD = l.APRVER_POS_CD
+    WHERE l.APRV_NO = #{aprvNo}
+    ORDER BY l.APRV_SEQ
+  </select>
+
+  <select id="selectCurrentWaitLine" resultMap="lineMap">
+    SELECT
+      l.LINE_NO,
+      l.APRV_NO,
+      l.EMP_NO,
+      l.APRV_SEQ,
+      l.APRV_DTM,
+      l.RJCT_RSN,
+      l.APRVER_DEPT_CD,
+      l.APRVER_POS_CD,
+      l.APRVER_EMP_NM,
+      l.STAT_DIV,
+      l.STAT_CD
+    FROM APRV_LINE l
+    WHERE l.APRV_NO = #{aprvNo}
+      AND l.EMP_NO = #{empNo}
+      AND l.STAT_CD = 'WAIT'
+      AND l.APRV_SEQ = (
+        SELECT MIN(w.APRV_SEQ)
+        FROM APRV_LINE w
+        WHERE w.APRV_NO = #{aprvNo}
+          AND w.STAT_CD = 'WAIT'
+      )
+  </select>
+
+  <update id="updateLineApproved">
+    UPDATE APRV_LINE
+    SET STAT_CD = 'APPROVED',
+        APRV_DTM = SYSDATE
+    WHERE LINE_NO = #{lineNo}
+      AND EMP_NO = #{empNo}
+      AND STAT_CD = 'WAIT'
+  </update>
+
+  <update id="updateLineRejected">
+    UPDATE APRV_LINE
+    SET STAT_CD = 'REJECTED',
+        RJCT_RSN = #{rjctRsn},
+        APRV_DTM = SYSDATE
+    WHERE LINE_NO = #{lineNo}
+      AND STAT_CD = 'WAIT'
+  </update>
+
+  <select id="countRemainingWaitLines" resultType="int">
+    SELECT COUNT(1)
+    FROM APRV_LINE
+    WHERE APRV_NO = #{aprvNo}
+      AND STAT_CD = 'WAIT'
+  </select>
+
+  <select id="countApprovedLine" resultType="int">
+    SELECT COUNT(1)
+    FROM APRV_LINE
+    WHERE APRV_NO = #{aprvNo}
+      AND STAT_CD = 'APPROVED'
+  </select>
+
+  <select id="countAnyApprovedLine" resultType="int">
+    SELECT COUNT(1)
+    FROM APRV_LINE
+    WHERE APRV_NO = #{aprvNo}
+      AND STAT_CD = 'APPROVED'
+  </select>
+
+  <!-- =========================================================
+       참조(APRV_REF)
+  ========================================================== -->
+
+  <insert id="insertAprvRef">
+    INSERT INTO APRV_REF (
+      APRV_NO,
+      EMP_NO,
+      REF_TYPE_CD,
+      REF_STAT_CD,
+      REF_DTM
+    ) VALUES (
+      #{aprvNo},
+      #{empNo},
+      #{refTypeCd},
+      #{refStatCd},
+      NULL
+    )
+  </insert>
+
+  <delete id="deleteAprvRefByAprvNo">
+    DELETE FROM APRV_REF
+    WHERE APRV_NO = #{aprvNo}
+  </delete>
+
+  <select id="selectAprvRefListByAprvNo" resultMap="refMap">
+    SELECT
+      r.APRV_NO,
+      r.EMP_NO,
+      r.REF_TYPE_CD,
+      r.REF_STAT_CD,
+      r.REF_DTM,
+      e.EMP_NM,
+      d.DEPT_NM,
+      p.POS_NM
+    FROM APRV_REF r
+    LEFT JOIN EMP e ON e.EMP_NO = r.EMP_NO
+    LEFT JOIN DEPT d ON d.DEPT_CD = e.DEPT_CD
+    LEFT JOIN POSITION_MST p ON p.POS_CD = e.POS_CD
+    WHERE r.APRV_NO = #{aprvNo}
+    ORDER BY r.EMP_NO
+  </select>
+
+  <!-- =========================================================
+       첨부(APPR_FILE)
+  ========================================================== -->
+
+  <insert id="insertApprFile">
+    INSERT INTO APPR_FILE (
+      APPR_FILE_NO,
+      APRV_NO,
+      FILE_NM,
+      SAVE_FILE_NM,
+      FILE_PATH,
+      FILE_SIZE,
+      FILE_EXT,
+      REG_DTM,
+      DEL_YN,
+      DEL_DTM,
+      FILE_DIV
+    ) VALUES (
+      SEQ_APPR_FILE_NO.NEXTVAL,
+      #{aprvNo},
+      #{fileNm},
+      #{saveFileNm},
+      #{filePath},
+      #{fileSize},
+      #{fileExt},
+      SYSDATE,
+      'N',
+      NULL,
+      #{fileDiv}
+    )
+  </insert>
+
+  <insert id="insertSystemPdfFile">
+    INSERT INTO APPR_FILE (
+      APPR_FILE_NO,
+      APRV_NO,
+      FILE_NM,
+      SAVE_FILE_NM,
+      FILE_PATH,
+      FILE_SIZE,
+      FILE_EXT,
+      REG_DTM,
+      DEL_YN,
+      DEL_DTM,
+      FILE_DIV
+    ) VALUES (
+      SEQ_APPR_FILE_NO.NEXTVAL,
+      #{aprvNo},
+      #{fileNm},
+      #{saveFileNm},
+      #{filePath},
+      #{fileSize},
+      #{fileExt},
+      SYSDATE,
+      'N',
+      NULL,
+      'SYSTEM_PDF'
+    )
+  </insert>
+
+  <select id="selectApprFileByFileNo" resultMap="fileMap">
+    SELECT
+      APPR_FILE_NO,
+      APRV_NO,
+      FILE_NM,
+      SAVE_FILE_NM,
+      FILE_PATH,
+      FILE_SIZE,
+      FILE_EXT,
+      REG_DTM,
+      DEL_YN,
+      DEL_DTM
+    FROM APPR_FILE
+    WHERE APPR_FILE_NO = #{fileNo}
+  </select>
+
+  <select id="selectApprFileListByAprvNo" resultMap="fileMap">
+    SELECT
+      APPR_FILE_NO,
+      APRV_NO,
+      FILE_NM,
+      SAVE_FILE_NM,
+      FILE_PATH,
+      FILE_SIZE,
+      FILE_EXT,
+      REG_DTM,
+      DEL_YN,
+      DEL_DTM
+    FROM APPR_FILE
+    WHERE APRV_NO = #{aprvNo}
+      AND DEL_YN = 'N'
+    ORDER BY REG_DTM DESC, APPR_FILE_NO DESC
+  </select>
+
+  <select id="selectLatestPdfByAprvNo" resultMap="fileMap">
+    SELECT *
+    FROM (
+      SELECT
+        APPR_FILE_NO,
+        APRV_NO,
+        FILE_NM,
+        SAVE_FILE_NM,
+        FILE_PATH,
+        FILE_SIZE,
+        FILE_EXT,
+        REG_DTM,
+        DEL_YN,
+        DEL_DTM
+      FROM APPR_FILE
+      WHERE APRV_NO = #{aprvNo}
+        AND DEL_YN = 'N'
+        AND FILE_EXT = 'pdf'
+      ORDER BY REG_DTM DESC, APPR_FILE_NO DESC
+    )
+    WHERE ROWNUM = 1
+  </select>
+
+  <select id="selectLatestPdfByAprvNoAndDiv" resultMap="fileMap">
+    SELECT *
+    FROM (
+      SELECT
+        APPR_FILE_NO,
+        APRV_NO,
+        FILE_NM,
+        SAVE_FILE_NM,
+        FILE_PATH,
+        FILE_SIZE,
+        FILE_EXT,
+        REG_DTM,
+        DEL_YN,
+        DEL_DTM
+      FROM APPR_FILE
+      WHERE APRV_NO = #{aprvNo}
+        AND DEL_YN = 'N'
+        AND FILE_DIV = #{fileDiv}
+      ORDER BY REG_DTM DESC, APPR_FILE_NO DESC
+    )
+    WHERE ROWNUM = 1
+  </select>
+
+  <!-- =========================================================
+       접근 통제
+  ========================================================== -->
+
+  <select id="existsDocAccess" resultType="int">
+    SELECT CASE WHEN COUNT(1) &gt; 0 THEN 1 ELSE 0 END AS OK
+    FROM (
+      /* 1) 작성자 */
+      SELECT 1
+      FROM APRV_DOC d
+      WHERE d.APRV_NO = #{aprvNo}
+        AND d.EMP_NO = #{empNo}
+
+      UNION ALL
+
+      /* 2) 결재선 포함 */
+      SELECT 1
+      FROM APRV_LINE l
+      WHERE l.APRV_NO = #{aprvNo}
+        AND l.EMP_NO = #{empNo}
+
+      UNION ALL
+
+      /* 3) 참조/수신 포함 */
+      SELECT 1
+      FROM APRV_REF r
+      WHERE r.APRV_NO = #{aprvNo}
+        AND r.EMP_NO = #{empNo}
+    )
+  </select>
+
+  <!-- =========================================================
+       양식별 상세(APRV_*)
+  ========================================================== -->
+
+  <select id="selectAprvLeaveByAprvNo" resultType="com.flowenect.hr.dto.aprv.AprvLeaveDTO">
+    SELECT
+      APRV_NO      AS aprvNo,
+      LEAVE_TYPE_CD AS leaveTypeCd,
+      START_DTM    AS startDtm,
+      END_DTM      AS endDtm,
+      REASON       AS reason
+    FROM APRV_LEAVE
+    WHERE APRV_NO = #{aprvNo}
+  </select>
+
+  <select id="selectAprvLoaByAprvNo" resultType="com.flowenect.hr.dto.aprv.AprvLoaDTO">
+    SELECT
+      APRV_NO     AS aprvNo,
+      LOA_TYPE_CD AS loaTypeCd,
+      START_DTM   AS startDtm,
+      END_DTM     AS endDtm,
+      REASON      AS reason
+    FROM APRV_LOA
+    WHERE APRV_NO = #{aprvNo}
+  </select>
+
+  <select id="selectAprvPromotionByAprvNo" resultType="com.flowenect.hr.dto.aprv.AprvPromotionDTO">
+    SELECT
+      APRV_NO       AS aprvNo,
+      TARGET_POS_CD AS targetPosCd,
+      EFFECTIVE_DTM AS effectiveDtm,
+      REASON        AS reason,
+      TARGET_EMP_NO AS targetEmpNo
+    FROM APRV_PROMOTION
+    WHERE APRV_NO = #{aprvNo}
+  </select>
+
+  <select id="selectAprvAppointmentByAprvNo" resultType="com.flowenect.hr.dto.aprv.AprvAppointmentDTO">
+    SELECT
+      APRV_NO       AS aprvNo,
+      TARGET_EMP_NO AS targetEmpNo,
+      BEF_DEPT_CD   AS befDeptCd,
+      AFT_DEPT_CD   AS aftDeptCd,
+      APPT_TYPE_CD  AS apptTypeCd,
+      EFFECTIVE_DT  AS effectiveDt,
+      BEF_POS_CD    AS befPosCd,
+      AFT_POS_CD    AS aftPosCd,
+      REASON        AS reason
+    FROM APRV_APPOINTMENT
+    WHERE APRV_NO = #{aprvNo}
+  </select>
+
+  <select id="selectAprvHeadcountByAprvNo" resultType="com.flowenect.hr.dto.aprv.AprvHeadcountDTO">
+    SELECT
+      APRV_NO     AS aprvNo,
+      REQ_DEPT_CD AS reqDeptCd,
+      REQ_CNT     AS reqCnt,
+      HOPE_DT     AS hopeDt,
+      REASON      AS reason
+    FROM APRV_HEADCOUNT
+    WHERE APRV_NO = #{aprvNo}
+  </select>
+
+  <select id="selectAprvRetireByAprvNo" resultType="com.flowenect.hr.dto.aprv.AprvRetireDTO">
+    SELECT
+      RETR_NO       AS retrNo,
+      APRV_NO       AS aprvNo,
+      EMP_NO        AS empNo,
+      EXP_RETR_DT   AS expRetrDt,
+      RETR_RSN      AS retrRsn,
+      PROC_STAT_CD  AS procStatCd,
+      CONF_RETR_DTM AS confRetrDtm,
+      E_APPR_DOC_NO AS eApprDocNo,
+      REQ_DTM       AS reqDtm,
+      PROC_END_DTM  AS procEndDtm
+    FROM APRV_RETIRE
+    WHERE APRV_NO = #{aprvNo}
+  </select>
+
+  <insert id="insertAprvLeave" parameterType="com.flowenect.hr.dto.aprv.AprvLeaveDTO">
+    INSERT INTO APRV_LEAVE (APRV_NO, LEAVE_TYPE_CD, START_DTM, END_DTM, REASON)
+    VALUES (#{aprvNo}, #{leaveTypeCd}, #{startDtm,jdbcType=DATE}, #{endDtm,jdbcType=DATE}, #{reason})
+  </insert>
+
+  <insert id="insertAprvLoa" parameterType="com.flowenect.hr.dto.aprv.AprvLoaDTO">
+    INSERT INTO APRV_LOA (APRV_NO, LOA_TYPE_CD, START_DTM, END_DTM, REASON)
+    VALUES (#{aprvNo}, #{loaTypeCd}, #{startDtm,jdbcType=DATE}, #{endDtm,jdbcType=DATE}, #{reason})
+  </insert>
+
+  <insert id="insertAprvPromotion" parameterType="com.flowenect.hr.dto.aprv.AprvPromotionDTO">
+    INSERT INTO APRV_PROMOTION (APRV_NO, TARGET_POS_CD, EFFECTIVE_DTM, REASON, TARGET_EMP_NO)
+    VALUES (#{aprvNo}, #{targetPosCd}, #{effectiveDtm,jdbcType=DATE}, #{reason}, #{targetEmpNo})
+  </insert>
+
+  <insert id="insertAprvAppointment" parameterType="com.flowenect.hr.dto.aprv.AprvAppointmentDTO">
+    INSERT INTO APRV_APPOINTMENT (
+      APRV_NO, TARGET_EMP_NO, BEF_DEPT_CD, AFT_DEPT_CD, APPT_TYPE_CD, EFFECTIVE_DT, BEF_POS_CD, AFT_POS_CD, REASON
+    ) VALUES (
+      #{aprvNo}, #{targetEmpNo}, #{befDeptCd}, #{aftDeptCd}, #{apptTypeCd}, #{effectiveDt,jdbcType=DATE}, #{befPosCd}, #{aftPosCd}, #{reason}
+    )
+  </insert>
+
+  <insert id="insertAprvHeadcount" parameterType="com.flowenect.hr.dto.aprv.AprvHeadcountDTO">
+    INSERT INTO APRV_HEADCOUNT (APRV_NO, REQ_DEPT_CD, REQ_CNT, HOPE_DT, REASON)
+    VALUES (#{aprvNo}, #{reqDeptCd}, #{reqCnt}, #{hopeDt,jdbcType=DATE}, #{reason})
+  </insert>
+
+  <insert id="insertAprvRetire" parameterType="com.flowenect.hr.dto.aprv.AprvRetireDTO">
+    INSERT INTO APRV_RETIRE (
+      RETR_NO, APRV_NO, EMP_NO, EXP_RETR_DT, RETR_RSN, PROC_STAT_CD, CONF_RETR_DTM, E_APPR_DOC_NO, REQ_DTM, PROC_END_DTM
+    ) VALUES (
+      #{retrNo}, #{aprvNo}, #{empNo}, #{expRetrDt,jdbcType=DATE}, #{retrRsn}, #{procStatCd},
+      #{confRetrDtm,jdbcType=TIMESTAMP}, #{eApprDocNo}, #{reqDtm,jdbcType=TIMESTAMP}, #{procEndDtm,jdbcType=TIMESTAMP}
+    )
+  </insert>
+
+  <delete id="deleteAprvLeaveByAprvNo">
+    DELETE FROM APRV_LEAVE WHERE APRV_NO = #{aprvNo}
+  </delete>
+
+  <delete id="deleteAprvLoaByAprvNo">
+    DELETE FROM APRV_LOA WHERE APRV_NO = #{aprvNo}
+  </delete>
+
+  <delete id="deleteAprvPromotionByAprvNo">
+    DELETE FROM APRV_PROMOTION WHERE APRV_NO = #{aprvNo}
+  </delete>
+
+  <delete id="deleteAprvAppointmentByAprvNo">
+    DELETE FROM APRV_APPOINTMENT WHERE APRV_NO = #{aprvNo}
+  </delete>
+
+  <delete id="deleteAprvHeadcountByAprvNo">
+    DELETE FROM APRV_HEADCOUNT WHERE APRV_NO = #{aprvNo}
+  </delete>
+
+  <delete id="deleteAprvRetireByAprvNo">
+    DELETE FROM APRV_RETIRE WHERE APRV_NO = #{aprvNo}
+  </delete>
+
+  <!-- =========================================================
+       자산이력(ASSET_HIST)
+  ========================================================== -->
+
+  <insert id="insertAssetHist">
+    INSERT INTO ASSET_HIST (
+      ASSET_TYPE_CD,
+      LINE_NO,
+      ASSET_NO,
+      ASSET_NM_SNAP,
+      FILE_PATH_SNAP,
+      APPLIED_DTM
+    ) VALUES (
+      #{assetTypeCd},
+      #{lineNo},
+      #{assetNo},
+      #{assetNmSnap},
+      #{filePathSnap},
+      SYSDATE
+    )
+  </insert>
+
+  <select id="selectAssetHistListByAprvNo" resultMap="assetHistMap">
+    SELECT
+      h.ASSET_TYPE_CD,
+      h.LINE_NO,
+      h.ASSET_NO,
+      h.ASSET_NM_SNAP,
+      h.FILE_PATH_SNAP,
+      h.APPLIED_DTM
+    FROM ASSET_HIST h
+    JOIN APRV_LINE l ON l.LINE_NO = h.LINE_NO
+    WHERE l.APRV_NO = #{aprvNo}
+    ORDER BY h.APPLIED_DTM ASC
+  </select>
+
+  <select id="selectAssetHistByLineNoAndType" resultMap="assetHistMap">
+    SELECT
+      ASSET_TYPE_CD,
+      LINE_NO,
+      ASSET_NO,
+      ASSET_NM_SNAP,
+      FILE_PATH_SNAP,
+      APPLIED_DTM
+    FROM ASSET_HIST
+    WHERE LINE_NO = #{lineNo}
+      AND ASSET_TYPE_CD = #{assetTypeCd}
+  </select>
+
+  <select id="selectAprvNoByLineNo" resultType="long">
+    SELECT APRV_NO
+    FROM APRV_LINE
+    WHERE LINE_NO = #{lineNo}
+  </select>
+
+</mapper>

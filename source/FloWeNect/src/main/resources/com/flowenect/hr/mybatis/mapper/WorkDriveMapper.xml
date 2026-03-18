@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper
+	namespace="com.flowenect.hr.department.board.mapper.WorkDriveMapper">
+
+	<!-- ❌ ResultMap 완전히 삭제하고 아래처럼 변경 -->
+
+	<select id="selectFileListByDept" parameterType="string"
+		resultType="com.flowenect.hr.dto.FileDTO">
+		SELECT
+		DEPT_CD AS refNo,
+		FILE_TYPE_CD AS fileTypeCd,
+		WORK_DRIVE_NO AS "fileMeta.fileNo",
+		FILE_NM AS "fileMeta.fileNm",
+		SAVE_FILE_NM AS "fileMeta.saveFileNm",
+		FILE_PATH AS
+		"fileMeta.filePath",
+		FILE_SIZE AS "fileMeta.fileSize",
+		FILE_EXT AS
+		"fileMeta.fileExt",
+		EMP_NM AS "fileMeta.empNm",
+		USE_YN AS
+		"fileMeta.delYn",
+		REG_DTM AS "fileMeta.regDtm"
+		FROM WORK_DRIVE
+		WHERE
+		DEPT_CD = #{deptCd}
+		AND USE_YN = 'Y'
+		ORDER BY WORK_DRIVE_NO DESC
+	</select>
+
+	<insert id="insertFile">
+    INSERT INTO WORK_DRIVE (
+        WORK_DRIVE_NO,
+        DEPT_CD,        FILE_NM,
+        SAVE_FILE_NM,
+        FILE_PATH,
+        FILE_SIZE,
+        FILE_EXT,
+        EMP_NM
+    ) VALUES (
+        SEQ_WORK_DRIVE.NEXTVAL,
+        #{deptCd},               #{file.fileMeta.fileNm}, #{file.fileMeta.saveFileNm},
+        #{file.fileMeta.filePath},
+        #{file.fileMeta.fileSize},
+        #{file.fileMeta.fileExt},
+        #{file.fileMeta.empNm}
+    )
+</insert>
+
+	<update id="updateUseYn" parameterType="list">
+		UPDATE WORK_DRIVE
+		SET USE_YN = 'N'
+		WHERE WORK_DRIVE_NO IN
+		<foreach item="no" collection="list" open="(" separator=","
+			close=")">
+			#{no}
+		</foreach>
+	</update>
+
+	<!-- ✅ 올바른 코드 -->
+	<select id="selectByFileNo" parameterType="long"
+		resultType="com.flowenect.hr.dto.FileMetaDTO">
+		SELECT
+		WORK_DRIVE_NO AS fileNo, 
+		FILE_NM AS fileNm,
+		SAVE_FILE_NM AS saveFileNm,
+		FILE_PATH AS filePath,
+		FILE_SIZE AS fileSize,
+		FILE_EXT AS fileExt,
+		REG_DTM AS regDtm,
+		USE_YN AS delYn 
+		FROM WORK_DRIVE 
+		WHERE WORK_DRIVE_NO = #{fileNo}
+		AND USE_YN = 'Y' 
+	</select>
+	
+	<update id="updateFilePath">
+	    UPDATE WORK_DRIVE
+	       SET FILE_PATH = #{targetPath}
+	     WHERE WORK_DRIVE_NO = #{fileNo}
+	       AND USE_YN = 'Y'  
+	</update>
+	
+	<select id="selectFileListByPath" resultType="com.flowenect.hr.dto.FileDTO">
+        SELECT
+            DEPT_CD       AS refNo,
+            FILE_TYPE_CD  AS fileTypeCd,
+            WORK_DRIVE_NO AS "fileMeta.fileNo",
+            FILE_NM       AS "fileMeta.fileNm",
+            SAVE_FILE_NM  AS "fileMeta.saveFileNm",
+            FILE_PATH     AS "fileMeta.filePath",
+            FILE_SIZE     AS "fileMeta.fileSize",
+            FILE_EXT      AS "fileMeta.fileExt",
+            EMP_NM        AS "fileMeta.empNm",
+            USE_YN        AS "fileMeta.delYn",
+            REG_DTM       AS "fileMeta.regDtm"
+        FROM WORK_DRIVE
+        WHERE DEPT_CD = #{deptCd}
+          AND FILE_PATH = #{filePath}
+          AND USE_YN = 'Y'
+        ORDER BY (CASE WHEN FILE_EXT = '폴더' THEN 0 ELSE 1 END) ASC, WORK_DRIVE_NO DESC
+    </select>
+
+</mapper>

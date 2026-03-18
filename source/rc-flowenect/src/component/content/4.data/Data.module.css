@@ -1,0 +1,243 @@
+/* 1. 전체 레이아웃 (Grid 완전 제거) */
+.dashboard-container {
+    padding: 25px;
+    background-color: #f4f7f9;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    font-family: 'Pretendard', -apple-system, sans-serif;
+}
+
+/* 상단 헤더 */
+.dashboard-header .main-title {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #1a1a1b;
+    margin: 0 0 10px 0;
+}
+
+/* 2. 요약 통계 섹션 (ResignSummary) */
+.summaryRow {
+    display: flex;
+    gap: 16px;
+    width: 100%;
+}
+
+.summaryCard {
+    flex: 1;
+    background: #ffffff;
+    padding: 22px;
+    border-radius: 14px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* 포인트 컬러 (border-top 활용) */
+.primary {
+    border-top: 5px solid #339af0;
+}
+
+.warning {
+    border-top: 5px solid #fcc419;
+}
+
+.success {
+    border-top: 5px solid #51cf66;
+}
+
+.cardTitle {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #868e96;
+}
+
+.cardCount {
+    font-size: 1.7rem;
+    font-weight: 800;
+    color: #212529;
+    margin: 0;
+}
+
+.unit {
+    font-size: 1rem;
+    color: #adb5bd;
+    margin-left: 4px;
+}
+
+/* 3. 검색 필터 (RetireSearchBar) */
+.search-filter-container {
+    background: #ffffff;
+    padding: 20px 24px;
+    border-radius: 14px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+}
+
+.filter-group {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+}
+
+.input-box {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.input-box label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #495057;
+}
+
+.input-box select,
+.input-box input {
+    padding: 10px;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    font-size: 0.95rem;
+}
+
+.search-button {
+    padding: 10px 24px;
+    background: #339af0;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+/* 4. 메인 콘텐츠 (높이 자동 맞춤의 핵심) */
+.main-content-wrapper {
+    display: flex;
+    gap: 12px;
+    align-items: stretch;
+    /* 왼쪽, 중앙, 오른쪽의 높이를 100% 동일하게 유지 */
+    width: 100%;
+}
+
+/* 패널 공통 */
+.dept-side-panel,
+.detail-main-panel {
+    background: #ffffff;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.03);
+    display: flex;
+    flex-direction: column;
+}
+
+.dept-side-panel {
+    flex: 0 0 360px;
+}
+
+/* 왼쪽 고정 */
+.detail-main-panel {
+    flex: 1;
+}
+
+/* 중앙 유연 */
+
+.dept-side-panel h3,
+.detail-main-panel h3 {
+    font-size: 1.2rem;
+    font-weight: 800;
+    margin-bottom: 18px;
+    border-left: 5px solid #339af0;
+    padding-left: 12px;
+}
+
+/* 5. 데이터 테이블 디자인 */
+.table-scroll-box {
+    flex: 1;
+    overflow-y: auto;
+    border: 1px solid #f1f3f5;
+    border-radius: 8px;
+}
+
+.data-table,
+.dept-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.data-table th {
+    position: sticky;
+    top: 0;
+    background: #f8f9fa;
+    padding: 12px;
+    text-align: left;
+    font-size: 0.85rem;
+    color: #868e96;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.data-table td {
+    padding: 16px 12px;
+    border-bottom: 1px solid #f1f3f5;
+    font-size: 1rem;
+}
+
+/* 6. 영향도 분석 사이드바 (ImpactAnalysis) */
+.impactSidebar {
+    flex: 0 0 300px;
+    /* 오른쪽 분석바 너비 */
+    background: #2d3436;
+    /* 어두운 톤으로 강조 */
+    color: #fff;
+    padding: 24px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.impactHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    border-bottom: 1px solid #4a4a4a;
+    padding-bottom: 10px;
+}
+
+.impactAlert {
+    background: rgba(255, 193, 7, 0.15);
+    border: 1px solid #ffc107;
+    padding: 14px;
+    border-radius: 10px;
+    margin-bottom: 12px;
+}
+
+.impactBtnGroup {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* 상태별 텍스트 색상 */
+.status-APPROVED {
+    color: #2b8a3e;
+    font-weight: 700;
+}
+
+.status-SUBMITTED {
+    color: #f08c00;
+    font-weight: 700;
+}
+
+.status-REJECTED {
+    color: #e03131;
+    font-weight: 700;
+}
+
+.empty-msg {
+    text-align: center;
+    color: #adb5bd;
+    padding: 40px 0 !important;
+}

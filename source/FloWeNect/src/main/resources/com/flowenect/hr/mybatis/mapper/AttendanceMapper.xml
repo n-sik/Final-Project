@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.flowenect.hr.attendance.mapper.AttendanceMapper">
+
+	<!-- 메인보드 - 출근: SEQ_ATTD_NO 사용 / LATE_YN: 09:10:00 초과부터 Y -->
+	<insert id="insertAttendanceIn">
+	  INSERT INTO ATTENDANCE (
+	    ATTD_NO, EMP_NO, WORK_DT, IN_DTM,
+	    LATE_YN, OUT_DTM, OUT_AUTO_YN,
+	    ATTD_STAT_CD, REMARK, CRT_DTM, MOD_DTM
+	  ) VALUES (
+	    SEQ_ATTD_NO.NEXTVAL,
+	    #{empNo},
+	    TRUNC(SYSDATE),
+	    SYSDATE,
+	    CASE
+	      WHEN SYSDATE > (TRUNC(SYSDATE) + (9/24) + (10/1440)) THEN 'Y'
+	      ELSE 'N'
+	    END,
+	    NULL,
+	    'N',
+	    NULL,
+	    NULL,
+	    SYSDATE,
+	    NULL
+	  )
+	</insert>
+
+  <!-- 메인보드 - 퇴근: OUT_DTM이 NULL인 경우만 / 18:00 이후 클릭이면 18:00으로 고정 -->
+  <update id="updateAttendanceOut">
+    UPDATE ATTENDANCE
+    SET
+      OUT_DTM = CASE
+                  WHEN SYSDATE > (TRUNC(SYSDATE) + (18/24)) THEN (TRUNC(SYSDATE) + (18/24))
+                  ELSE SYSDATE
+                END,
+      OUT_AUTO_YN = 'N',
+      MOD_DTM = SYSDATE
+    WHERE EMP_NO = #{empNo}
+      AND WORK_DT = TRUNC(SYSDATE)
+      AND IN_DTM IS NOT NULL
+      AND OUT_DTM IS NULL
+  </update>
+
+  <!-- 배치: 18:00 자동퇴근 (OUT_DTM=18:00 고정, REMARK에 AUTO, OUT_AUTO_YN='Y') -->
+  <update id="updateAttendanceAutoOutAt18">
+    UPDATE ATTENDANCE
+    SET
+      OUT_DTM = (TRUNC(SYSDATE) + (18/24)),
+      OUT_AUTO_YN = 'Y',
+      REMARK = CASE
+                 WHEN REMARK IS NULL THEN 'AUTO_OUT'
+                 ELSE REMARK || '|AUTO_OUT'
+               END,
+      MOD_DTM = SYSDATE
+    WHERE WORK_DT = TRUNC(SYSDATE)
+      AND IN_DTM IS NOT NULL
+      AND OUT_DTM IS NULL
+  </update>
+
+  <!-- ======= 출퇴 현황/관리 페이지용 ======= -->	
+
+  <!-- 전체 사원의 근태 목록 -->
+	<select id="selectAttendanceList" resultType="AttendanceDTO">
+	SELECT
+	    ATTD_NO,
+	    EMP_NO,
+	    EMP_NM,
+	    DEPT_NM,
+	    WORK_DT,
+	    IN_DTM,
+	    LATE_YN,
+	    OUT_DTM,
+	    OUT_AUTO_YN,
+	    ATTD_STAT_CD,
+	    REMARK,
+	    CRT_DTM,
+	    MOD_DTM
+	FROM (
+	    SELECT ROWNUM AS RNUM, T.* FROM (
+	        SELECT
+	            A.ATTD_NO,
+	            E.EMP_NO,
+	            E.EMP_NM,
+	            D.DEPT_NM,
+	            #{workDt} AS WORK_DT,
+	            A.IN_DTM,
+	            A.LATE_YN,
+	            A.OUT_DTM,
+	            A.OUT_AUTO_YN,
+	            
+	            CASE
+	              /* 0) 수동으로 저장된 상태가 있으면 그걸 우선 */
+				  WHEN A.ATTD_STAT_CD IS NOT NULL
+				  THEN A.ATTD_STAT_CD	
+	            
+				  /* 1) 연차(일정에 오늘 포함) */
+				  WHEN EXISTS (
+				        SELECT 1
+				        FROM SCHEDULE S
+				        WHERE S.EMP_NO = E.EMP_NO
+				          AND S.DEL_YN = 'N'
+				          AND S.SCHD_DIV_CD = 'VACATION'
+				          AND TRUNC(S.SCHD_ST_DTM) &lt;= #{workDt}
+				          AND TRUNC(S.SCHD_ED_DTM) &gt;= #{workDt}
+				      )
+				  THEN 'VACATION'
+				
+				  /* 2) 지각 (출근 기록이 있고 09:10 이후라면 퇴근 여부와 상관없이 지각 유지) */
+				  WHEN TO_CHAR(A.IN_DTM, 'HH24:MI') &gt; '09:10'
+				  THEN 'LATE'	
+				
+				  /* 3) 퇴근 기록 있으면 최종 퇴근 */
+				  WHEN A.OUT_DTM IS NOT NULL
+				  THEN 'OFF'
+				
+				  /* 4) 출근 기록 없으면 결근 */
+				  WHEN A.IN_DTM IS NULL
+				  THEN 'ABSENT'
+				
+				  /* 5) 정상 출근 */
+				  ELSE 'PRESENT'
+	            END AS ATTD_STAT_CD,
+	            
+	            A.REMARK,
+	            A.CRT_DTM,
+	            A.MOD_DTM
+	        FROM
+	            EMP E
+	        JOIN DEPT D ON E.DEPT_CD = D.DEPT_CD
+	        LEFT JOIN ATTENDANCE A 
+	            ON E.EMP_NO = A.EMP_NO
+	            AND A.WORK_DT = #{workDt}
+	        <where>
+	            <if test="empNo != null and empNo != ''">
+	                AND E.EMP_NO = #{empNo}
+	            </if>
+	            <if test="empNm != null and empNm != ''">
+				  AND E.EMP_NM LIKE '%' || #{empNm} || '%'
+				</if>
+				<if test="deptNm != null and deptNm != '' and deptNm != '전체'">
+				  AND D.DEPT_NM = #{deptNm}
+				</if>
+	            <if test="attdStatCd != null and attdStatCd != ''">
+			        AND (
+	                    CASE
+						  WHEN A.ATTD_STAT_CD IS NOT NULL
+						  THEN A.ATTD_STAT_CD
+	                    
+	                      WHEN EXISTS (
+	                            SELECT 1
+	                            FROM SCHEDULE S
+	                            WHERE S.EMP_NO = E.EMP_NO
+	                              AND S.DEL_YN = 'N'
+	                              AND S.SCHD_DIV_CD = 'VACATION'
+	                              AND TRUNC(S.SCHD_ST_DTM) &lt;= #{workDt}
+	                              AND TRUNC(S.SCHD_ED_DTM) &gt;= #{workDt}
+	                      ) THEN 'VACATION'
+	                      WHEN TO_CHAR(A.IN_DTM,'HH24:MI') &gt; '09:10' THEN 'LATE'
+	                      WHEN A.OUT_DTM IS NOT NULL THEN 'OFF'
+	                      WHEN A.IN_DTM IS NULL THEN 'ABSENT'
+	                      ELSE 'PRESENT'
+	                    END
+			        ) = #{attdStatCd}
+			    </if>
+	        </where>
+	        ORDER BY E.EMP_NO
+	    ) T
+	    WHERE ROWNUM &lt;= #{endRow}
+	)
+	WHERE RNUM &gt;= #{startRow}
+	</select>
+  
+  <!-- 페이징 처리를 위해 검색 조건에 맞는 데이터 개수 파악 -->
+	<select id="selectAttendanceCount" resultType="long">
+	  SELECT COUNT(*)
+	  FROM EMP E
+	  JOIN DEPT D ON E.DEPT_CD = D.DEPT_CD
+	  LEFT JOIN ATTENDANCE A
+	    ON E.EMP_NO = A.EMP_NO
+	   AND A.WORK_DT = #{workDt}
+	  <where>
+	    <if test="empNo != null and empNo != ''">
+	        AND E.EMP_NO = #{empNo}
+	    </if>
+	    <if test="empNm != null and empNm != ''">
+	        AND E.EMP_NM LIKE '%' || #{empNm} || '%'
+	    </if>
+	    <if test="deptNm != null and deptNm != '' and deptNm != '전체'">
+	        AND D.DEPT_NM = #{deptNm}
+	    </if>
+	    <if test="attdStatCd != null and attdStatCd != ''">
+	        AND (
+	            CASE
+	              WHEN EXISTS (
+	                    SELECT 1
+	                    FROM SCHEDULE S
+	                    WHERE S.EMP_NO = E.EMP_NO
+	                      AND S.DEL_YN = 'N'
+	                      AND S.SCHD_DIV_CD = 'VACATION'
+	                      AND TRUNC(S.SCHD_ST_DTM) &lt;= #{workDt}
+	                      AND TRUNC(S.SCHD_ED_DTM) &gt;= #{workDt}
+	              ) THEN 'VACATION'
+	              WHEN TO_CHAR(A.IN_DTM,'HH24:MI') &gt; '09:10' THEN 'LATE'
+	              WHEN A.OUT_DTM IS NOT NULL THEN 'OFF'
+	              WHEN A.IN_DTM IS NULL THEN 'ABSENT'
+	              ELSE 'PRESENT'
+	            END
+	        ) = #{attdStatCd}
+	    </if>
+	  </where>
+	</select>
+  
+  <!-- 사원 근태정보 수정 -->
+  <update id="updateAttendance">
+  	UPDATE ATTENDANCE
+	SET
+      IN_DTM = #{inDtm},
+      LATE_YN = NVL(#{lateYn}, LATE_YN),
+      OUT_DTM = #{outDtm},
+      OUT_AUTO_YN = NVL(#{outAutoYn}, OUT_AUTO_YN),
+      ATTD_STAT_CD = #{attdStatCd},
+      REMARK = #{remark},
+      MOD_DTM = SYSDATE
+	WHERE
+      ATTD_NO = #{attdNo}
+  </update>
+  
+  
+  <!-- 사원 근태정보 등록 (근태에 없을 때) -->
+  <insert id="insertAttendance" parameterType="AttendanceDTO">
+	  INSERT INTO ATTENDANCE (
+	    ATTD_NO,
+	    EMP_NO,
+	    WORK_DT,
+	    IN_DTM,
+	    LATE_YN,
+	    OUT_DTM,
+	    OUT_AUTO_YN,
+	    ATTD_STAT_CD,
+	    REMARK,
+	    CRT_DTM,
+	    MOD_DTM
+	  ) VALUES (
+	    SEQ_ATTD_NO.NEXTVAL,
+	    #{empNo},
+	    #{workDt},
+	    #{inDtm},
+	    NVL(#{lateYn}, 'N'),
+	    #{outDtm},
+	    NVL(#{outAutoYn}, 'N'),
+	    #{attdStatCd},
+	    #{remark},
+	    SYSDATE,
+	    SYSDATE
+	  )
+  </insert>
+</mapper>

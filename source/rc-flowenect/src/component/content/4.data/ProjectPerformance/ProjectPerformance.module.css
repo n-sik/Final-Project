@@ -1,0 +1,620 @@
+/* =============================================
+   1. 레이아웃 시스템
+============================================= */
+.dashboardWrapper {
+  display: flex;
+  gap: 12px;
+  height: 100%;
+  color: #1e293b;
+  flex-direction: column;
+}
+
+/* =============================================
+   2. 탭 스위처
+============================================= */
+.tabSwitcher {
+  display: flex;
+  background-color: #f1f5f9;
+  padding: 0.25rem;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+}
+
+.tabSwitcher button {
+  padding: 0.5rem 1.25rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  border: none;
+  color: #64748b;
+  cursor: pointer;
+  background: transparent;
+  font-family: inherit;
+}
+
+.activeTab {
+  background-color: #ffffff !important;
+  color: #3b82f6 !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* =============================================
+   3. 필터바
+============================================= */
+.filterBarWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 12px;
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+.filterGroupLeft,
+.filterGroupRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 날짜 범위 박스 */
+.dateRangeBox {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 12px;
+  height: 34px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  transition: border-color 0.2s;
+}
+.dateRangeBox:focus-within {
+  border-color: #94b4f5;
+  background: #fff;
+}
+.filterIcon {
+  color: #94a3b8;
+  flex-shrink: 0;
+}
+.dateInput {
+  border: none;
+  outline: none;
+  font-size: 0.8rem;
+  color: #475569;
+  background: transparent;
+  cursor: pointer;
+  width: 110px;
+  font-family: inherit;
+}
+.dateSeparator {
+  color: #cbd5e1;
+  font-size: 0.75rem;
+}
+
+/* 셀렉트 래퍼 (아이콘 포함) */
+.selectWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.selectIcon {
+  position: absolute;
+  left: 10px;
+  color: #94a3b8;
+  pointer-events: none;
+  z-index: 1;
+}
+.selectWrapper .selectInput {
+  padding-left: 28px;
+}
+
+/* 셀렉트 */
+.selectInput {
+  height: 34px;
+  padding: 0 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #f8fafc;
+  font-size: 0.8rem;
+  color: #334155;
+  outline: none;
+  cursor: pointer;
+  min-width: 110px;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+.selectInput:focus {
+  border-color: #94b4f5;
+  background: #fff;
+}
+
+/* 검색바 */
+.searchBar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 34px;
+  padding: 0 12px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  width: 220px;
+  transition: all 0.2s;
+}
+.searchBar:focus-within {
+  border-color: #94b4f5;
+  background: #fff;
+  width: 260px;
+}
+.searchIcon {
+  color: #94a3b8;
+  flex-shrink: 0;
+}
+.searchBar input {
+  border: none;
+  outline: none;
+  width: 100%;
+  font-size: 0.8rem;
+  color: #1e293b;
+  background: transparent;
+  font-family: inherit;
+}
+.searchBar input::placeholder {
+  color: #cbd5e1;
+}
+.clearIcon {
+  color: #cbd5e1;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: color 0.15s;
+}
+.clearIcon:hover {
+  color: #ef4444;
+}
+
+/* 초기화 버튼 */
+.resetBtn {
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.resetBtn:hover:not(:disabled) {
+  background: #eff6ff;
+  border-color: #94b4f5;
+  color: #3b82f6;
+}
+.resetBtn:hover:not(:disabled) svg {
+  transform: rotate(-180deg);
+  transition: transform 0.4s ease;
+}
+.resetBtn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+/* 엑셀 버튼 */
+.excelBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 14px;
+  background: #10b981;
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  white-space: nowrap;
+  font-family: inherit;
+}
+.excelBtn:hover {
+  background: #059669;
+}
+
+/* =============================================
+   4. 콘텐츠 영역
+============================================= */
+.contentArea {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow: hidden;
+  min-height: 0;
+  position: relative;
+  padding-bottom: 0;
+}
+
+/* =============================================
+   5. 요약 카드
+============================================= */
+.summaryGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.statCard {
+  background: #ffffff;
+  padding: 14px 16px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border: 1px solid #e2e8f0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.iconCircle {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+}
+
+.orange  { background: linear-gradient(135deg, #60a5fa, #3b82f6); color: white; }
+.green { background: linear-gradient(135deg, #34d399, #10b981); color: white; }
+.blue { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: white; }
+.red   { background: linear-gradient(135deg, #f87171, #ef4444); color: white; }
+
+.statDetail span {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #64748b;
+  margin-bottom: 4px;
+  display: block;
+}
+.statDetail h3 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin: 0;
+  line-height: 1;
+}
+
+/* =============================================
+   6. 차트 영역
+============================================= */
+.chartWrapper {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  padding: 1rem;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  box-sizing: border-box;
+}
+
+/* =============================================
+   7. 테이블
+============================================= */
+.tableContainer {
+  width: 100%;
+  height: 100%;
+  overflow-x: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 1rem;
+  background-color: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+.mainTable {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.mainTable th {
+  padding: 12px 8px;
+  background-color: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+  text-align: center;
+  vertical-align: middle;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #475569;
+}
+
+.headerContent {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 100%;
+}
+
+.mainTable td {
+  padding: 13px 8px;
+  text-align: center;
+  vertical-align: middle;
+  border-bottom: 1px solid #f0f2f7;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.875rem;
+  color: #334155;
+}
+
+.mainTable tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.mainTable th:nth-child(1) { width: 30%; }
+.mainTable th:nth-child(2) { width: 15%; }
+.mainTable th:nth-child(3) { width: 15%; }
+.mainTable th:nth-child(4) { width: 15%; }
+.mainTable th:nth-child(5) { width: 25%; }
+
+.projectName {
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.clickableRow {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.clickableRow:hover {
+  background-color: #f8faff;
+}
+
+.noData {
+  text-align: center;
+  color: #94a3b8;
+  padding: 60px 0 !important;
+}
+
+/* =============================================
+   8. 상태 배지
+============================================= */
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  min-width: 50px;
+}
+.ING  { background: #e8efff; color: #4b49ac; }
+.END  { background: #e1f9f0; color: #27ae60; }
+.DELAY{ background: #fee2e2; color: #991b1b; }
+.HOLD { background: #fef3c7; color: #92400e; }
+
+/* =============================================
+   9. 페이지네이션
+============================================= */
+._paginationContainer {
+  display: flex;
+  padding: 20px 0;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+}
+
+.pageBtn {
+  min-width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background: white;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: inherit;
+}
+.pageBtn:hover:not(:disabled) {
+  border-color: #3b82f6;
+  color: #3b82f6;
+  background: #eff6ff;
+}
+.activePage {
+  background: #3b82f6 !important;
+  color: #fff !important;
+  border-color: #3b82f6 !important;
+  box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3);
+}
+.pageBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* =============================================
+   10. 모달
+============================================= */
+.modalOverlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  background: white;
+  width: 100%;
+  max-width: 500px;
+  border-radius: 12px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+.modalHeader {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid #f1f5f9;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.modalHeader h2 {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+}
+.closeBtn {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.closeBtn:hover { color: #1e293b; }
+
+.modalBody {
+  padding: 1.5rem;
+}
+
+.projectTitle {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0.5rem 0 0.25rem 0;
+}
+.projectNo {
+  color: #64748b;
+  font-size: 0.875rem;
+  margin-bottom: 1.5rem;
+}
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 1.5rem;
+}
+.infoItem .label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #94a3b8;
+  margin-bottom: 0.375rem;
+  text-transform: uppercase;
+}
+.infoItem .value {
+  font-size: 0.938rem;
+  font-weight: 600;
+  color: #334155;
+}
+
+.descriptionBox .label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #94a3b8;
+  margin-bottom: 0.5rem;
+}
+.descriptionText {
+  background: #f8fafc;
+  padding: 1rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: #475569;
+  margin: 0;
+}
+
+.modalFooter {
+  padding: 1.25rem 1.5rem;
+  border-top: 1px solid #f1f5f9;
+  text-align: right;
+}
+.confirmBtn {
+  background: #3b82f6;
+  color: white;
+  padding: 0.625rem 1.5rem;
+  border-radius: 8px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-family: inherit;
+}
+.confirmBtn:hover { background: #2563eb; }
+
+.badge {
+  padding: 0.25rem 0.625rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+.badge.ING  { background: #dbeafe; color: #1e40af; }
+.badge.END  { background: #dcfce7; color: #166534; }
+.badge.DELAY{ background: #fee2e2; color: #991b1b; }
+
+/* =============================================
+   11. 초기화 버튼 (필터바 내)
+============================================= */
+.resetBtn {
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.resetBtn:hover:not(:disabled) {
+  background: #eff6ff;
+  border-color: #94b4f5;
+  color: #3b82f6;
+}
+.resetBtn:hover:not(:disabled) svg {
+  transform: rotate(-180deg);
+  transition: transform 0.4s ease;
+}
+.resetBtn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}

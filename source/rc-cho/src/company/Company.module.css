@@ -1,0 +1,339 @@
+@reference "tailwindcss";
+
+/* font-family: "Paperozi"; */
+/* font-size: x-large */
+
+.company {
+    @apply
+    w-full
+    min-h-screen
+    flex
+    justify-center
+    ;
+}
+
+.companyContainer {
+    @apply
+    w-[70%]
+
+    mt-30
+    ;
+}
+
+.textArea {
+    @apply
+    w-full
+    flex
+    gap-4
+    
+    items-start
+
+    mt-20
+    p-4
+    ;
+}
+
+.textAreaLeft, .textAreaRight {
+    @apply
+    w-[50%]
+    h-full
+    ;
+}
+
+.textAreaLeft {
+    @apply
+    flex
+    flex-col
+    items-end
+    ;
+}
+
+.textAreaRight {
+    @apply
+    flex
+    flex-col
+    items-start
+    ;
+}
+
+.textAreaCenter {
+    @apply
+    w-full
+    flex
+    flex-col
+    items-center
+    ;
+}
+
+.textBox {
+    @apply
+    text-2xl
+    ;
+}
+
+.companyTitle {
+    @apply
+    flex
+    items-center
+    ;
+}
+
+.companyTitle div {
+    @apply
+    w-full
+    ;
+}
+
+.companyTitle span {
+    @apply
+    block
+    w-[80%]
+    text-right
+    ;
+}
+
+.projectName span {
+
+    font-weight: 900;
+
+    @apply
+    text-7xl
+    ;
+}
+
+.companyTitleText .textBox {
+
+    font-weight: 900;
+
+    @apply
+    pt-5
+    text-4xl
+    ;
+}
+
+.companyText1 div {
+    @apply
+    m-2
+    ;
+}
+
+.companyTextRight {
+    @apply
+    mt-[10rem]
+    ;
+}
+
+.animeArea {
+    @apply
+    relative
+
+    flex-col
+    items-center
+    ;
+}
+
+.animeArea .textAreaCenter {
+    @apply
+    mt-20
+    mb-60
+    ;
+}
+
+.animeArea .textAreaCenter:last-child {
+    @apply
+    h-screen
+
+    justify-center
+
+    mt-0
+    mb-10
+    ;
+}
+
+.animeArea .textBox {
+    @apply
+    p-3
+    ;
+}
+
+.textCanvas {
+    @apply 
+    w-full
+    h-screen
+
+    block
+
+    fixed
+    left-0
+    top-0
+    -z-1
+    ;
+}
+
+/* ---------------------------
+   Responsive (Company)
+   - desktop: 기존 유지
+   - tablet: 폭/폰트/간격 축소
+   - mobile: 2컬럼 -> 1컬럼 스택
+--------------------------- */
+
+/* ✅ 1280px 이하: 컨테이너 폭 확대(70% → 더 넓게) + 간격/폰트 약간 축소 */
+@media (max-width: 1280px) {
+  .companyContainer {
+    @apply w-[86%] mt-16;
+  }
+
+  .textArea {
+    @apply mt-14 p-3;
+  }
+
+  .textBox {
+    @apply text-xl;
+  }
+
+  .projectName span {
+    @apply text-6xl;
+  }
+
+  .companyTitleText .textBox {
+    @apply text-3xl pt-4;
+  }
+
+  .companyTextRight {
+    @apply mt-24;
+  }
+
+  .animeArea .textAreaCenter {
+    @apply mt-16 mb-44;
+  }
+}
+
+/* ✅ 980px 이하(태블릿): 2컬럼 유지하되 폭/타이포 더 축소 */
+@media (max-width: 980px) {
+  .companyContainer {
+    @apply w-[92%] mt-12;
+  }
+
+  .textArea {
+    @apply mt-10 p-3 gap-3;
+  }
+
+  .textBox {
+    @apply text-lg;
+  }
+
+  .projectName span {
+    @apply text-5xl;
+  }
+
+  .companyTitleText .textBox {
+    @apply text-2xl pt-3;
+  }
+
+  .companyTitle span {
+    @apply w-full;
+  }
+
+  .companyTextRight {
+    @apply mt-16;
+  }
+
+  .animeArea .textAreaCenter {
+    @apply mt-12 mb-32;
+  }
+
+  .animeArea .textAreaCenter:last-child {
+    @apply mb-8;
+  }
+}
+
+/* ✅ 640px 이하(모바일): 2컬럼 -> 1컬럼 스택 + 정렬 변경 */
+@media (max-width: 640px) {
+  .companyContainer {
+    @apply w-[94%] mt-10;
+  }
+
+  .textArea {
+    @apply flex-col items-stretch mt-8 p-3 gap-4;
+  }
+
+  .textAreaLeft,
+  .textAreaRight {
+    @apply w-full;
+  }
+
+  /* 모바일에서 왼쪽도 오른쪽도 "좌측 정렬"로 통일(가독성) */
+  .textAreaLeft {
+    @apply items-start;
+  }
+
+  .textAreaRight {
+    @apply items-start;
+  }
+
+  .companyTitle {
+    @apply flex-col items-start gap-2;
+  }
+
+  .companyTitle span {
+    @apply w-full text-left;
+  }
+
+  .projectName span {
+    @apply text-4xl;
+  }
+
+  .companyTitleText .textBox {
+    @apply text-xl pt-2;
+  }
+
+  .textBox {
+    @apply text-base;
+  }
+
+  .companyText1 div {
+    @apply m-1;
+  }
+
+  /* 모바일에서 오른쪽 섹션 밀어내는 큰 마진 제거 */
+  .companyTextRight {
+    @apply mt-6;
+  }
+
+  .animeArea .textAreaCenter {
+    @apply mt-10 mb-20;
+  }
+
+  /* 마지막 섹션이 h-screen이면 모바일에서 너무 길어짐 → auto로 */
+  .animeArea .textAreaCenter:last-child {
+    height: auto;
+    @apply justify-start mb-10;
+  }
+}
+
+/* ✅ 420px 이하(소형 모바일): 타이포/패딩 추가 축소 */
+@media (max-width: 420px) {
+  .companyContainer {
+    @apply w-[96%] mt-8;
+  }
+
+  .textArea {
+    @apply mt-6 p-2 gap-3;
+  }
+
+  .projectName span {
+    @apply text-3xl;
+  }
+
+  .companyTitleText .textBox {
+    @apply text-lg;
+  }
+
+  .textBox {
+    @apply text-sm;
+  }
+
+  .animeArea .textBox {
+    @apply p-2;
+  }
+}

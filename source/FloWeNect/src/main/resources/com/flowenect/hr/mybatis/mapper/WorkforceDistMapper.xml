@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.flowenect.hr.data.mapper.WorkforceDistMapper">
+
+	<select id="selectWorkforceDistList" parameterType="SearchRequest" resultType="ResponseWorkforceDistDTO">
+		SELECT * FROM (
+			SELECT a.*, ROWNUM rnum FROM (
+				SELECT
+					e.EMP_NO
+					, e.EMP_NM
+					, e.DEPT_CD
+					, d.DEPT_NM
+					, p.POS_NM
+					, CASE
+						WHEN e.EMP_STAT_CD = 'WORK' THEN '재직'
+						WHEN e.EMP_STAT_CD = 'LEAVE' THEN '휴직'
+						WHEN e.EMP_STAT_CD = 'RESIGN' THEN '퇴사'
+						ELSE '기타'
+					END AS empStatNm
+					, e.EMP_STAT_CD AS stts
+					, TO_CHAR(e.HIRE_DT, 'YYYY-MM-DD') AS hireDt
+				FROM EMP e
+				LEFT JOIN DEPT d ON e.DEPT_CD = d.DEPT_CD
+				LEFT JOIN POSITION_MST p ON e.POS_CD = p.POS_CD
+				<where>
+					(p.USE_YN = 'Y' OR p.USE_YN IS NULL)
+
+					<if test="params.searchTerm != null and params.searchTerm != ''">
+						AND (e.EMP_NM LIKE '%' || #{params.searchTerm} || '%'
+						OR d.DEPT_NM LIKE '%' || #{params.searchTerm} || '%'
+						OR e.EMP_NO LIKE '%' || #{params.searchTerm} || '%')
+					</if>
+
+					<if test="params.posNm != null and params.posNm != '' and params.posNm != 'ALL'">
+						AND p.POS_NM LIKE '%' || #{params.posNm} || '%'
+					</if>
+
+					<if test="params.deptNm != null and params.deptNm != '' and params.deptNm != 'ALL'">
+						AND d.DEPT_NM LIKE '%' || #{params.deptNm} || '%'
+					</if>
+
+					<if test="params.empStatNm != null and params.empStatNm != '' and params.empStatNm != 'ALL'">
+						AND (CASE
+							WHEN e.EMP_STAT_CD = 'WORK' THEN '재직'
+							WHEN e.EMP_STAT_CD = 'LEAVE' THEN '휴직'
+							WHEN e.EMP_STAT_CD = 'RESIGN' THEN '퇴사'
+							ELSE '기타'
+						END) = #{params.empStatNm}
+					</if>
+				</where>
+			) a
+			/* pageSize를 recordSize로 수정하여 프론트에서 보낸 개수만큼 가져오도록 변경 */
+			WHERE ROWNUM &lt;= #{paging.page} * #{paging.recordSize}
+		)
+		WHERE rnum &gt; (#{paging.page} - 1) * #{paging.recordSize}
+	</select>
+
+	<select id="selectWorkforceDistCount" parameterType="SearchRequest" resultType="int">
+		SELECT COUNT(*)
+		FROM EMP e
+		LEFT JOIN DEPT d ON e.DEPT_CD = d.DEPT_CD
+		LEFT JOIN POSITION_MST p ON e.POS_CD = p.POS_CD
+		<where>
+			(p.USE_YN = 'Y' OR p.USE_YN IS NULL)
+
+			<if test="params.searchTerm != null and params.searchTerm != ''">
+				AND (e.EMP_NM LIKE '%' || #{params.searchTerm} || '%'
+				OR d.DEPT_NM LIKE '%' || #{params.searchTerm} || '%'
+				OR e.EMP_NO LIKE '%' || #{params.searchTerm} || '%')
+			</if>
+
+			<if test="params.posNm != null and params.posNm != '' and params.posNm != 'ALL'">
+				AND p.POS_NM LIKE '%' || #{params.posNm} || '%'
+			</if>
+
+			<if test="params.deptNm != null and params.deptNm != '' and params.deptNm != 'ALL'">
+				AND d.DEPT_NM LIKE '%' || #{params.deptNm} || '%'
+			</if>
+
+			<if test="params.empStatNm != null and params.empStatNm != '' and params.empStatNm != 'ALL'">
+				AND (CASE
+					WHEN e.EMP_STAT_CD = 'WORK' THEN '재직'
+					WHEN e.EMP_STAT_CD = 'LEAVE' THEN '휴직'
+					WHEN e.EMP_STAT_CD = 'RESIGN' THEN '퇴사'
+					ELSE '기타'
+				END) = #{params.empStatNm}
+			</if>
+		</where>
+	</select>
+
+</mapper>

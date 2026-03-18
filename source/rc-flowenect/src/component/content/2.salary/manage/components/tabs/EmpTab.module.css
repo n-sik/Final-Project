@@ -1,0 +1,53 @@
+.grid {
+    width: 100%;
+    flex: 1;
+    min-height: 0;
+}
+
+.baseAmtCell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: flex-start;
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+.dotOk {
+    background: #22c55e;
+}
+
+.dotNo {
+    background: #ef4444;
+}
+
+.baseAmtText {
+    font-weight: 800;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.historyBtn {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    border: 1px solid #e8eef7;
+    background: #fff;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.historyBtn:hover {
+    background: #f6f8fc;
+}
+
+
+.unregisteredText {
+    color: #dc2626;
+}

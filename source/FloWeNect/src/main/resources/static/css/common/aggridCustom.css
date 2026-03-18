@@ -1,0 +1,76 @@
+@charset "UTF-8";
+
+/* [1] 그리드 본체 및 테마 변수 */
+.manager-view-grid {
+    width: 100% !important; 
+    height: 100% !important;
+    border-radius: 8px !important; 
+    overflow: hidden !important; 
+    -webkit-tap-highlight-color: transparent;
+    --ag-font-size: 15px;
+}
+
+.manager-view-grid .ag-checkbox-input-wrapper:focus-within,
+.manager-view-grid .ag-checkbox-input-wrapper:focus,
+.manager-view-grid .ag-header-cell:focus,
+.manager-view-grid .ag-header-cell-focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.manager-view-grid .ag-header-cell-label,
+.manager-view-grid .ag-cell {
+    display: flex !important;
+    justify-content: center !important; 
+    align-items: center !important;  
+}
+
+
+.ag-row { 
+    cursor: pointer; 
+}
+
+.ag-row-selected {
+    z-index: 1; 
+}
+
+/* [5] 불필요한 장식 요소 숨김 */
+.manager-view-grid .ag-row-selected::before, 
+.manager-view-grid .ag-header-cell-menu-button { 
+    display: none !important; 
+}
+
+.manager-view-grid .ag-cell-wrapper {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px;
+    width: 100%;
+}
+
+.badge-wrapper {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+}
+
+.status-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 0.8rem;
+	font-weight: 700;
+	transition: all 0.2s;
+}
+
+.status-badge.done {
+	color: #4f46e5;
+}
+
+.status-badge.wait {
+	color: #64748b;
+}
+
+.status-badge i {
+	font-size: 0.75rem;
+}

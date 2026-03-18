@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.flowenect.hr.mypage.mapper.MyPageMapper">
+
+  <select id="selectMyProfile" parameterType="string" resultType="MyPageProfileDTO">
+    SELECT
+      E.EMP_NO   AS empNo,
+      E.EMP_NM   AS empNm,
+      E.DEPT_CD  AS deptCd,
+      D.DEPT_NM  AS deptNm,
+      E.POS_CD   AS posCd,
+      P.POS_NM   AS posNm,
+      E.EMP_EMAIL AS empEmail,
+      E.HP_NO     AS hpNo,
+      E.ZIP_CD    AS zipCd,
+      E.ADDR1     AS addr1,
+      E.ADDR2     AS addr2
+    FROM EMP E
+    LEFT JOIN DEPT D ON D.DEPT_CD = E.DEPT_CD AND D.DEL_YN = 'N'
+    LEFT JOIN POSITION_MST P ON P.POS_CD = E.POS_CD
+    WHERE E.EMP_NO = #{empNo}
+  </select>
+
+  <select id="selectMyPasswordHash" parameterType="string" resultType="string">
+    SELECT PWD
+    FROM EMP
+    WHERE EMP_NO = #{empNo}
+  </select>
+
+  <update id="updateMyContact">
+    UPDATE EMP
+    SET
+      EMP_EMAIL = #{empEmail},
+      HP_NO     = #{hpNo},
+      ZIP_CD    = #{zipCd},
+      ADDR1     = #{addr1},
+      ADDR2     = #{addr2},
+      MOD_DTM   = SYSDATE
+    WHERE EMP_NO = #{empNo}
+  </update>
+
+  <update id="updateMyPassword">
+    UPDATE EMP
+    SET
+      PWD = #{pwd},
+      MOD_DTM = SYSDATE
+    WHERE EMP_NO = #{empNo}
+  </update>
+  
+  <update id="updateProfileImgDisabled">
+    UPDATE EMP_FILE
+       SET USE_YN = 'N'
+     WHERE EMP_NO = #{empNo}
+       AND FILE_TYPE_CD = 'PROFILE'
+</update>
+
+</mapper>

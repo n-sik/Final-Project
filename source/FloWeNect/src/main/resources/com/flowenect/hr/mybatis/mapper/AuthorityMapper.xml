@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.flowenect.hr.authority.mapper.AuthorityMapper">
+
+    <sql id="authorityEmpSearchCondition">
+        <where>
+            <if test="params.deptCd != null and params.deptCd != '' and params.deptCd != 'ALL'">
+                AND E.DEPT_CD = #{params.deptCd}
+            </if>
+            <if test="params.empNo != null and params.empNo != ''">
+                AND E.EMP_NO LIKE '%' || #{params.empNo} || '%'
+            </if>
+            <if test="params.empNm != null and params.empNm != ''">
+                AND E.EMP_NM LIKE '%' || #{params.empNm} || '%'
+            </if>
+            <if test="params.posCd != null and params.posCd != '' and params.posCd != 'ALL'">
+                AND E.POS_CD = #{params.posCd}
+            </if>
+            <if test="params.deptRoleCd != null and params.deptRoleCd != '' and params.deptRoleCd != 'ALL'">
+                AND EXISTS (
+                    SELECT 1
+                    FROM EMP_ROLE ER
+                    WHERE ER.EMP_NO = E.EMP_NO
+                      AND ER.ROLE_CD = #{params.deptRoleCd}
+                )
+            </if>
+            <if test="params.posRoleCd != null and params.posRoleCd != '' and params.posRoleCd != 'ALL'">
+                AND EXISTS (
+                    SELECT 1
+                    FROM EMP_ROLE ER
+                    WHERE ER.EMP_NO = E.EMP_NO
+                      AND ER.ROLE_CD = #{params.posRoleCd}
+                )
+            </if>
+            <if test="params.roleCd != null and params.roleCd != '' and params.roleCd != 'ALL'">
+                AND EXISTS (
+                    SELECT 1
+                    FROM EMP_ROLE ER
+                    WHERE ER.EMP_NO = E.EMP_NO
+                      AND ER.ROLE_CD = #{params.roleCd}
+                )
+            </if>
+            <if test="params.acntActYn != null and params.acntActYn != '' and params.acntActYn != 'ALL'">
+                AND E.ACNT_ACT_YN = #{params.acntActYn}
+            </if>
+        </where>
+    </sql>
+
+    <sql id="authorityEmpSelectColumns">
+        E.EMP_NO      AS empNo,
+        E.EMP_NM      AS empNm,
+        E.DEPT_CD     AS deptCd,
+        D.DEPT_NM     AS deptNm,
+        E.POS_CD      AS posCd,
+        P.POS_NM      AS posNm,
+        E.ACNT_ACT_YN AS acntActYn,
+        CASE WHEN E.ACNT_ACT_YN = 'Y' THEN '활성' ELSE '비활성' END AS acntActNm,
+        E.EMP_STAT_CD AS empStatCd,
+        (
+            SELECT role_cd
+            FROM (
+                SELECT ER.ROLE_CD AS role_cd
+                FROM EMP_ROLE ER
+                WHERE ER.EMP_NO = E.EMP_NO
+                  AND ER.ROLE_CD IN ('ROLE_HR', 'ROLE_USER')
+                ORDER BY CASE ER.ROLE_CD WHEN 'ROLE_HR' THEN 1 WHEN 'ROLE_USER' THEN 2 ELSE 99 END
+            )
+            WHERE ROWNUM = 1
+        ) AS deptRoleCd,
+        (
+            SELECT role_nm
+            FROM (
+                SELECT RM.ROLE_NM AS role_nm
+                FROM EMP_ROLE ER
+                JOIN ROLE_MST RM ON RM.ROLE_CD = ER.ROLE_CD
+                WHERE ER.EMP_NO = E.EMP_NO
+                  AND ER.ROLE_CD IN ('ROLE_HR', 'ROLE_USER')
+                ORDER BY CASE ER.ROLE_CD WHEN 'ROLE_HR' THEN 1 WHEN 'ROLE_USER' THEN 2 ELSE 99 END
+            )
+            WHERE ROWNUM = 1
+        ) AS deptRoleNm,
+        (
+            SELECT role_cd
+            FROM (
+                SELECT ER.ROLE_CD AS role_cd
+                FROM EMP_ROLE ER
+                WHERE ER.EMP_NO = E.EMP_NO
+                  AND ER.ROLE_CD IN ('ROLE_LEADER', 'ROLE_EMP')
+                ORDER BY CASE ER.ROLE_CD WHEN 'ROLE_LEADER' THEN 1 WHEN 'ROLE_EMP' THEN 2 ELSE 99 END
+            )
+            WHERE ROWNUM = 1
+        ) AS posRoleCd,
+        (
+            SELECT role_nm
+            FROM (
+                SELECT RM.ROLE_NM AS role_nm
+                FROM EMP_ROLE ER
+                JOIN ROLE_MST RM ON RM.ROLE_CD = ER.ROLE_CD
+                WHERE ER.EMP_NO = E.EMP_NO
+                  AND ER.ROLE_CD IN ('ROLE_LEADER', 'ROLE_EMP')
+                ORDER BY CASE ER.ROLE_CD WHEN 'ROLE_LEADER' THEN 1 WHEN 'ROLE_EMP' THEN 2 ELSE 99 END
+            )
+            WHERE ROWNUM = 1
+        ) AS posRoleNm,
+        (
+            SELECT LISTAGG(ER.ROLE_CD, ',') WITHIN GROUP (ORDER BY ER.ROLE_CD)
+            FROM EMP_ROLE ER
+            WHERE ER.EMP_NO = E.EMP_NO
+        ) AS roleCds
+    </sql>
+
+    <select id="selectAuthorityEmpCount" parameterType="SearchRequest" resultType="int">
+        SELECT COUNT(*)
+        FROM EMP E
+        LEFT JOIN DEPT D ON E.DEPT_CD = D.DEPT_CD
+        LEFT JOIN POSITION_MST P ON E.POS_CD = P.POS_CD
+        <include refid="authorityEmpSearchCondition"/>
+    </select>
+
+    <select id="selectAuthorityEmpList" parameterType="SearchRequest" resultType="AuthorityEmpRowDTO">
+        SELECT * FROM (
+            SELECT a_inner.*, ROWNUM rnum FROM (
+                SELECT
+                    <include refid="authorityEmpSelectColumns"/>
+                FROM EMP E
+                LEFT JOIN DEPT D ON E.DEPT_CD = D.DEPT_CD
+                LEFT JOIN POSITION_MST P ON E.POS_CD = P.POS_CD
+                <include refid="authorityEmpSearchCondition"/>
+                ORDER BY E.EMP_NO DESC
+            ) a_inner
+            WHERE ROWNUM &lt;= #{paging.page} * #{paging.recordSize}
+        )
+        WHERE rnum &gt; (#{paging.page} - 1) * #{paging.recordSize}
+    </select>
+
+    <select id="selectRoleList" resultType="RoleDTO">
+        SELECT
+            ROLE_CD   AS roleCd,
+            ROLE_NM   AS roleNm,
+            ROLE_DESC AS roleDesc,
+            USE_YN    AS useYn
+        FROM ROLE_MST
+        ORDER BY CASE WHEN USE_YN = 'Y' THEN 0 ELSE 1 END, ROLE_CD
+    </select>
+
+    <select id="selectRoleByRoleCd" parameterType="string" resultType="RoleDTO">
+        SELECT
+            ROLE_CD   AS roleCd,
+            ROLE_NM   AS roleNm,
+            ROLE_DESC AS roleDesc,
+            USE_YN    AS useYn
+        FROM ROLE_MST
+        WHERE ROLE_CD = #{roleCd}
+    </select>
+
+    <select id="selectRoleCountByRoleCd" parameterType="string" resultType="int">
+        SELECT COUNT(*)
+        FROM ROLE_MST
+        WHERE ROLE_CD = #{roleCd}
+    </select>
+
+    <insert id="insertRole" parameterType="RoleDTO">
+        INSERT INTO ROLE_MST (
+            ROLE_CD,
+            ROLE_NM,
+            ROLE_DESC,
+            USE_YN,
+            REG_DTM,
+            MOD_DTM
+        ) VALUES (
+            #{roleCd},
+            #{roleNm},
+            #{roleDesc},
+            #{useYn},
+            SYSDATE,
+            SYSDATE
+        )
+    </insert>
+
+    <update id="updateRole" parameterType="RoleDTO">
+        UPDATE ROLE_MST
+        SET ROLE_NM = #{roleNm},
+            ROLE_DESC = #{roleDesc},
+            MOD_DTM = SYSDATE
+        WHERE ROLE_CD = #{roleCd}
+    </update>
+
+    <select id="selectEmpRoleCountByRoleCd" parameterType="string" resultType="int">
+        SELECT COUNT(*)
+        FROM EMP_ROLE
+        WHERE ROLE_CD = #{roleCd}
+    </select>
+
+    <select id="selectMenuRoleCountByRoleCd" parameterType="string" resultType="int">
+        SELECT COUNT(*)
+        FROM MENU_ROLE
+        WHERE ROLE_CD = #{roleCd}
+    </select>
+
+    <select id="selectRoleHierarchyRefCount" parameterType="string" resultType="int">
+        SELECT COUNT(*)
+        FROM ROLE_HIERARCHY
+        WHERE PARENT_ROLE_CD = #{roleCd}
+           OR CHILD_ROLE_CD = #{roleCd}
+    </select>
+
+    <delete id="deleteRoleByRoleCd" parameterType="string">
+        DELETE FROM ROLE_MST
+        WHERE ROLE_CD = #{roleCd}
+    </delete>
+
+    <select id="selectRoleHierarchyEdges" resultType="RoleHierarchyEdgeDTO">
+        SELECT
+            PARENT_ROLE_CD AS parentRoleCd,
+            CHILD_ROLE_CD  AS childRoleCd,
+            REG_DTM        AS regDtm,
+            MOD_DTM        AS modDtm
+        FROM ROLE_HIERARCHY
+        ORDER BY PARENT_ROLE_CD, CHILD_ROLE_CD
+    </select>
+
+    <delete id="deleteAllRoleHierarchy">
+        DELETE FROM ROLE_HIERARCHY
+    </delete>
+
+    <insert id="insertRoleHierarchyEdges" parameterType="list">
+        INSERT ALL
+        <foreach collection="list" item="e">
+            INTO ROLE_HIERARCHY (
+                PARENT_ROLE_CD,
+                CHILD_ROLE_CD,
+                REG_DTM,
+                MOD_DTM
+            ) VALUES (
+                #{e.parentRoleCd},
+                #{e.childRoleCd},
+                SYSDATE,
+                SYSDATE
+            )
+        </foreach>
+        SELECT 1 FROM DUAL
+    </insert>
+
+</mapper>

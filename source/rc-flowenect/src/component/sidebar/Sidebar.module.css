@@ -1,0 +1,173 @@
+ .sidebar {
+  width: var(--sidebar-width);
+  background: var(--sidebar-bg);
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  z-index: 1000;
+  /* box-shadow: 4px 0 30px rgba(0, 0, 0, 0.4); */
+}
+
+.sidebarHeader {
+  position: relative;
+  height: 63px;
+  padding: 15px 20px;
+  background-color: var(--sidebar-bg);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.logoImageContainer {
+  position: absolute;    /* 부모(.sidebarHeader)를 기준으로 자유롭게 이동 */
+  top: 10px;             /* 위에서부터의 거리 */
+  right: 6px;           /* 오른쪽에서부터의 거리 */
+}
+.logoImageContainer img {
+  width: 70px;           /* 이미지 너비 */
+  height: 50px;          /* 이미지 높이 */
+  object-fit: contain;   /* 비율 유지 */
+}
+.logoWrapper h1 {
+  margin: 0;
+  font-size: 22px;
+
+  padding-right: 50px; 
+}
+
+.logoWrapper {
+  display: flex;         /* 제목과 로고만 가로로! */
+  align-items: center;   /* 세로 중앙 맞춤 */
+  gap: 12px;              /* 간격 */
+
+}
+
+.logoWrapper h1 {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.sidebarHeader p {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin: 0;             /* 마진 제거해서 위치 잡기 */
+  white-space: nowrap;   /* 글자가 강제로 짤리는 것 방지 */
+}
+
+.sidebarNav {
+  flex: 1;
+  overflow-y: auto;
+
+}
+
+.navSection {
+  margin-bottom: 8px;
+}
+
+.navSectionOpen .navSubmenu {
+  display: flex;
+}
+
+.navMain {
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text-primary);
+  border-left: 3px solid transparent;
+  user-select: none;
+}
+
+.navMain:hover {
+  background: var(--hover-bg);
+  color: var(--primary);
+}
+
+.navMainActive {
+  background: rgba(0, 144, 231, 0.12);
+  color: var(--primary);
+  border-left-color: var(--primary);
+}
+
+.navMain svg {
+  flex-shrink: 0;
+}
+
+.navSubmenu {
+  padding: 4px 0 4px 20px;
+  display: none;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.navSubItem {
+  display: block;
+  width: calc(100% - 8px);
+  box-sizing: border-box;
+  padding: 10px 16px;
+  font-size: 13px;
+  color: #4a5568;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-radius: 8px;
+  margin: 0 8px 0 0;
+  position: relative;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+  line-height: 1.35;
+}
+
+.navSubItem:hover {
+  background: var(--hover-bg);
+  color: var(--primary);
+  transform: translateX(4px);
+}
+
+.navSubItemActive {
+  background: #667eea;
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(102, 126, 234, 0.5);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(102, 126, 234, 0.7);
+}

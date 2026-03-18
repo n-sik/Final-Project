@@ -1,0 +1,148 @@
+.innerSplit {
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    gap: 12px;
+
+    flex: 1;
+    min-height: 0;
+}
+
+.innerLeft,
+.innerRight {
+    border: 1px solid #eef2f7;
+    border-radius: 14px;
+    padding: 12px;
+
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.grid {
+    width: 100%;
+    flex: 1;
+    min-height: 0;
+    min-width: 0;
+}
+
+/* ag-grid header / cell align helpers */
+.headerCenter :global(.ag-header-cell-label) {
+  justify-content: center;
+}
+.headerRight :global(.ag-header-cell-label) {
+  justify-content: flex-end;
+}
+.cellCenter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cellRight {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.sectionTitle {
+    margin-top: 2px;
+    margin-bottom: 10px;
+    font-weight: 900;
+    color: #1f2a44;
+}
+
+.sectionTitleRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.formBox {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.formRow {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    align-items: center;
+    gap: 10px;
+}
+
+.formRow label {
+    font-size: 12px;
+    font-weight: 800;
+    color: #475569;
+}
+
+.formRow input,
+.formRow select {
+    height: 36px;
+    border: 1px solid #e8eef7;
+    border-radius: 10px;
+    padding: 0 10px;
+    background: #fff;
+}
+
+.inlineActions {
+    margin-top: 8px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    flex: 0 0 auto;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 12px;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.btnPrimary {
+    background: #4f46e5;
+    color: #fff;
+}
+
+.btnDanger {
+    background: #fff;
+    border-color: #fee2e2;
+    color: #b91c1c;
+}
+
+.btnGhost {
+    background: #fff;
+    border-color: #dbe7ff;
+    color: #1f2a44;
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.hint {
+    margin-top: 6px;
+    font-size: 12px;
+    color: #64748b;
+    line-height: 1.4;
+}
+
+
+.historyBtn{
+  border:none;
+  background:transparent;
+  cursor:pointer;
+  padding:6px;
+  border-radius:10px;
+  color:#334155;
+}
+.historyBtn:hover{
+  background:#f1f5f9;
+}

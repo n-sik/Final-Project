@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper
+	namespace="com.flowenect.hr.department.kpi.mapper.KpiMapper">
+
+	<select id="selectKpiListByProj"
+		resultType="KpiDTO">
+		SELECT *
+		FROM KPI
+		WHERE PROJ_NO = #{projNo}
+		AND USE_YN = 'Y'
+		ORDER BY KPI_NO ASC
+	</select>
+
+	<select id="selectKpiDetail"
+		resultType="KpiDTO">
+		SELECT * FROM KPI WHERE KPI_NO = #{kpiNo}
+	</select>
+
+	<insert id="insertKpi">
+		INSERT INTO KPI (
+		KPI_NO, KPI_PARENT_NO, PROJ_NO,
+		REG_EMP_NO, 
+		KPI_NM, KPI_CN,
+		KPI_TYPE_CD,
+		START_DTM,
+		END_DTM, USE_YN, REG_DTM, PROGRESS_RATE
+		) VALUES
+		(
+		SEQ_KPI_NO.NEXTVAL,
+		<choose>
+			<when test="kpiParentNo == 0">NULL</when>
+			<otherwise>#{kpiParentNo}</otherwise>
+		</choose>
+		,
+
+		#{projNo}, #{regEmpNo}, 
+		#{kpiNm}, #{kpiCn},
+		#{kpiTypeCd},
+		#{startDtm}, #{endDtm}, 'Y', SYSDATE, 0
+		)
+	</insert>
+
+	<update id="updateKpi">
+		UPDATE KPI
+		SET KPI_NM = #{kpiNm},
+		KPI_CN = #{kpiCn},
+		KPI_TYPE_CD = #{kpiTypeCd},
+		PROGRESS_RATE = #{progressRate},
+		START_DTM = #{startDtm},
+		END_DTM = #{endDtm},
+		MOD_DTM = SYSDATE
+		WHERE KPI_NO = #{kpiNo}
+	</update>
+
+	<update id="deleteKpi">
+		UPDATE KPI SET USE_YN = 'N' WHERE KPI_NO = #{kpiNo}
+	</update>
+
+	<select id="getSubKpiListByParent"
+		resultType="KpiDTO">
+		SELECT
+		KPI_NO,
+		KPI_PARENT_NO,
+		PROJ_NO,
+		KPI_NM,
+		PROGRESS_RATE,
+		REG_DTM,
+		USE_YN
+		FROM KPI
+		WHERE KPI_PARENT_NO = #{parentNo}
+		AND USE_YN = 'Y'
+		ORDER BY KPI_NO ASC
+	</select>
+
+</mapper>

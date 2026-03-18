@@ -1,0 +1,638 @@
+@charset "UTF-8";
+
+/* =========================================================
+   aprvDetail 전용 스타일 (단일 CSS)
+   - aprvList/aprvForm과 동일한 톤(타이포/색/레디우스/섀도우 수치)
+   - 페이지 전체 스크롤 제거 + 섹션(좌/우) 내부만 스크롤
+   ========================================================= */
+
+
+/* 페이지 스코프 */
+.aprv-detail-page{
+  height: 100vh;
+  min-height: 100vh;
+  overflow: hidden;
+
+  /* aprvList.css :root와 동일 값 */
+  --aprv-line:#e6e8f0;
+  --aprv-line2:#d8ddeb;
+  --aprv-text:#111827;
+  --aprv-muted:#6b7280;
+  --aprv-muted2:#94a3b8;
+
+  --aprv-primary:#3b6cff;
+  --aprv-primary-bg:#eef3ff;
+
+  --aprv-danger:#ef4444;
+  --aprv-danger-bg:#fff1f2;
+
+  --aprv-radius-layout:8px;
+  --aprv-radius-control:12px;
+  --aprv-radius-pill:999px;
+
+  --aprv-shadow:0 10px 24px rgba(17,24,39,.06);
+  --aprv-shadow2:0 6px 14px rgba(17,24,39,.05);
+
+  /* Typography (mainboard.css 기준) */
+  --aprv-fs-base:0.85rem;
+  --aprv-fs-title:1.00rem;
+  --aprv-fs-h2:1.00rem;
+  --aprv-fw-base:400;
+  --aprv-fw-strong:600;
+
+  /* One-line controls (input/select) */
+  --aprv-control-h:36px;
+  --aprv-control-pad-x:10px;
+
+  /* Layout rhythm */
+  --aprv-gap:12px;
+}
+
+.aprv-detail-page *{ box-sizing: border-box; }
+
+.aprv-detail-page .aprv-container{
+  height: 100vh;
+  min-height: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--aprv-gap);
+  padding: 0;
+}
+
+/* =========================================================
+   Alert
+   ========================================================= */
+.aprv-detail-page .aprv-alert{
+  background: #fff;
+  border: 1px solid var(--aprv-line);
+  border-radius: var(--aprv-radius-layout);
+  padding: 12px 14px;
+  box-shadow: var(--aprv-shadow2);
+  font-size: var(--aprv-fs-base);
+  color: var(--aprv-text);
+}
+
+/* =========================================================
+   Top header
+   ========================================================= */
+.aprv-detail-page .aprv-top {
+  height: 64px;
+  padding: 0 16px;
+  background: #fff;
+  border-bottom: 1px solid var(--aprv-line);
+  border-radius: 10px;
+  box-shadow: var(--aprv-shadow2);
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-shrink: 0;
+}
+.aprv-detail-page .aprv-top-left{ min-width: 0; }
+.aprv-detail-page .aprv-top-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.1px;
+  color: var(--aprv-text);
+}
+.aprv-detail-page .aprv-top-sub {
+  margin: 2px 0 0;
+  font-size: 11px;
+  color: #94a3b8;
+  font-weight: 400;
+}
+.aprv-detail-page .aprv-top-right{
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* =========================================================
+   Guide (페이지 안내) - aprvList와 동일 톤
+   ========================================================= */
+.aprv-detail-page .aprv-guide {
+  background: #fff;
+  border-bottom: 1px solid var(--aprv-line);
+  border-radius: 10px;
+  box-shadow: var(--aprv-shadow2);
+  height: 56px;
+  padding: 0 16px;
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.aprv-detail-page .aprv-guide-left {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.aprv-detail-page .aprv-guide-title {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--aprv-text);
+  white-space: nowrap;
+}
+
+.aprv-detail-page .aprv-guide-desc {
+  margin: 0;
+  font-size: 11px;
+  color: #94a3b8;
+  font-weight: 400;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.aprv-detail-page .aprv-guide-right {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.aprv-detail-page .aprv-guide-pill {
+  display: inline-flex;
+  align-items: center;
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 999px;
+  border: 1px solid var(--aprv-line);
+  background: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--aprv-text);
+  white-space: nowrap;
+}
+
+.aprv-detail-page .aprv-guide-pill.is-tip {
+  color: #94a3b8;
+}
+
+/* =========================================================
+   Buttons
+   ========================================================= */
+.aprv-detail-page .aprv-btn{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  height: var(--aprv-control-h);
+  padding: 0 12px;
+  border-radius: var(--aprv-radius-control);
+  border: 1px solid var(--aprv-line2);
+  background: #fff;
+  color: var(--aprv-text);
+  font-size: var(--aprv-fs-base);
+  font-weight: var(--aprv-fw-strong);
+  text-decoration: none;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+.aprv-detail-page .aprv-btn:hover{ box-shadow: var(--aprv-shadow2); }
+.aprv-detail-page .aprv-btn:disabled{ opacity:.55; cursor:not-allowed; box-shadow:none; }
+.aprv-detail-page .aprv-btn--primary{
+  border-color: transparent;
+  background: var(--aprv-primary);
+  color: #fff;
+}
+.aprv-detail-page .aprv-btn--ghost{
+  background: #fff;
+  color: var(--aprv-text);
+}
+.aprv-detail-page .aprv-btn--danger{
+  border-color: transparent;
+  background: var(--aprv-danger);
+  color: #fff;
+}
+
+/* =========================================================
+   Layout (2 columns)
+   ========================================================= */
+.aprv-detail-page .aprv-detail-body{
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: var(--aprv-gap);
+}
+@media (max-width: 1080px){
+  .aprv-detail-page .aprv-detail-body{
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =========================================================
+   Card / Section
+   ========================================================= */
+.aprv-detail-page .aprv-card{
+  background: #fff;
+  border: 1px solid var(--aprv-line);
+  border-radius: var(--aprv-radius-layout);
+  box-shadow: var(--aprv-shadow2);
+  overflow: hidden;
+  min-height: 0;
+}
+.aprv-detail-page .aprv-card__head{
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--aprv-line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.aprv-detail-page .aprv-card__title{
+  margin: 0;
+  font-size: var(--aprv-fs-h2);
+  font-weight: var(--aprv-fw-strong);
+  color: var(--aprv-text);
+  line-height: 1.2;
+}
+.aprv-detail-page .aprv-card__body{
+  padding: 12px 14px;
+  min-height: 0;
+}
+.aprv-detail-page .aprv-card--grow{ flex:1; display:flex; flex-direction:column; min-height:0; }
+
+
+/* 좌/우 컬럼 내부 스크롤 */
+.aprv-detail-page .aprv-col{
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--aprv-gap);
+  overflow: hidden;
+}
+.aprv-detail-page .aprv-col-scroll{
+  min-height: 0;
+  overflow: auto;
+}
+
+/* =========================================================
+   Key/Value (summary)
+   ========================================================= */
+.aprv-detail-page .aprv-kv{
+  display: grid;
+  grid-template-columns: 140px minmax(0, 1fr);
+  row-gap: 10px;
+  column-gap: 12px;
+  font-size: var(--aprv-fs-base);
+}
+.aprv-detail-page .aprv-kv__k{
+  color: var(--aprv-muted);
+  font-weight: var(--aprv-fw-strong);
+}
+.aprv-detail-page .aprv-kv__v{
+  color: var(--aprv-text);
+  min-width: 0;
+  word-break: break-word;
+}
+.aprv-detail-page .aprv-pill{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 28px;
+  padding: 0 10px;
+  border-radius: var(--aprv-radius-pill);
+  background: var(--aprv-primary-bg);
+  color: var(--aprv-primary);
+  font-weight: var(--aprv-fw-strong);
+  font-size: var(--aprv-fs-base);
+}
+
+/* =========================================================
+   Tabs
+   ========================================================= */
+
+.aprv-detail-page .aprv-tabs{
+  display: flex;
+  gap: 6px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--aprv-line);
+  background: #fff;
+  overflow-x: auto;
+}
+.aprv-detail-page .aprv-dtab{
+  height: 32px;
+  padding: 0 12px;
+  border-radius: var(--aprv-radius-pill);
+  border: 1px solid var(--aprv-line2);
+  background: #fff;
+  color: var(--aprv-text);
+  font-size: var(--aprv-fs-base);
+  font-weight: var(--aprv-fw-strong);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.aprv-detail-page .aprv-dtab.is-active{
+  border-color: transparent;
+  background: var(--aprv-primary-bg);
+  color: var(--aprv-primary);
+}
+
+.aprv-detail-page .aprv-tabpanel{ display: none; }
+.aprv-detail-page .aprv-tabpanel.is-active{ display: block; }
+
+.aprv-detail-page .aprv-section{
+  margin: 0 0 14px;
+}
+.aprv-detail-page .aprv-section:last-child{ margin-bottom: 0; }
+.aprv-detail-page .aprv-section__ttl{
+  margin: 0 0 10px;
+  font-size: var(--aprv-fs-base);
+  font-weight: var(--aprv-fw-strong);
+  color: var(--aprv-text);
+}
+
+/* =========================================================
+   Table
+   ========================================================= */
+.aprv-detail-page .aprv-table-wrap{
+  width: 100%;
+  overflow: auto;
+  border: 1px solid var(--aprv-line);
+  border-radius: var(--aprv-radius-layout);
+}
+.aprv-detail-page .aprv-table{
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--aprv-fs-base);
+}
+.aprv-detail-page .aprv-table th,
+.aprv-detail-page .aprv-table td{
+  padding: 10px 10px;
+  border-bottom: 1px solid var(--aprv-line);
+  text-align: left;
+  vertical-align: middle;
+  color: var(--aprv-text);
+  white-space: nowrap;
+}
+.aprv-detail-page .aprv-table thead th{
+  background: #f8fafc;
+  font-weight: var(--aprv-fw-strong);
+  color: var(--aprv-muted);
+}
+.aprv-detail-page .aprv-table tbody tr:last-child td{ border-bottom: 0; }
+.aprv-detail-page .aprv-table-wrap--compact{
+  width: min(100%, 960px);
+  margin: 0 auto;
+}
+.aprv-detail-page .aprv-table--compact th,
+.aprv-detail-page .aprv-table--compact td{
+  text-align: center;
+}
+.aprv-detail-page .aprv-table--compact .aprv-textblock{
+  text-align: left;
+}
+.aprv-detail-page .aprv-empty{
+  text-align: center !important;
+  color: var(--aprv-muted);
+  padding: 18px 10px !important;
+}
+.aprv-detail-page .aprv-ellipsis{
+  max-width: 320px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.aprv-detail-page .aprv-asset-thumb{
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--aprv-line);
+  border-radius: 10px;
+  background: #fff;
+  display: inline-block;
+  object-fit: contain;
+}
+
+/* =========================================================
+   Badge
+   ========================================================= */
+.aprv-detail-page .aprv-badge{
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+  padding: 0 10px;
+  border-radius: var(--aprv-radius-pill);
+  font-weight: var(--aprv-fw-strong);
+  font-size: var(--aprv-fs-base);
+  border: 1px solid var(--aprv-line2);
+  color: var(--aprv-text);
+  background: #fff;
+}
+.aprv-detail-page .aprv-badge--wait{ background:#fff7ed; border-color:#fed7aa; color:#9a3412; }
+.aprv-detail-page .aprv-badge--approved{ background:#ecfdf5; border-color:#a7f3d0; color:#065f46; }
+.aprv-detail-page .aprv-badge--rejected{ background:#fef2f2; border-color:#fecaca; color:#991b1b; }
+
+/* =========================================================
+   Form controls
+   ========================================================= */
+.aprv-detail-page .aprv-textarea{
+  width: 100%;
+  min-height: 110px;
+  resize: vertical;
+  padding: 10px 12px;
+  border-radius: var(--aprv-radius-control);
+  border: 1px solid var(--aprv-line2);
+  font-size: var(--aprv-fs-base);
+  line-height: 1.4;
+  outline: none;
+}
+.aprv-detail-page .aprv-textarea:focus{
+  border-color: var(--aprv-primary);
+  box-shadow: 0 0 0 3px rgba(59,108,255,.12);
+}
+
+.aprv-detail-page .aprv-counter{
+  margin-top: 6px;
+  text-align: right;
+  font-size: var(--aprv-fs-base);
+  color: var(--aprv-muted);
+}
+
+.aprv-detail-page .aprv-muted{ color: var(--aprv-muted); }
+
+.aprv-detail-page .aprv-help{
+  margin: 8px 0 0;
+  font-size: var(--aprv-fs-base);
+  color: var(--aprv-muted);
+  line-height: 1.35;
+}
+
+.aprv-detail-page .aprv-hr{
+  margin: 14px 0;
+  border: 0;
+  border-top: 1px solid var(--aprv-line);
+}
+
+.aprv-detail-page .aprv-radio{
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.aprv-detail-page .aprv-radio__item{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: var(--aprv-control-h);
+  padding: 0 12px;
+  border: 1px solid var(--aprv-line2);
+  border-radius: var(--aprv-radius-control);
+  cursor: pointer;
+  user-select: none;
+}
+.aprv-detail-page .aprv-radio__item input{ margin: 0; }
+
+.aprv-detail-page .aprv-asset-opt{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+@media (max-width: 1080px){
+  .aprv-detail-page .aprv-asset-opt{ grid-template-columns: 1fr; }
+}
+.aprv-detail-page .aprv-asset-card{
+  border: 1px solid var(--aprv-line);
+  border-radius: var(--aprv-radius-layout);
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 56px;
+}
+.aprv-detail-page .aprv-asset-card__left{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.aprv-detail-page .aprv-asset-card__meta{
+  min-width: 0;
+}
+.aprv-detail-page .aprv-asset-card__name{
+  font-size: var(--aprv-fs-base);
+  font-weight: var(--aprv-fw-strong);
+  color: var(--aprv-text);
+  margin: 0;
+  line-height: 1.2;
+}
+.aprv-detail-page .aprv-asset-card__sub{
+  font-size: var(--aprv-fs-base);
+  color: var(--aprv-muted);
+  margin: 2px 0 0;
+  line-height: 1.2;
+}
+.aprv-detail-page .aprv-asset-card__right{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* added: preserve newlines in content */
+.aprv-detail-page .aprv-textblock{
+  white-space: pre-wrap;
+  line-height: 1.5;
+  color: var(--aprv-text);
+}
+
+/* =========================================================
+   aprvDetail.css 하단에 추가할 픽스 코드
+   ========================================================= */
+
+/* ✅ 페이지/컨테이너: 100vh → 100%로 (레이아웃 wrapper 신뢰) */
+.aprv-detail-page {
+  height: 100%;
+  min-height: 0;
+}
+
+.aprv-detail-page .aprv-container {
+  height: 100%;
+  min-height: 0;
+}
+
+/* ✅ 본문 2컬럼: 양쪽 같은 높이로 stretch */
+.aprv-detail-page .aprv-detail-body {
+  align-items: stretch;
+}
+
+/* ✅ 우측 컬럼: overflow auto (내부 스크롤) */
+.aprv-detail-page .aprv-col:last-child {
+  overflow: auto;
+}
+
+/* ✅ 우측 카드: 컬럼 전체 높이 채움 */
+.aprv-detail-page .aprv-col:last-child .aprv-card {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.aprv-detail-page .aprv-col:last-child .aprv-card__body {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+/* ✅ 결재처리 섹션 타이틀 */
+.aprv-detail-page .aprv-col:last-child .aprv-section__ttl {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--aprv-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin: 0 0 10px;
+}
+
+/* ✅ 승인/반려/취소 버튼 풀width */
+.aprv-detail-page .aprv-col:last-child .aprv-btn--primary,
+.aprv-detail-page .aprv-col:last-child .aprv-btn--danger {
+  width: 100%;
+  height: 38px;
+  font-weight: 700;
+}
+
+.aprv-detail-page .aprv-col:last-child .aprv-section:last-child .aprv-btn {
+  width: 100%;
+}
+
+/* ✅ asset 카드 hover 효과 */
+.aprv-detail-page .aprv-asset-card {
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.aprv-detail-page .aprv-asset-card:hover {
+  border-color: var(--aprv-primary);
+  box-shadow: 0 0 0 3px rgba(59,108,255,.10);
+}
+
+/* ✅ 좌측 본문 카드(탭): 남은 높이 채우기 */
+.aprv-detail-page .aprv-card--grow {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.aprv-detail-page .aprv-card--grow .aprv-col-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}

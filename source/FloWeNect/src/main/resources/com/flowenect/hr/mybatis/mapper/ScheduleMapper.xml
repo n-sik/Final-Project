@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.flowenect.hr.department.schedule.mapper.ScheduleMapper">
+	<select id="selectScheduleList" resultType="com.flowenect.hr.dto.ScheduleDTO">
+        SELECT 
+            T.TASK_NO,
+            T.TASK_TITLE,
+            T.TASK_CN,
+            T.TASK_STAT_CD,
+            T.TASK_START_DTM,
+            T.TASK_END_DTM,
+            T.PROGRESS_RATE,
+            T.DEL_YN,
+            E.EMP_NO,
+            E.EMP_NM,
+            E.DEPT_CD
+        FROM ASSIGN_TASK T
+        INNER JOIN EMP E ON T.EMP_NO = E.EMP_NO
+        WHERE T.DEL_YN = 'N' -- 삭제되지 않은 업무만
+        ORDER BY T.TASK_START_DTM ASC
+    </select>
+
+</mapper>

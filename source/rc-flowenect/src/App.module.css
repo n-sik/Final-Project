@@ -1,0 +1,50 @@
+/* Layout baseline inspired by the Java(Sitemesh) layout:
+   .container-scroller -> sidebar + main-panel
+   .navbar(top header) -> fixed height
+   .content-wrapper -> padding:20px, starts under navbar
+*/
+
+.containerScroller {
+  display: flex;
+  min-height: 100vh;
+  background: var(--body-bg);
+  color: var(--text-primary);
+}
+
+/* Equivalent to Java .main-panel */
+.mainPanel {
+  margin-left: var(--sidebar-width);
+  width: calc(100% - var(--sidebar-width));
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Equivalent to Java .content-wrapper */
+.contentWrapper {
+  padding: 12px;
+  flex-grow: 1;
+  width: 100%;
+  height: calc(100vh - var(--navbar-height));
+  margin-top: var(--navbar-height);
+  /* min-height: calc(100vh - var(--navbar-height)); */
+}
+.contentWrapper {
+  padding: 12px;
+  flex-grow: 1;
+  width: 100%;
+  height: calc(100vh - var(--navbar-height));
+  margin-top: var(--navbar-height);
+  animation: fadeSlideIn 0.3s ease;  /* ← 추가 */
+}
+
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

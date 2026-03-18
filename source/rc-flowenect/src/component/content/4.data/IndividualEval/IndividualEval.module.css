@@ -1,0 +1,1687 @@
+/* 1. 전체 레이아웃 (Fixed Height 구조) */
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    overflow-y: auto;
+}
+
+.layoutBody {
+    display: flex;
+    flex: 1;
+    gap: 12px;
+    width: 100%;
+    margin-top: 1rem;
+    overflow-y: auto;
+}
+
+.sidebarWrapper {
+    width: 280px;
+    background: #ffffff;
+    border-right: 1px solid #e2e8f0;
+    border-radius: 8px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    flex-shrink: 0;
+}
+
+.mainContent {
+    height: 100%;
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 5. 헤더 탭 메뉴 스타일링 */
+.headerTabs {
+    display: flex;
+    gap: 10px;
+}
+
+.tab,
+.activeTab {
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid #e2e8f0;
+}
+
+.tab {
+    background: #f8fafc;
+    color: #64748b;
+}
+
+.tab:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+}
+
+.activeTab {
+    background: #4f46e5;
+    color: #ffffff;
+    border-color: #4338ca;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+}
+
+/* 6. 빈 화면 상태 (Empty State) */
+.emptyState {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #94a3b8;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+/* 7. 로딩 애니메이션 및 스피너 */
+.loadingWrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+/* 🌀 작고 세련된 스피너 */
+.spinner {
+    width: 16px;
+    /* 실제 공간 차지 크기 고정 */
+    height: 16px;
+    animation: rotate_spinner 0.8s linear infinite;
+    display: flex;
+    /* 중앙 정렬용 */
+    align-items: center;
+    justify-content: center;
+    color: inherit;
+    /* 버튼 글자색과 통일 */
+}
+
+@keyframes rotate_spinner {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.analysisTriggerBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 16px;
+    font-size: 14px;
+}
+
+.alertBorder {
+    border: 2px solid #ef4444 !important;
+    animation: pulseBorder 2s infinite;
+}
+
+.fadeAnim {
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+/* 마크다운 컨텐츠 스타일 */
+.markdownContent {
+    line-height: 1.8;
+    color: #334155;
+}
+
+.markdownContent h3 {
+    margin-top: 2rem;
+    color: #1e293b;
+    border-left: 4px solid #4f46e5;
+    padding-left: 12px;
+}
+
+.emptyContainer {
+    display: flex;
+    flex: 1;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    background-color: #f9fafb;
+    border-radius: 8px;
+}
+
+/* 내부 콘텐츠 박스 */
+.emptyContent {
+    text-align: center;
+    padding: 40px;
+    max-width: 450px;
+    background: transparent;
+}
+
+/* 메인 타이틀 */
+.emptyTitle {
+    font-size: 22px;
+    font-weight: 800;
+    color: #1e293b;
+    margin-bottom: 16px;
+    letter-spacing: -0.5px;
+}
+
+/* 상세 설명 문구 */
+.emptyDesc {
+    font-size: 15px;
+    color: #64748b;
+    line-height: 1.7;
+    word-break: keep-all;
+}
+
+/* 1. 비어있는 상태의 전체 배경 */
+.emptyState {
+    display: flex;
+    flex: 1;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    background-color: #f8fafc;
+    border-radius: 12px;
+}
+
+.emptyContent {
+    text-align: center;
+}
+
+/* 2. 시선을 유도하는 펄스 애니메이션 아이콘 */
+.pulseIcon {
+    font-size: 50px;
+    display: inline-block;
+    animation: pulse 2s infinite ease-in-out;
+}
+
+.emptyState h3 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #334155;
+    margin-bottom: 8px;
+}
+
+.emptyState p {
+    font-size: 15px;
+    color: #64748b;
+    margin-bottom: 24px;
+}
+
+/* 3. 안내 문구 배지 */
+.guideBadge {
+    display: inline-block;
+    padding: 6px 14px;
+    background-color: #ffffff;
+    border: 1px solid #cbd5e1;
+    color: #94a3b8;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.mainIcon {
+    font-size: 64px;
+    margin-bottom: 24px;
+    display: inline-block;
+}
+
+/* ==========================================================
+   1. 공통 및 레이아웃 (Layout & Common)
+   ========================================================== */
+
+/* 전체 컴포넌트 페이드인 애니메이션 */
+.fadeAnim {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    /* padding: 10px; */
+}
+
+/* 꽉 찬 화면 데이터 없음 스타일 */
+.emptyContainer {
+    display: flex;
+    flex: 1;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    background-color: #f8fafc;
+    border-radius: 20px;
+    text-align: center;
+}
+
+.emptyContent {
+    padding: 40px;
+    max-width: 450px;
+}
+
+.mainIcon {
+    font-size: 64px;
+    margin-bottom: 24px;
+    display: inline-block;
+    animation: float 3s infinite ease-in-out;
+    /* 둥둥 떠있는 효과 */
+}
+
+.emptyTitle {
+    font-size: 24px;
+    font-weight: 800;
+    color: #1e293b;
+    margin-bottom: 12px;
+}
+
+.emptyDesc {
+    font-size: 15px;
+    color: #64748b;
+    line-height: 1.8;
+    word-break: keep-all;
+}
+
+/* 섹션 구분 타이틀 (Evidence) */
+.dividerText {
+    font-size: 14px;
+    font-weight: 600;
+    color: #94a3b8;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+}
+
+.dividerText::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background-color: #e2e8f0;
+    margin-left: 15px;
+}
+
+/* ==========================================================
+   2. 상단 요약 섹션 (Type Summary)
+   ========================================================== */
+.typeSummaryBox {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 24px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.typeIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 70px;
+    height: 70px;
+    background-color: #f0f9ff;
+    border-radius: 14px;
+    border: 1px solid #e0f2fe;
+}
+
+.typeText {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* AI 행동 합성 배지 */
+.aiBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    background-color: #eef2ff;
+    color: #4f46e5;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    align-self: flex-start;
+    /* 왼쪽 정렬 */
+}
+
+.titleWrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* 행동유형 코드 태그 (MCFE 등) */
+.modelCodeTag {
+    font-size: 18px;
+    font-weight: 800;
+    color: #ffffff;
+    background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-family: 'Courier New', Courier, monospace;
+    /* 코드 느낌 */
+}
+
+/* 유형 이름 (가치 분석가 등) */
+.typeName {
+    font-size: 24px;
+    font-weight: 800;
+    color: #1e293b;
+    margin: 0;
+}
+
+/* 분석 실행 버튼 */
+.analysisTriggerBtn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    background-color: #4f46e5;
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.analysisTriggerBtn:hover:not(:disabled) {
+    background-color: #4338ca;
+}
+
+.analysisTriggerBtn:disabled {
+    background-color: #a5b4fc;
+    cursor: not-allowed;
+}
+
+/* 스피너 애니메이션 */
+.spinner {
+    animation: spin 1s linear infinite;
+}
+
+/* ==========================================================
+   3. AI 심층 분석 섹션 (AI Deep Analysis)
+   ========================================================== */
+.aiDeepAnalysisSection {
+    background-color: #ffffff;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+    /* 테두리 밖으로 안 나가게 */
+}
+
+.aiAnalysisTitle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 20px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.aiAnalysisTitle h4 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0;
+}
+
+/* 신뢰성 지표 테이블 */
+.metricTableWrapper {
+    padding: 20px;
+}
+
+.metricTable {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.metricTable th {
+    background-color: #f8fafc;
+    color: #64748b;
+    font-weight: 600;
+    padding: 10px;
+    text-align: center;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.metricTable td {
+    padding: 12px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.metricLabel {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #1e293b;
+    font-weight: 500;
+    width: 150px;
+}
+
+.metricValue {
+    font-size: 18px;
+    font-weight: 700;
+    color: #4f46e5;
+    text-align: center;
+    width: 100px;
+}
+
+.metricInfo {
+    color: #64748b;
+    line-height: 1.5;
+}
+
+.metricInfo strong {
+    color: #1e293b;
+}
+
+/* AI 행동 양식 텍스트 블록 */
+.aiAnalysisContent {
+    padding: 0 20px 20px 20px;
+}
+
+.aiAnalysisText {
+    background-color: #f9fafb;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #f1f5f9;
+}
+
+.textHeader {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 15px;
+    font-weight: 700;
+    color: #4f46e5;
+    margin-bottom: 12px;
+}
+
+.aiAnalysisText p {
+    font-size: 14px;
+    color: #334155;
+    margin: 0;
+}
+
+/* ==========================================================
+   4. 동료 피드백 원문 섹션 (Evidence / Individual Feedback)
+   ========================================================== */
+.evidenceSection {
+    display: flex;
+    flex-direction: column;
+}
+
+.feedbackCard {
+    background-color: #ffffff;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+}
+
+.cardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.evaluatorInfo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #64748b;
+}
+
+.evaluatorName {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.evalDate {
+    font-size: 13px;
+    color: #94a3b8;
+}
+
+/* 피드백 상세 그리드 */
+.reportGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    /* 2열 배치 */
+    gap: 12px;
+    padding: 20px;
+}
+
+.analysisCard {
+    background-color: #fcfcfd;
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px solid #f1f5f9;
+    transition: transform 0.2s;
+}
+
+.analysisCard:hover {
+    transform: translateY(-3px);
+    /* 호버 시 살짝 들림 */
+    border-color: #e2e8f0;
+}
+
+.analysisCard h5 {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1e293b;
+    margin-top: 0;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #eef2ff;
+}
+
+.analysisCard p {
+    font-size: 13px;
+    color: #475569;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* 페이징 하단 중앙 배치 */
+.paginationWrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.emptyAnalysisBox::before {
+    content: "";
+    position: absolute;
+    top: -20px;
+    left: -20px;
+    width: 100px;
+    height: 100px;
+    pointer-events: none;
+}
+
+.emptyAnalysisBox svg {
+    margin-bottom: 10px;
+    animation: pulseIcon 2.5s infinite ease-in-out;
+}
+
+.emptyAnalysisBox h4 {
+    font-size: 20px;
+    font-weight: 800;
+    color: #1e293b;
+    margin-bottom: 12px;
+    letter-spacing: -0.5px;
+}
+
+.emptyAnalysisBox p {
+    font-size: 15px;
+    color: #64748b;
+    line-height: 1.6;
+    margin-bottom: 15px;
+    max-width: 320px;
+}
+
+.primaryAnalysisBtn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 28px;
+    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+    color: #ffffff;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.primaryAnalysisBtn:active {
+    transform: translateY(-1px);
+}
+
+.primaryAnalysisBtn svg {
+    margin: 0;
+    filter: none;
+    animation: none;
+}
+
+/* 🌀 스피너 회전 애니메이션 */
+.spinner {
+    animation: rotate_spinner 1s linear infinite;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 8px;
+}
+
+@keyframes rotate_spinner {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* 🧪 분석 중일 때 버튼 스타일 (선택사항: 약간 흐리게 처리) */
+.analysisTriggerBtn:disabled {
+    cursor: not-allowed;
+    background-color: #a5b4fc;
+    /* 좀 더 연한 보라색 */
+    opacity: 0.8;
+}
+
+/* 🌀 로딩 컨테이너 */
+.loadingWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 775px;
+    background: #ffffff;
+    border-radius: 24px;
+    border: 1px solid #f1f5f9;
+}
+
+.loadingContent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+}
+
+/* ⚡ 디지털 웨이브 (고리형 파동) */
+.digitalWave {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    width: 70px;
+    height: 70px;
+    background: #f5f3ff;
+    border-radius: 50%;
+}
+
+/* 밖으로 퍼져나가는 깨끗한 원형 라인 */
+.digitalWave::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 1.5px solid #6366f1;
+    border-radius: 50%;
+    animation: ringSpread 2s infinite cubic-bezier(0.215, 0.61, 0.355, 1);
+}
+
+@keyframes ringSpread {
+    0% {
+        transform: scale(0.8);
+        opacity: 0.8;
+    }
+
+    100% {
+        transform: scale(2.2);
+        opacity: 0;
+    }
+}
+
+.digitalWave svg {
+    position: relative;
+    z-index: 1;
+}
+
+/* 📏 로딩 바 및 텍스트 */
+.loadingTextZone h4 {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #1e293b;
+    margin-bottom: 8px;
+}
+
+.loadingTextZone p {
+    font-size: 0.95rem;
+    color: #64748b;
+    margin-bottom: 24px;
+}
+
+.loadingBarTrack {
+    width: 200px;
+    height: 4px;
+    border-radius: 2px;
+    overflow: hidden;
+    margin: 0 auto;
+}
+
+.loadingBarThumb {
+    width: 80px;
+    height: 100%;
+    background: #6366f1;
+    animation: slideLoading 1.5s infinite ease-in-out;
+}
+
+@keyframes slideLoading {
+    from {
+        transform: translateX(-80px);
+    }
+
+    to {
+        transform: translateX(200px);
+    }
+}
+
+/* statusBadge 스타일 예시 */
+.statusBadge {
+    font-size: 12px;
+    padding: 2px 8px;
+    border-radius: 12px;
+}
+
+.ready { /* 준비됨 */
+    background-color: #e0e7ff;
+    color: #4338ca;
+}
+
+.missing { /* 데이터 부족 */
+    background-color: #f3f4f6;
+    color: #9ca3af;
+}
+
+.resourceStatusContainer {
+    display: flex;
+    gap: 20px;
+    margin: 24px 0;
+    padding: 16px;
+    background: #f9fafb;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+}
+
+.qualListWrapper {
+    margin-top: 15px;
+    max-height: 400px; /* 16개 항목이 다 나오면 길어지니 스크롤 부여 */
+    overflow-y: auto;
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 10px;
+}
+
+.qualDetailCard {
+    background: white;
+    padding: 12px;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    border: 1px solid #eee;
+}
+
+.qualMeta {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    color: #555;
+}
+
+.qualComment {
+    font-size: 0.9rem;
+    color: #333;
+    line-height: 1.4;
+}
+
+.correctionRequestBox {
+    margin-top: 25px;
+    background: #eef2ff;
+    border: 2px solid #6366f1;
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.1);
+}
+
+.correctionHeader {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    color: #4338ca;
+}
+
+.originalComment {
+    font-size: 1.1rem;
+    font-weight: 500;
+    line-height: 1.6;
+    color: #1e1b4b;
+    font-style: italic;
+}
+
+.originalComment strong {
+    color: #6366f1;
+    font-size: 1.3rem;
+    text-decoration: underline;
+}
+
+.correctionNotice {
+    margin-top: 15px;
+    font-size: 0.85rem;
+    color: #6366f1;
+    font-weight: bold;
+}
+
+.headerZone {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.headerZone h4 {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #1e293b;
+    margin-top: 12px;
+}
+
+.headerZone p {
+    color: #64748b;
+    font-size: 0.95rem;
+}
+
+/* 2. 양옆 2컬럼 레이아웃 */
+.sideBySideContainer {
+    display: flex;
+    width: 100%;
+    gap: 25px;
+    margin-bottom: 25px;
+}
+
+.analysisSide {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(12px);
+    border: 1px solid #e2e8f0;
+    border-radius: 18px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+}
+
+.sideHeader {
+    padding: 14px 20px;
+    background: #6366f1;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.sideContent {
+    padding: 20px;
+    flex: 1;
+}
+
+/* 3. 왼쪽: 정량 평가 점수 그리드 */
+.compactScoreGrid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.miniScore {
+    background: #f1f5f9;
+    border-radius: 10px;
+    padding: 10px 5px;
+    text-align: center;
+    border: 1px solid #e2e8f0;
+}
+
+.miniScore span {
+    display: block;
+    font-size: 11px;
+    color: #64748b;
+    margin-bottom: 2px;
+}
+
+.miniScore strong {
+    font-size: 15px;
+    color: #4f46e5;
+}
+
+/* 4. 스크롤 영역 (높이 고정 및 가독성) */
+.scrollTextWrapper, .qualScrollList {
+    height: 420px;
+    overflow-y: auto;
+    background: #ffffff;
+    border: 1px solid #f1f5f9;
+    border-radius: 12px;
+    padding: 15px;
+}
+
+/* 슬림 스크롤바 */
+.scrollTextWrapper::-webkit-scrollbar, 
+.qualScrollList::-webkit-scrollbar {
+    width: 5px;
+}
+.scrollTextWrapper::-webkit-scrollbar-thumb, 
+.qualScrollList::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+
+.preTextSmall {
+    white-space: pre-wrap;
+    font-size: 13px;
+    line-height: 1.8;
+    color: #334155;
+    font-family: 'Pretendard', sans-serif;
+}
+
+.scrollTextWrapper h5 {
+    font-size: 0.85rem;
+    color: #94a3b8;
+    margin-bottom: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+/* 5. 오른쪽: 정성 평가 카드 */
+.miniQualCard {
+    background: #f8fafc;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 10px;
+    border-left: 3px solid #e2e8f0;
+}
+
+.miniQualMeta {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+}
+
+.qCd { font-size: 11px; font-weight: 800; color: #6366f1; }
+.qSc { font-size: 11px; color: #94a3b8; font-weight: 600; }
+.qCm { font-size: 13px; color: #475569; line-height: 1.5; }
+
+/* 6. 하단 와이드 강조 박스 (포기래) */
+.wideCorrectionBox {
+    width: 100%;
+    background: #f5f3ff;
+    border: 2px solid #8b5cf6;
+    border-radius: 20px;
+    padding: 25px;
+    margin-bottom: 30px;
+    position: relative;
+    box-shadow: 0 10px 25px rgba(139, 92, 246, 0.12);
+}
+
+.corHeader {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #7c3aed;
+    font-size: 1rem;
+    margin-bottom: 12px;
+}
+
+.corBody {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: #2e1065;
+    text-align: center;
+    line-height: 1.6;
+}
+
+.corFooter {
+    text-align: center;
+    font-size: 0.85rem;
+    color: #8b5cf6;
+    margin-top: 12px;
+    font-weight: 500;
+}
+
+/* 7. 실행 버튼 (글로우 애니메이션) */
+.primaryAnalysisBtn {
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    color: white;
+    padding: 18px 50px;
+    border-radius: 50px;
+    font-size: 1.15rem;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+    transition: all 0.3s ease;
+}
+
+.primaryAnalysisBtn:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 12px 35px rgba(99, 102, 241, 0.5);
+}
+
+.primaryAnalysisBtn:active {
+    transform: scale(0.98);
+}
+
+/* 2. 양옆 배치를 위한 컨테이너 (너비 고정) */
+.sideBySideContainer {
+    display: flex;
+    width: 100%;
+    gap: 20px;
+    margin: 12px 0;
+    box-sizing: border-box;
+    min-width: 0; /* 자식 요소의 최소 너비가 부모를 뚫지 않게 함 */
+}
+
+/* 3. 개별 카드 (왼쪽/오른쪽) */
+.analysisSide {
+    flex: 1;
+    min-width: 0; /* Flex 자식 요소가 콘텐츠 크기 때문에 늘어나는 것 방지 */
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    height: 550px; /* 전체 높이 고정 (화면 비율에 맞게 조절 가능) */
+}
+
+.sideHeader {
+    flex-shrink: 0; /* 헤더는 높이 고정 */
+    padding: 12px 18px;
+    background: #6366f1;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.sideContent {
+    flex: 1; /* 나머지 공간 차지 */
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* 내부 스크롤을 위해 숨김 */
+}
+
+/* 4. 내부 스크롤 영역 (이 안에서만 스크롤 발생) */
+.scrollTextWrapper, .qualScrollList {
+    flex: 1; /* 남은 높이 꽉 채우기 */
+    overflow-y: auto; /* 내용 많을 때만 내부 스크롤 */
+    background: #f8fafc;
+    border: 1px solid #f1f5f9;
+    border-radius: 10px;
+    padding: 12px;
+}
+
+/* 5. 하단 정정 요청 박스 (와이드) */
+.wideCorrectionBox {
+    width: 100%;
+    box-sizing: border-box;
+    background: #f5f3ff;
+    border: 2px solid #8b5cf6;
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+    flex-shrink: 0; /* 버튼 밀려나지 않게 고정 */
+}
+
+/* 6. 실행 버튼 */
+.primaryAnalysisBtn {
+    flex-shrink: 0; /* 버튼이 찌그러지지 않게 */
+    margin-top: 10px;
+    padding: 16px 60px;
+    border-radius: 50px;
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    color: white;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+}
+
+/* 1. 최상위 부모: 브라우저 높이에 맞게 고정 */
+.emptyAnalysisBox {
+    width: 100%;
+    height: 100%;
+    background: #ffffff;
+    border-radius: 24px;
+    padding: 25px;
+    display: flex;
+    flex-direction: column; /* 세로 배치 */
+    box-sizing: border-box;
+    overflow: hidden; /* 부모 자체 스크롤 금지 */
+    border: 1px solid #e2e8f0;
+}
+
+/* 2. 상단 타이틀 영역 (고정 높이) */
+.headerZone {
+    flex-shrink: 0; 
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* 3. 양옆 2컬럼 영역 (남은 공간 꽉 채우기) */
+.sideBySideContainer {
+    flex: 1; /* ★ 중요: 상단과 하단 사이의 모든 남은 공간 차지 */
+    display: flex;
+    gap: 20px;
+    min-height: 0; /* 자식 스크롤 작동을 위한 필수 설정 */
+    margin-bottom: 20px;
+}
+
+.analysisSide {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    min-width: 0;
+    overflow: hidden;
+}
+
+/* 4. 카드 내부 콘텐츠 (스크롤 핵심) */
+.sideContent {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+    min-height: 0; /* 내부 스크롤 보장 */
+}
+
+.scrollTextWrapper, .qualScrollList {
+    flex: 1; /* 남은 공간만큼만 스크롤 영역 생성 */
+    overflow-y: auto;
+    background: #ffffff;
+    border: 1px solid #eef2f6;
+    border-radius: 10px;
+    padding: 12px;
+}
+
+/* 5. 하단 강조 박스 및 버튼 (아래에 딱 붙음) */
+.wideCorrectionBox {
+    flex-shrink: 0; /* ★ 중요: 높이가 줄어들지 않도록 고정 */
+    background: #f5f3ff;
+    border: 2px solid #8b5cf6;
+    padding: 15px 20px;
+    border-radius: 16px;
+    margin-bottom: 15px;
+}
+
+.primaryAnalysisBtn {
+    flex-shrink: 0; /* 버튼이 화면 밖으로 밀려나지 않게 고정 */
+    padding: 15px 50px;
+    border-radius: 50px;
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(99, 102, 241, 0.2);
+}
+
+.headerZoneSlim {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* 양 끝 배치 */
+    padding: 10px 20px;
+    margin-bottom: 15px; /* 본문과의 간격 최소화 */
+    background: rgba(99, 102, 241, 0.03);
+    border-radius: 12px;
+    flex-shrink: 0;
+}
+
+.headerTitleGroup {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.headerZoneSlim h4 {
+    font-size: 1.25rem; /* 크기 살짝 축소 */
+    font-weight: 800;
+    color: #1e293b;
+    margin: 0; /* 마진 제거 */
+}
+
+.headerZoneSlim p {
+    color: #64748b;
+    font-size: 0.85rem;
+    margin: 0;
+    font-weight: 500;
+}
+
+/* 아래는 기존 sideBySideContainer 마진 조정 */
+.sideBySideContainer {
+    flex: 1;
+    display: flex;
+    gap: 15px; /* 간격 최적화 */
+    margin: 0 0 15px 0; /* 상단 마진 제거 */
+    min-height: 0;
+}
+
+.primaryAnalysisBtn {
+    /* 1. 레이아웃: 한 줄로 슬림하게 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    
+    /* 2. 크기 압축: 패딩과 높이 축소 */
+    width: fit-content;      /* 콘텐츠 크기에 맞춤 */
+    min-width: 200px;        /* 너무 작아지지 않게 하한선만 설정 */
+    padding: 10px 24px;      /* 기존 16px/40px에서 대폭 축소 */
+    margin: 8px auto 0 auto; /* 중앙 정렬 및 여백 최소화 */
+    flex-shrink: 0;          /* 찌그러짐 방지 고정 */
+
+    /* 3. 디자인: 더 얇고 날렵한 느낌 */
+    background: linear-gradient(135deg, #6366f1 0%, #a78bfa 100%);
+    color: #ffffff;
+    border: none;
+    border-radius: 30px;     /* 더 날렵한 둥근 모서리 */
+    
+    /* 4. 텍스트: 크기 줄이기 */
+    font-size: 0.95rem;      /* 1.1rem에서 0.95rem으로 축소 */
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    cursor: pointer;
+
+    /* 5. 효과: 그림자 농도 조절 */
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+    transition: all 0.2s ease-in-out;
+}
+
+/* 호버 효과: 가볍게 반응 */
+.primaryAnalysisBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(99, 102, 241, 0.35);
+    filter: brightness(1.08);
+}
+
+/* 아이콘 크기도 살짝 조절 (JSX에서 size={18} 정도로 낮추면 더 좋음) */
+.primaryAnalysisBtn svg {
+    width: 18px;
+    height: 18px;
+}
+
+/* 1. 리포트 전체 컨테이너 */
+.container {
+    background: #fcfdfe;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid #eef2f6;
+    animation: slideUp 0.5s ease-out;
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* 2. 상단 헤더 대시보드 */
+.topDashboard {
+    background: white;
+    padding: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.headerInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.tagRow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.mainTag {
+    background: #6366f1;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.faithTagStable {
+    color: #059669;
+    background: #ecfdf5;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.faithTagCrisis {
+    color: #dc2626;
+    background: #fef2f2;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.reportTitle {
+    font-size: 24px;
+    font-weight: 800;
+    color: #1e293b;
+    margin: 0;
+}
+
+/* 3. 다시 분석하기 버튼 */
+.refreshBtn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    color: #64748b;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.refreshBtn:hover {
+    background: #f8fafc;
+    color: #6366f1;
+    border-color: #6366f1;
+}
+
+/* 4. 중간 구분 라벨 */
+.evidenceLabel {
+    padding: 20px 30px 10px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #94a3b8;
+    letter-spacing: 1px;
+}
+
+/* 5. 콘텐츠 레이아웃 (카드 스택) */
+.contentStack {
+    padding: 0 30px 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.contentCard {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #eef2f6;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+}
+
+.cardHeader {
+    padding: 16px 20px;
+    background: #f8fafc;
+    border-bottom: 1px solid #f1f5f9;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #334155;
+    font-weight: 700;
+    font-size: 15px;
+}
+
+.cardBody {
+    padding: 24px;
+}
+
+/* 6. AI 인사이트 마크다운 스타일링 */
+.insightWrapper {
+    line-height: 1.8;
+    color: #334155;
+    font-size: 15px;
+}
+
+/* 마크다운 내부 요소 강제 스타일링 */
+.insightWrapper h3 {
+    color: #1e293b;
+    margin: 25px 0 15px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #f1f5f9;
+}
+
+.insightWrapper table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 15px 0;
+}
+
+.insightWrapper th {
+    background: #f8fafc;
+    padding: 12px;
+    border: 1px solid #e2e8f0;
+    text-align: left;
+    font-weight: 600;
+}
+
+.insightWrapper td {
+    padding: 12px;
+    border: 1px solid #e2e8f0;
+}
+
+/* 7. 데이터 검증 박스 (성공/위험) */
+.successBox {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.successBox h5 { color: #166534; margin: 0 0 8px; font-size: 16px; }
+.successBox p { color: #15803d; margin: 0; font-size: 14px; }
+
+.alertBox {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.alertBox h5 { color: #991b1b; margin: 0 0 8px; font-size: 16px; }
+.alertBox p { color: #b91c1c; margin: 0; font-size: 14px; }
+
+.insightWrapper {
+    padding: 40px;
+    background-color: #ffffff;
+    line-height: 1.85; /* 줄 간격을 넓혀 가독성 확보 */
+    color: #334155;
+    font-size: 16px;
+    word-break: keep-all; /* 한글 단어 잘림 방지 */
+    overflow-wrap: break-word;
+}
+
+/* 헤더 스타일 (이모티콘/강조 없이 깔끔하게) */
+.insightWrapper h1, 
+.insightWrapper h2, 
+.insightWrapper h3 {
+    color: #0f172a;
+    font-weight: 700;
+    margin-top: 40px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid #f1f5f9;
+    padding-bottom: 12px;
+}
+
+.insightWrapper h2 { font-size: 20px; }
+.insightWrapper h3 { font-size: 18px; border-bottom: none; padding-bottom: 0; }
+
+/* 문단 간격 */
+.insightWrapper p {
+    margin-bottom: 24px;
+    text-align: justify; /* 양쪽 정렬로 깔끔한 문서 느낌 부여 */
+}
+
+/* 불필요한 강조(**)가 프롬프트에서 빠졌더라도, 혹시 모를 볼드체 처리 */
+.insightWrapper strong {
+    font-weight: 600;
+    color: #1e293b;
+}
+
+/* 리스트 스타일 (텍스트 중심) */
+.insightWrapper ul, 
+.insightWrapper ol {
+    margin-bottom: 24px;
+    padding-left: 20px;
+}
+
+.insightWrapper li {
+    margin-bottom: 12px;
+    list-style-type: disc;
+}
+
+/* 인용문 (부서장 의견 등을 강조할 때 사용될 경우) */
+.insightWrapper blockquote {
+    margin: 30px 0;
+    padding: 16px 24px;
+    border-left: 4px solid #e2e8f0;
+    background-color: #f8fafc;
+    color: #475569;
+    font-style: normal;
+}
+
+/* 표 형식을 쓰지 말라고 했으므로, 혹시 나올 경우를 대비한 최소한의 리셋 */
+.insightWrapper table {
+    display: none; /* 표가 나오면 숨기거나 아주 단순하게 처리 */
+}
+
+/* 피드백 원문 섹션 내 플레이스홀더 */
+.emptyFeedbackPlaceholder {
+    width: 100%;
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(to bottom, #ffffff, #f8fafc);
+    border: 2px dashed #e2e8f0; /* 점선 테두리로 '채워질 공간'임을 암시 */
+    border-radius: 16px;
+    margin-top: 20px;
+}
+
+.emptyCardContent {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* 아이콘 주변 원형 배경 */
+.iconCircle {
+    width: 70px;
+    height: 70px;
+    background-color: #f1f5f9;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.emptyCardContent h4 {
+    font-size: 1.2rem;
+    color: #475569;
+    margin-bottom: 12px;
+    font-weight: 600;
+}
+
+.emptyCardContent p {
+    font-size: 0.95rem;
+    color: #94a3b8;
+    line-height: 1.6;
+    margin-bottom: 24px;
+}
+
+/* 하단 배지 디자인 */
+.emptyStatusBadge {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #64748b;
+    background: #f1f5f9;
+    padding: 6px 16px;
+    border-radius: 100px;
+    border: 1px solid #e2e8f0;
+}
+
+/* AI 분석 결과가 없을 때의 placeholder (위쪽 영역용) */
+.aiPlaceholder {
+    padding: 40px;
+    text-align: center;
+    background: rgba(248, 250, 252, 0.5);
+    border-radius: 12px;
+    margin: 12px 0;
+    color: #94a3b8;
+    font-size: 0.9rem;
+    border: 1px inset #f1f5f9;
+}
+
+/* IndividualEval.module.css 에 추가 */
+
+.sideBySidePlaceholder {
+    display: flex;
+    gap: 20px;
+    margin-top: 30px;
+    height: 300px;
+}
+
+.skeletonSide {
+    flex: 1;
+    background: linear-gradient(90deg, #f1f5f9 25%, #f8fafc 50%, #f1f5f9 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite;
+    border-radius: 12px;
+}
+
+@keyframes skeleton-loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+.primaryAnalysisBtn {
+    margin-top: 30px;
+    width: 100%;
+    padding: 16px;
+    background-color: #6366f1;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: transform 0.2s, background-color 0.2s;
+}
+
+.primaryAnalysisBtn:hover:not(:disabled) {
+    background-color: #4f46e5;
+    transform: translateY(-2px);
+}
+
+.primaryAnalysisBtn:disabled {
+    background-color: #e2e8f0;
+    cursor: not-allowed;
+}
